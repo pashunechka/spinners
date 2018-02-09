@@ -52,6 +52,7 @@ $color: rgb(169, 165, 80);
   }
 
   .svg-spinner-parts{
+    user-select: none;
     width: 288px;
     height: 288px;
     z-index: 150;

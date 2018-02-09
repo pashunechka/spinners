@@ -1,4 +1,4 @@
-<div class="container" (mouseup)="move($event)">
+<div class="container" (mouseup)="clickUp($event)">
   <div class="row">
     <div class="col-12">
     <div class="grid">
@@ -16,62 +16,8 @@
           </svg>
         </div>
         <div class="wheel-cont" >
-          <svg class="svg-spinner-parts" id="wheel" (mousedown)="clicked($event)">
+          <svg class="svg-spinner-parts" id="wheel" (mousedown)="clickDown($event)">
             <g id="wheel-parts">
-              <!--<g id="wheel-parts">
-              <g class="part odd">
-                <path d="
-                M144 0
-                A144 144 0 0 1 288 144
-                L144 144 Z"></path>
-               <path id="Mypath" stroke="none" fill="none" d="
-                M144 72
-                A72 72 0 0 1 216 144"
-                ></path>
-                <text fill="black">
-                  <textPath startOffset="50%" xlink:href="#Mypath">{{spinner.id}}</textPath>
-                </text>
-              </g>
-              <g class="part even">
-                <path d="
-                M288 144
-                A144 144  0 0 1 144 288
-                L144 144 Z" ></path>
-                <path id="Mypath1" stroke="none" fill="none" d="
-                M216 144
-                A144 144 0 0 1 144 216"
-                ></path>
-                <text fill="black">
-                  <textPath startOffset="50%" xlink:href="#Mypath1">2</textPath>
-                </text>
-              </g>
-
-              <g class="part odd">
-                <path d="
-                M144 288
-                A144 144 0 0 1 0 144
-                L144 144 Z"></path>
-                <path id="Mypath2" stroke="none" fill="none" d="
-                M144 216
-                A216 144 0 0 1 72 144"
-                ></path>
-                <text fill="black">
-                  <textPath startOffset="50%" xlink:href="#Mypath2">3</textPath>
-                </text>
-              </g>
-              <g class="part even">
-                <path d="
-                M0 144
-                A144 144  0 0 1 144 0
-                L144 144 Z" ></path>
-                <path id="Mypath3" stroke="none" fill="none" d="
-                M72 144
-                A72 144 0 0 1 144 72"
-                ></path>
-                <text fill="black">
-                  <textPath startOffset="50%" xlink:href="#Mypath3">4</textPath>
-                </text>
-              </g>-->
             </g>
             <circle class="spinner-center" cx="144" cy="144" r="6px"></circle>
           </svg>
@@ -79,7 +25,7 @@
         <button class="btn-skip" (click)="rotateWheel()">Skip</button>
       </div>
       <div class="item-add-form">
-        <button class="add but-submit" (click)="showForm()">Add item</button>
+        <button class="add but-submit" (click)="toggleIsShow()">Add item</button>
         <div *ngIf="isShow">
         <form [formGroup]="addForm" novalidate>
           <div class="input-cont">
