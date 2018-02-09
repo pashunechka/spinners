@@ -1,0 +1,124 @@
+<div class="container" (mouseup)="move($event)">
+  <div class="row">
+    <div class="col-12">
+    <div class="grid">
+      <div class="reel">
+        <div class="arrow-cont" id="arrow-cont">
+          <svg height="18px" version="1.1" viewBox="0 0 24 12" width="36px" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+            <g fill="none" fill-rule="evenodd" stroke="none" stroke-width="1">
+              <g transform="translate(-16.000000, -23.000000)">
+                <g transform="translate(28.000000, 28.000000) rotate(-90.000000) translate(-28.000000, -28.000000)">
+                <polygon id="arrow" class="arrow" points="32.6666667 16.3333333 21 28 32.6666667 39.6666667"></polygon>
+                <polygon points="56 0 56 56 0 56 0 0"></polygon>
+              </g>
+              </g>
+            </g>
+          </svg>
+        </div>
+        <div class="wheel-cont" (mousedown)="clicked($event)">
+          <svg class="svg-spinner-parts" id="wheel">
+            <g id="wheel-parts">
+              <!--<g id="wheel-parts">
+              <g class="part odd">
+                <path d="
+                M144 0
+                A144 144 0 0 1 288 144
+                L144 144 Z"></path>
+               <path id="Mypath" stroke="none" fill="none" d="
+                M144 72
+                A72 72 0 0 1 216 144"
+                ></path>
+                <text fill="black">
+                  <textPath startOffset="50%" xlink:href="#Mypath">{{spinner.id}}</textPath>
+                </text>
+              </g>
+              <g class="part even">
+                <path d="
+                M288 144
+                A144 144  0 0 1 144 288
+                L144 144 Z" ></path>
+                <path id="Mypath1" stroke="none" fill="none" d="
+                M216 144
+                A144 144 0 0 1 144 216"
+                ></path>
+                <text fill="black">
+                  <textPath startOffset="50%" xlink:href="#Mypath1">2</textPath>
+                </text>
+              </g>
+
+              <g class="part odd">
+                <path d="
+                M144 288
+                A144 144 0 0 1 0 144
+                L144 144 Z"></path>
+                <path id="Mypath2" stroke="none" fill="none" d="
+                M144 216
+                A216 144 0 0 1 72 144"
+                ></path>
+                <text fill="black">
+                  <textPath startOffset="50%" xlink:href="#Mypath2">3</textPath>
+                </text>
+              </g>
+              <g class="part even">
+                <path d="
+                M0 144
+                A144 144  0 0 1 144 0
+                L144 144 Z" ></path>
+                <path id="Mypath3" stroke="none" fill="none" d="
+                M72 144
+                A72 144 0 0 1 144 72"
+                ></path>
+                <text fill="black">
+                  <textPath startOffset="50%" xlink:href="#Mypath3">4</textPath>
+                </text>
+              </g>-->
+            </g>
+            <circle class="spinner-center" cx="144" cy="144" r="6px"></circle>
+          </svg>
+        </div>
+        <button class="btn-skip" (click)="rotateWheel()">Skip</button>
+      </div>
+      <div class="item-add-form">
+        <button class="add but-submit" (click)="showForm()">Add item</button>
+        <div *ngIf="isShow">
+        <form [formGroup]="addForm" novalidate>
+          <div class="input-cont">
+          <label for="title">Title:</label>
+          <input
+            id="title"
+            type="text"
+            name="title"
+            placeholder="Enter title"
+            formControlName="title"
+          >
+          </div>
+          <div class="input-cont">
+          <span for="image">Image:</span><br />
+          <img id="image-cont" class="image-cont" src="../../assets/no-image.svg" (click)="chooseImg()"/>
+          <input
+            hidden
+            id="image"
+            type="file"
+            accept="image/*"
+            name="image"
+            formControlName="image"
+            (change)="upload($event)"
+          >
+            <span class="image-name">{{image.name}}</span>
+          </div>
+        </form>
+        <button class="but-submit submit" (click)="submit()">Submit</button>
+        </div>
+      </div>
+      <div class="statistics"></div>
+      <div class="item-list">
+          <div class="list" *ngFor="let member of spinner.spinnerMembers">
+            <input type="checkbox" name="member" value="{{member.name}}">
+            <span> {{member.name}}</span>
+            <img src="../../assets/{{member.image}}">
+          </div>
+      </div>
+    </div>
+    </div>
+  </div>
+</div>

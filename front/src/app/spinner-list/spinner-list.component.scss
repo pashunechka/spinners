@@ -1,0 +1,64 @@
+$color: rgb(169, 165, 80);
+
+.container{
+  margin-top: 15em;
+}
+
+.cont{
+  border: 5px solid $color;
+  p{
+    background-color: $color;
+    font-size: 1.5em;
+    padding: 0.2em 0;
+    text-align: center;
+    text-transform: uppercase;
+    color: white;
+    margin-bottom: 0;
+  }
+  .arround{
+    padding: 1em;
+    box-shadow: inset 5px 0 10px gray;
+    display: grid;
+    grid-template-columns: 80% 20%;
+    grid-template-areas: "inp-spinners add-spinner"
+                          "list-spinners nothing";
+  }
+}
+
+.inp-spinners{
+  grid-area: inp-spinners;
+  padding: 0.5em 0 0.5em 0.2em;
+  border: 1px solid gray;
+  outline: none;
+}
+
+.add-spinner{
+  grid-area: add-spinner;
+  background-color: white;
+  border: 1px solid gray;
+  outline: none;
+  cursor: pointer;
+  &:hover{
+    color: $color;
+  }
+}
+
+.list-spinners{
+  grid-area: list-spinners;
+}
+
+.nothing{
+  grid-area: nothing;
+}
+
+.select-spinner{
+  padding: 0.3em 0 0.3em 0.3em;
+  margin-top: 0.3em;
+  font-size: 1.2em;
+  border-left: 4px solid black;
+  cursor: pointer;
+  &:hover{
+    background-color: rgba(181, 227, 68, 0.3);
+    border-left: 4px solid $color;
+  }
+}
