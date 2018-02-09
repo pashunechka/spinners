@@ -40,6 +40,8 @@ export class SpinnerComponent implements OnInit {
   startClick = {x: 0, y: 0};
   endClick = {x: 0, y: 0};
   image: any = {};
+  timeout;
+  test;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -52,7 +54,31 @@ export class SpinnerComponent implements OnInit {
     this.getSpinner();
     this.initForm();
     this.wheel = document.getElementById('wheel');
-    this.wheel.style.transition = `transform ${this.MILLISECONDS}ms cubic-bezier(0.33, 0.66, 0.66, 1)`;
+    window.addEventListener("mousemove", (event) =>{
+      if(this.isClick){
+        this.move (event.pageX, event.pageY);
+        this.wheel.style.transition = `transform 0ms cubic-bezier(0.33, 0.66, 0.66, 1)`;
+      }
+    });
+    window.addEventListener("mouseup", (event) =>{
+        if(this.isClick) {
+          this.isClick = false;
+          this.catchClick(event, this.endClick);
+          if(this.topPosition)
+            this.setStyleToTopPart();
+          this.wheel.style.transition = `transform ${this.MILLISECONDS}ms cubic-bezier(0.33, 0.66, 0.66, 1)`;
+          this.rotate((this.startClick.x - this.endClick.x)*0.33);
+          this.afterSkip();
+        }
+    });
+  }
+
+  move (x, y) {
+    let wh = window.innerHeight / 2,
+        ww = window.innerWidth / 2;
+    if(this.wheelArray.length > 1)
+     this.wheel.style.transform = `rotate(${(360/Math.PI * Math.atan2(y-wh, x-ww))}deg)`;
+    this.test = true;
   }
 
   getSpinner(){
@@ -82,47 +108,44 @@ export class SpinnerComponent implements OnInit {
     }
   }
 
-
-
   clickDown(event){
-    this.setParts();
-    this.toggleIsClick();
-    this.catchClick(event, this.startClick);
-    if(this.topPosition)
-      this.setStyleToTopPart();
-  }
-
-  clickUp(event){
-    if(this.isClick){
-      this.catchClick(event, this.endClick);
-      this.rotate((this.startClick.x - this.endClick.x)*0.33);
-      this.afterSkip();
-      this.toggleIsClick();
+    clearTimeout(this.timeout);
+    if(this.test){
+      this.test = false;
+      return this.wheel.style.transition = "";
     }
+    this.setParts();
+    this.isClick = true;
+    this.catchClick(event, this.startClick);
   }
 
   rotateWheel(){
+    clearTimeout(this.timeout);
     this.setParts();
     if(this.topPosition)
       this.setStyleToTopPart();
     this.clickNumber++;
+    this.test = true;
+    this.wheel.style.transition = `transform ${this.MILLISECONDS}ms cubic-bezier(0.33, 0.66, 0.66, 1)`;
     this.rotate(this.clickNumber*this.RANDOM);
     this.afterSkip();
   }
 
   afterSkip() {
     if(this.wheelArray.length > 1){
-      setTimeout(() => {
+      this.timeout = setTimeout(() => {
         this.searchTopPart(this.sortWheelPartsByTopLength);
         this.topPositionColor = this.topPosition.getAttribute('fill');
         this.topPosition.style.fill = this.FILLSTYLE;
         this.topPosition.style.stroke = this.STROKESTYLETOP;
+        this.test = false;
       }, this.MILLISECONDS);
     }
   }
 
   rotate(rad){
-    this.wheel.style.transform = `rotate(${rad}rad)`;
+    if(this.wheelArray.length > 1)
+      this.wheel.style.transform = `rotate(${rad}rad)`;
   }
 
   catchClick(event: MouseEvent, coord) {
