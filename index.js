@@ -3,13 +3,14 @@ const router = express.Router();
 const fs = require('fs');
 let spinners = [];
 
+fs.readFile('spinners.json', 'utf8', (err, data) => {
+    if (err) throw err;
+    spinners = JSON.parse(data);
+
+});
 
 router.get('/getSpinners', (req, res) => {
-    fs.readFile('spinners.json', 'utf8', (err, data) => {
-        if (err) throw err;
-        spinners = JSON.parse(data);
-        res.send(spinners);
-    });
+    res.send(spinners);
 });
 
 router.post('/addSpinner', (req, res) => {
