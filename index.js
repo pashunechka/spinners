@@ -49,9 +49,12 @@ router.post('/uploads', (req, res) => {
 router.post('/addSpinnerItems', (req, res) => {
     let member = req.body;
     console.log(member);
-    for(const key in Spinners)
-        if(Spinners[key].id === +member.id)
-            Spinners[key].spinnerMembers.push({name: member.title, image: member.image});
+    for(const key in spinners)
+        if(spinners[key].id === +member.id)
+            spinners[key].spinnerMembers.push({name: member.title, image: member.image});
+    fs.writeFile('spinners.json', JSON.stringify(spinners), "utf-8",(err) => {
+        if (err) return console.log(err);
+    });
     res.send({});
 });
 
