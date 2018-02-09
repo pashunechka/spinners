@@ -15,7 +15,7 @@ export class SpinnerComponent implements OnInit {
   STARTPOSITIONDEGREES = 270;
   CENTER = {x: 144, y: 144};
   RADIUS = 144;
-  RADIUSTEXT = 92;
+  RADIUSTEXT = 82;
   PARTSCOLORS = [
     'rgb(24, 100, 94)',
     'rgba(49, 187, 181, 0.45)',
@@ -23,6 +23,7 @@ export class SpinnerComponent implements OnInit {
   ];
   FILLSTYLE = 'rgba(255, 250, 71, 0.67)';
   STROKESTYLETOP = 'black';
+  RANDOM = Math.random()*10 + 5;
 
   spinnerId;
   spinner: any = {};
@@ -33,6 +34,7 @@ export class SpinnerComponent implements OnInit {
   points =[];
   wheel;
   parts;
+  wheelArray =[];
   topPosition;
   topPositionColor;
   startClick = {x: 0, y: 0};
@@ -56,7 +58,6 @@ export class SpinnerComponent implements OnInit {
   getSpinner(){
     this.http.postData('/getSpinner', {id: this.spinnerId}).subscribe((res: any) => {
       this.spinner = res;
-      this.innerWheelParts();
     });
   }
 
@@ -71,6 +72,8 @@ export class SpinnerComponent implements OnInit {
     if(this.addForm.valid){
       const form = this.addForm.value;
       form.image = this.image.name;
+      if(!this.image.name)
+        form.image = 'no-image.svg'
       form.id = this.spinnerId;
       this.sendFile();
       this.http.postData('/addSpinnerItems', form).subscribe(() =>{
@@ -78,6 +81,8 @@ export class SpinnerComponent implements OnInit {
       });
     }
   }
+
+
 
   clickDown(event){
     this.setParts();
@@ -101,39 +106,19 @@ export class SpinnerComponent implements OnInit {
     if(this.topPosition)
       this.setStyleToTopPart();
     this.clickNumber++;
-    this.rotate(this.clickNumber*10);
+    this.rotate(this.clickNumber*this.RANDOM);
     this.afterSkip();
   }
 
-  setStyleToTopPart(){
-    this.topPosition.style.fill = this.topPositionColor;
-    this.topPosition.style.stroke = 'none';
-  }
-
-  setParts(){
-    this.parts = document.getElementsByClassName('part');
-  }
-
   afterSkip() {
-    setTimeout(() => {
-      this.searchTopPart(this.sortWheelPartsByTopLength);
-      this.topPositionColor = this.topPosition.getAttribute('fill');
-      this.topPosition.style.fill = this.FILLSTYLE;
-      this.topPosition.style.stroke = this.STROKESTYLETOP;
-    }, this.MILLISECONDS);
-  }
-
-  searchTopPart(sortVal){
-    let partPos =[];
-    for(let key = 0; key < this.parts.length; key++)
-      partPos.push(this.parts[key]);
-    partPos = partPos.sort(sortVal);
-    this.topPosition = partPos[0];
-  }
-
-  sortWheelPartsByTopLength(firstEl, secondEl){
-    if (firstEl.getBoundingClientRect().top > secondEl.getBoundingClientRect().top) return 1;
-    return -1;
+    if(this.wheelArray.length > 1){
+      setTimeout(() => {
+        this.searchTopPart(this.sortWheelPartsByTopLength);
+        this.topPositionColor = this.topPosition.getAttribute('fill');
+        this.topPosition.style.fill = this.FILLSTYLE;
+        this.topPosition.style.stroke = this.STROKESTYLETOP;
+      }, this.MILLISECONDS);
+    }
   }
 
   rotate(rad){
@@ -145,9 +130,48 @@ export class SpinnerComponent implements OnInit {
     coord.y = event.screenY;
   }
 
-  createWheelParts(){
+  addToWheel(event) {
+    if(event.target.checked)
+       this.wheelArray.push(event.target.defaultValue);
+    else{
+      this.wheelArray.splice(this.wheelArray.indexOf(event.target.defaultValue),1);
+      document.getElementById('wheel-parts').innerHTML = '';
+    }
+    if(this.wheelArray.length > 0)
+      this.innerWheelParts();
+  }
+
+  innerWheelParts(){
+    this.createWheelParts();
+    document.getElementById('wheel-parts').innerHTML = this.generateWheelParts();
+  }
+
+  setParts(){
+    this.parts = document.getElementsByClassName('part');
+  }
+
+  searchTopPart(sortVal){
+    let partPos =[];
+    for(let key = 0; key < this.parts.length; key++)
+      partPos.push(this.parts[key]);
+    partPos = partPos.sort(sortVal);
+    this.topPosition = partPos[0];
+    //console.log(this.topPosition.childNodes[2].childNodes[0].innerHTML) //for statistics
+  }
+
+  setStyleToTopPart(){
+    this.topPosition.style.fill = this.topPositionColor;
+    this.topPosition.style.stroke = 'none';
+  }
+
+  sortWheelPartsByTopLength(firstEl, secondEl){
+    if (firstEl.getBoundingClientRect().top > secondEl.getBoundingClientRect().top) return 1;
+    return -1;
+  }
+
+  createWheelParts() {
     this.clearePoints();
-    for(let i = 0; i < this.spinner.spinnerMembers.length; i++){
+    for(let i = 0; i < this.wheelArray.length; i++){
       const startRad = this.calcRad(this.STARTPOSITIONDEGREES, i);
       const endRad = this.calcRad(this.STARTPOSITIONDEGREES, i+1);
       const startCoord = this.calcPointCoordinates(this.CENTER, this.RADIUS, startRad);
@@ -178,12 +202,7 @@ export class SpinnerComponent implements OnInit {
   }
 
   calcRad(startDegrees,partNumber){
-    return (startDegrees + 360/this.spinner.spinnerMembers.length*partNumber)*Math.PI/180;
-  }
-
-  innerWheelParts(){
-    this.createWheelParts();
-    document.getElementById('wheel-parts').innerHTML = this.generateWheelParts();
+    return (startDegrees + 360/this.wheelArray.length*partNumber)*Math.PI/180;
   }
 
   generateWheelParts(){
@@ -195,7 +214,7 @@ export class SpinnerComponent implements OnInit {
         ' M' + this.points[i].a + ' ' + this.points[i].b +
         ' A72 72 0 0 1' + this.points[i].a1 + " " + this.points[i].b1 +
         '"></path><text fill="black">' +
-        '<textPath startOffset="30%" xlink:href="#path'+ i +'">'+ this.spinner.spinnerMembers[i].name + '</textPath></text></g>';
+        '<textPath startOffset="30%" xlink:href="#path'+ i +'">'+ this.wheelArray[i] + '</textPath></text></g>';
     return result;
   }
 

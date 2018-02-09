@@ -59,7 +59,7 @@
       <div class="statistics"></div>
       <div class="item-list">
           <div class="list" *ngFor="let member of spinner.spinnerMembers">
-            <input type="checkbox" name="member" value="{{member.name}}">
+            <input type="checkbox" name="member" value="{{member.name}}" (click)="addToWheel($event)">
             <span> {{member.name}}</span>
             <img src="../../assets/{{member.image}}">
           </div>
