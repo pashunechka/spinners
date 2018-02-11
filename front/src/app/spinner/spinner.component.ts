@@ -22,7 +22,6 @@ export class SpinnerComponent implements OnInit {
     'rgb(31, 107, 169)'
   ];
   FILLSTYLE = 'rgba(255, 250, 71, 0.67)';
-  STROKESTYLETOP = 'black';
   RANDOM = Math.random()*10 + 5;
 
   spinnerId;
@@ -33,7 +32,6 @@ export class SpinnerComponent implements OnInit {
   clickNumber = 0;
   points =[];
   wheel;
-  parts;
   wheelArray =[];
   topPosition;
   topPositionColor;
@@ -41,7 +39,9 @@ export class SpinnerComponent implements OnInit {
   endClick = {x: 0, y: 0};
   image: any = {};
   timeout;
-  test;
+  stop;
+  radians;
+  delta = 0;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -67,10 +67,25 @@ export class SpinnerComponent implements OnInit {
           if(this.topPosition)
             this.setStyleToTopPart();
           this.wheel.style.transition = `transform ${this.MILLISECONDS}ms cubic-bezier(0.33, 0.66, 0.66, 1)`;
-          this.rotate((this.startClick.x - this.endClick.x)*0.33);
+          this.radians = (this.startClick.x - this.endClick.x)*0.33;
+          this.rotate(this.radians);
+          this.showRad();
+          this.topPositionColor = this.topPosition.getAttribute('fill');
           this.afterSkip();
         }
     });
+  }
+
+  showRad(){
+    let  delta = (this.radians >= 0)? (this.radians/(2*Math.PI)- Math.trunc(this.radians/(2*Math.PI)))*2*Math.PI: ((2*Math.PI + this.radians)/(2*Math.PI)- Math.trunc(this.radians/(2*Math.PI)))*2*Math.PI;
+    let partRadians = this.calcRad(0,1);
+    let radTotal = partRadians;
+    for(let i = 0; i < this.wheelArray.length; i++){
+      if(delta <= radTotal - this.delta)
+        return this.topPosition = document.getElementsByClassName("part")[this.wheelArray.length - 1 - i];
+      radTotal += partRadians;
+    }
+    this.delta = delta;
   }
 
   move (x, y) {
@@ -78,7 +93,7 @@ export class SpinnerComponent implements OnInit {
         ww = window.innerWidth / 2;
     if(this.wheelArray.length > 1)
      this.wheel.style.transform = `rotate(${(360/Math.PI * Math.atan2(y-wh, x-ww))}deg)`;
-    this.test = true;
+    this.stop = true;
   }
 
   getSpinner(){
@@ -99,7 +114,7 @@ export class SpinnerComponent implements OnInit {
       const form = this.addForm.value;
       form.image = this.image.name;
       if(!this.image.name)
-        form.image = 'no-image.svg'
+        form.image = 'no-image.svg';
       form.id = this.spinnerId;
       this.sendFile();
       this.http.postData('/addSpinnerItems', form).subscribe(() =>{
@@ -110,42 +125,39 @@ export class SpinnerComponent implements OnInit {
 
   clickDown(event){
     clearTimeout(this.timeout);
-    if(this.test){
-      this.test = false;
+    if(this.stop){
+      this.stop = false;
       return this.wheel.style.transition = "";
     }
-    this.setParts();
     this.isClick = true;
     this.catchClick(event, this.startClick);
   }
 
   rotateWheel(){
     clearTimeout(this.timeout);
-    this.setParts();
-    if(this.topPosition)
+    if(this.topPositionColor)
       this.setStyleToTopPart();
     this.clickNumber++;
-    this.test = true;
+    this.stop = true;
     this.wheel.style.transition = `transform ${this.MILLISECONDS}ms cubic-bezier(0.33, 0.66, 0.66, 1)`;
-    this.rotate(this.clickNumber*this.RANDOM);
+    this.radians = this.clickNumber*this.RANDOM
+    this.rotate(this.radians);
+    this.showRad();
+    this.topPositionColor = this.topPosition.getAttribute('fill');
     this.afterSkip();
   }
 
   afterSkip() {
-    if(this.wheelArray.length > 1){
+    if(this.wheelArray.length > 1)
       this.timeout = setTimeout(() => {
-        this.searchTopPart(this.sortWheelPartsByTopLength);
-        this.topPositionColor = this.topPosition.getAttribute('fill');
         this.topPosition.style.fill = this.FILLSTYLE;
-        this.topPosition.style.stroke = this.STROKESTYLETOP;
-        this.test = false;
+        this.stop = false;
       }, this.MILLISECONDS);
-    }
   }
 
   rotate(rad){
     if(this.wheelArray.length > 1)
-      this.wheel.style.transform = `rotate(${rad}rad)`;
+     return this.wheel.style.transform = `rotate(${rad}rad)`;
   }
 
   catchClick(event: MouseEvent, coord) {
@@ -169,27 +181,9 @@ export class SpinnerComponent implements OnInit {
     document.getElementById('wheel-parts').innerHTML = this.generateWheelParts();
   }
 
-  setParts(){
-    this.parts = document.getElementsByClassName('part');
-  }
-
-  searchTopPart(sortVal){
-    let partPos =[];
-    for(let key = 0; key < this.parts.length; key++)
-      partPos.push(this.parts[key]);
-    partPos = partPos.sort(sortVal);
-    this.topPosition = partPos[0];
-    //console.log(this.topPosition.childNodes[2].childNodes[0].innerHTML) //for statistics
-  }
-
   setStyleToTopPart(){
     this.topPosition.style.fill = this.topPositionColor;
     this.topPosition.style.stroke = 'none';
-  }
-
-  sortWheelPartsByTopLength(firstEl, secondEl){
-    if (firstEl.getBoundingClientRect().top > secondEl.getBoundingClientRect().top) return 1;
-    return -1;
   }
 
   createWheelParts() {
@@ -205,10 +199,6 @@ export class SpinnerComponent implements OnInit {
     }
   }
 
-  clearePoints() {
-    this.points.length = 0;
-  }
-
   setPoints(startCoord, endCoord, startCoordText, endCoordText){
     this.points.push({
       x: startCoord.x, y: startCoord.y,
@@ -217,6 +207,7 @@ export class SpinnerComponent implements OnInit {
       a1: endCoordText.x, b1: endCoordText.y
     });
   }
+
 
   calcPointCoordinates(center, radius, rad){
     const x0 = Math.round(center.x + radius*Math.cos(rad));
@@ -239,6 +230,10 @@ export class SpinnerComponent implements OnInit {
         '"></path><text fill="black">' +
         '<textPath startOffset="30%" xlink:href="#path'+ i +'">'+ this.wheelArray[i] + '</textPath></text></g>';
     return result;
+  }
+
+  clearePoints() {
+    this.points.length = 0;
   }
 
   setPartColor(i){
