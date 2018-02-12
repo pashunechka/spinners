@@ -10,6 +10,7 @@ import {DataService} from "../data.service";
 export class SpinnerListComponent implements OnInit {
 
   spinnerName = '';
+  error = false;
 
   spinners = [];
 
@@ -23,10 +24,17 @@ export class SpinnerListComponent implements OnInit {
   }
 
   createSpinner(){
-    this.http.postData('/addSpinner', {name: this.spinnerName}).subscribe((res: any) =>{
-      this.data.spinners.push(res);
-      this.spinners = this.data.spinners;
-    });
+    if(this.spinnerName != '')
+      this.http.postData('/addSpinner', {name: this.spinnerName}).subscribe((res: any) =>{
+        this.data.spinners.push(res);
+        this.spinners = this.data.spinners;
+      });
+    else
+      this.toggleError();
+  }
+
+  toggleError(){
+    this.error = !this.error;
   }
 
 }

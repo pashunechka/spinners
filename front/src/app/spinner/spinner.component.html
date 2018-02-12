@@ -1,15 +1,15 @@
-<div class="container">
-  <div class="row">
-    <div class="col-12">
     <div class="grid">
+      <div class="left">
+        <button id="back-btn" routerLink="/">Back</button>
+      </div>
+      <div class="right"></div>
       <div class="reel">
         <div class="arrow-cont" id="arrow-cont">
-          <svg height="18px" version="1.1" viewBox="0 0 24 12" width="36px" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-            <g fill="none" fill-rule="evenodd" stroke="none" stroke-width="1">
+          <svg id="arrow" height="18px" version="1.1" viewBox="0 0 24 12" width="36px" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+            <g fill-rule="evenodd" stroke="none" stroke-width="1">
               <g transform="translate(-16.000000, -23.000000)">
                 <g transform="translate(28.000000, 28.000000) rotate(-90.000000) translate(-28.000000, -28.000000)">
-                <polygon id="arrow" class="arrow" points="32.6666667 16.3333333 21 28 32.6666667 39.6666667"></polygon>
-                <polygon points="56 0 56 56 0 56 0 0"></polygon>
+                <polygon class="arrow" points="32.6666667 16.3333333 21 28 32.6666667 39.6666667"></polygon>
               </g>
               </g>
             </g>
@@ -22,21 +22,27 @@
             <circle class="spinner-center" cx="144" cy="144" r="6px"></circle>
           </svg>
         </div>
-        <button class="btn-skip" (click)="rotateWheel()">Skip</button>
+        <button class="btn-spin" (click)="clickToRotate()">Spin</button>
       </div>
       <div class="item-add-form">
-        <button class="add but-submit" (click)="toggleIsShow()">Add item</button>
+        <button class="add but-submit" (click)="toggleIsShow($event)">Add an item</button>
         <div *ngIf="isShow">
         <form [formGroup]="addForm" novalidate>
+          <div class="cont">
           <div class="input-cont">
           <label for="title">Title:</label>
-          <input
+            <input
+            [class.error]="addForm.controls['title'].invalid && addForm.controls['title'].touched"
             id="title"
             type="text"
             name="title"
-            placeholder="Enter title"
+            placeholder="Enter a title"
             formControlName="title"
           >
+            <span class="error"
+                  *ngIf="addForm.controls['title'].invalid && addForm.controls['title'].touched">
+              The field shouldn't be empty
+            </span>
           </div>
           <div class="input-cont">
           <span for="image">Image:</span><br />
@@ -48,23 +54,28 @@
             accept="image/*"
             name="image"
             formControlName="image"
-            (change)="upload($event)"
+            (change)="getImage($event)"
           >
-            <span class="image-name">{{image.name}}</span>
+            <a title="{{image.name}}" class="image-name">{{image.name}}</a>
           </div>
+          </div>
+          <button class="but-submit submit" (click)="submit()">Submit</button>
         </form>
-        <button class="but-submit submit" (click)="submit()">Submit</button>
         </div>
       </div>
-      <div class="statistics"></div>
+      <div class="statistics">
+        <chart [type]="chartType" [data]="chartData" [options]="chartOptions"></chart>
+      </div>
       <div class="item-list">
-          <div class="list" *ngFor="let member of spinner.spinnerMembers">
-            <input type="checkbox" name="member" value="{{member.name}}" (click)="addToWheel($event)">
-            <span> {{member.name}}</span>
+          <div class="list" (click)="getInput(i)" *ngFor="let member of spinner.spinnerMembers; let i = index">
+            <a title="{{member.name}}" class=""><input id="check{{i}}" type="checkbox" name="member" value="{{member.name}}" (click)="addChosenPartsToWheel($event)">{{member.name}}</a>
             <img src="../../assets/{{member.image}}">
           </div>
       </div>
     </div>
+    <div class="overlay" *ngIf="isPopUp" (click)="close()">
+      <div class="pop-up">
+        {{topPositionValue}}
+      </div>
+      <img src="../../assets/close.png" (click)="close()">
     </div>
-  </div>
-</div>

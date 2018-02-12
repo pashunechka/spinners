@@ -4,7 +4,11 @@
         <div class="cont">
           <p>Create new spinner</p>
           <div class="arround">
-            <input class="inp-spinners" type="text" name="spinnerName" placeholder="Enter spinner name" [(ngModel)]="spinnerName" >
+            <div class="error"
+               *ngIf="error">
+              The field shouldn't be empty
+            </div>
+            <input class="inp-spinners" type="text" name="spinnerName" placeholder="Enter spinner name" (focus)="toggleError()" [(ngModel)]="spinnerName" >
             <button class="add-spinner" (click)="createSpinner()">Add spinner</button>
             <div class="list-spinners">
               <div class="select-spinner" *ngFor="let spinner of spinners" [routerLink]="['/spinner', spinner.id]">{{spinner.spinnerName}}</div>

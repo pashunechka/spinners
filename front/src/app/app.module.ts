@@ -10,6 +10,7 @@ import { SpinnerComponent } from './spinner/spinner.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {HttpService} from "./http.service";
 import {HttpClientModule} from "@angular/common/http";
+import {ChartModule} from "angular2-chartjs";
 
 
 @NgModule({
@@ -23,7 +24,8 @@ import {HttpClientModule} from "@angular/common/http";
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpClientModule
+    HttpClientModule,
+    ChartModule
   ],
   providers: [
     DataService,
