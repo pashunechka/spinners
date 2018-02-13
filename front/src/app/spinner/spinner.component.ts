@@ -11,29 +11,30 @@ import {DataService} from "../data.service";
 })
 export class SpinnerComponent implements OnInit {
 
-  chartType = 'bar';
-  chartData = {
-    labels: [65, 59, 80, 81, 56, 55, 45],
-    datasets: [
-      {
-        label: "Statistics",
-        data: [65, 59, 80, 81, 56, 55, 45],
-        backgroundColor: [
-          'rgba(255,99,132,1)',
-          'rgba(54, 162, 235, 1)',
-          'rgba(255, 206, 86, 1)',
-          'rgba(75, 192, 192, 1)',
-          'rgba(153, 102, 255, 1)',
-          'rgba(255, 159, 64, 1)',
-          'rgba(255, 159, 64, 1)'
-        ],
-      }
-    ]
-  };
-  chartOptions = {
+  public chartOptions:any = {
+    scaleShowVerticalLines: false,
     responsive: true,
-    maintainAspectRatio: false
+    scales: {
+      yAxes: [{
+        ticks: {
+          beginAtZero:true
+        }
+      }]
+    }
   };
+  public chartColors:Array<any> = [{
+      backgroundColor: 'rgba(89, 187, 181, 0.5)',
+    }];
+  public chartLabels:string[] = [];
+  public chartType:string = 'line';
+  public chartLegend:boolean = true;
+
+  public chartData:any[] = [
+    {
+      data: [],
+      label: 'Statistics'
+    },
+  ];
 
   DEFAULTIMAGE = 'no-image.svg';
   MILLISECONDS = 4000;
@@ -69,6 +70,7 @@ export class SpinnerComponent implements OnInit {
   stop;
   radians;
   deltaFromStartPosition = 0;
+  collectStat = [];
 
   constructor(
     private formBuilder: FormBuilder,
@@ -98,15 +100,20 @@ export class SpinnerComponent implements OnInit {
   }
 
   submit() {
-    if(this.addForm.valid){
-      const form = this.setForm();
-      this.sendFileToServer();
-      this.http.postData('/addSpinnerItems', form).subscribe((res: any) =>{
-        this.spinner = res;
-        this.addForm.reset();
-      });
-    }
+    if(this.addForm.invalid)
+      return this.addForm.get('title').markAsTouched({onlySelf: true});
+    const form = this.setForm();
+    this.sendFileToServer();
+    this.addSpinnerItems(form);
   }
+
+  addSpinnerItems(spinnerItem){
+    this.http.postData('/addSpinnerItems', spinnerItem).subscribe((res: any) =>{
+      this.spinner = res;
+      this.addForm.reset();
+    });
+  }
+
 
   setForm(){
     const form = this.addForm.value;
@@ -122,16 +129,16 @@ export class SpinnerComponent implements OnInit {
   }
 
   addChosenPartsToWheel(event) {
-    if(event.target.checked){
+    if(event.target.checked)
       this.parts.push(event.target.defaultValue);
-      this.chartData.labels.push(event.target.defaultValue);
-    }
     else{
       this.parts.splice(this.parts.indexOf(event.target.defaultValue),1);
       this.innerHtml('wheel-parts', '');
     }
-    if(this.checkWheelPartsAmount())
+    if(this.checkWheelPartsAmount()){
+      this.initStatistics();
       this.innerWheelParts();
+    }
   }
 
   innerWheelParts(){
@@ -205,6 +212,28 @@ export class SpinnerComponent implements OnInit {
     }
   }
 
+  initStatistics(){
+    this.chartData[0].data = [];
+    this.collectStat = [];
+    this.chartLabels = [];
+      for(let key = 0; key < this.parts.length; key++){
+        this.chartLabels.push(this.parts[key]);
+        this.collectStat.push(0);
+      }
+  }
+
+  collectStatistics(){
+    if(this.topPositionValue)
+      this.collectStat[this.chartLabels.indexOf(this.topPositionValue)]+=1;
+    this.showStatistics();
+  }
+
+  showStatistics() {
+    let clone = JSON.parse(JSON.stringify(this.chartData));
+    clone[0].data = this.collectStat;
+    this.chartData = clone;
+  }
+
   setDefaultStyleToTopPart(){
     this.topPosition.style.fill = this.topPositionColor;
   }
@@ -245,6 +274,7 @@ export class SpinnerComponent implements OnInit {
         this.topPosition.style.fill =  this.FILLSTYLE;
         this.stop = false;
         this.isPopUp = true;
+        this.collectStatistics();
       }, this.MILLISECONDS);
   }
 
@@ -315,6 +345,7 @@ export class SpinnerComponent implements OnInit {
   toggleIsShow(event) {
     this.isShow = !this.isShow;
     event.target.style.borderBottom = '2px solid #31bbb5';
+    this.addForm.reset();
     if(this.isShow)
       event.target.style.borderBottom = 0;
   }

@@ -30,11 +30,11 @@ export class SpinnerListComponent implements OnInit {
         this.spinners = this.data.spinners;
       });
     else
-      this.toggleError();
+      this.error = true;
   }
 
   toggleError(){
-    this.error = !this.error;
+    this.error = false;
   }
 
 }

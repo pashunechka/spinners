@@ -64,7 +64,13 @@
         </div>
       </div>
       <div class="statistics">
-        <chart [type]="chartType" [data]="chartData" [options]="chartOptions"></chart>
+        <canvas baseChart
+                [datasets]="chartData"
+                [labels]="chartLabels"
+                [colors]="chartColors"
+                [options]="chartOptions"
+                [legend]="chartLegend"
+                [chartType]="chartType"></canvas>
       </div>
       <div class="item-list">
           <div class="list" (click)="getInput(i)" *ngFor="let member of spinner.spinnerMembers; let i = index">
