@@ -1,21 +1,15 @@
-<div class="container">
-    <div class="row">
-      <div class="col-12">
-        <div class="cont">
-          <p>Create a new spinner</p>
-          <div class="arround">
-            <div class="error"
-               *ngIf="error">
+<div class="cont">
+   <p>Create a new spinner</p>
+      <div class="arround">
+         <div class="error" *ngIf="error">
               The field shouldn't be empty
-            </div>
-            <input class="inp-spinners" type="text" name="spinnerName" placeholder="Enter a spinner name" (focus)="toggleError()" [(ngModel)]="spinnerName" >
-            <button class="add-spinner" (click)="createSpinner()">Add a spinner</button>
-            <div class="list-spinners">
-              <div class="select-spinner" *ngFor="let spinner of spinners" [routerLink]="['/spinner', spinner.id]">{{spinner.spinnerName}}</div>
-            </div>
-            <div class="nothing"></div>
-          </div>
-        </div>
-      </div>
+         </div>
+         <input class="inp-spinners" type="text" name="spinnerName" placeholder="Enter a spinner name" (focus)="toggleError()" [(ngModel)]="spinnerName" >
+         <button class="add-spinner" (click)="createSpinner()"><i class="fa fa-plus"></i> Add a spinner</button>
+         <div class="list-spinners">
+          <div class="select-spinner" *ngFor="let spinner of spinners" [routerLink]="['/spinner', spinner.id]">{{spinner.spinnerName}}</div>
+         </div>
+       <div class="nothing"></div>
     </div>
 </div>
+

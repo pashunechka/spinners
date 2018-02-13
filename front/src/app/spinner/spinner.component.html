@@ -1,6 +1,6 @@
     <div class="grid">
       <div class="left">
-        <button id="back-btn" routerLink="/">Back</button>
+        <button id="back-btn" routerLink="/"><i class="fa fa-arrow-left"></i> Back</button>
       </div>
       <div class="right"></div>
       <div class="reel">
@@ -15,17 +15,22 @@
             </g>
           </svg>
         </div>
-        <div class="wheel-cont" >
-          <svg class="svg-spinner-parts" id="wheel" (mousedown)="clickDown($event)">
+        <div class="wheel-cont" id="wheel-cont">
+          <svg class="svg-spinner-parts" id="wheel"
+               (drop)="drop($event)"
+               (dragenter)="dragEnter($event)"
+               (dragover)="dragOver($event)"
+               (dragleave)="dragExit($event)"
+               (mousedown)="clickDown($event)">
             <g id="wheel-parts">
             </g>
             <circle class="spinner-center" cx="144" cy="144" r="6px"></circle>
           </svg>
         </div>
-        <button class="btn-spin" (click)="clickToRotate()">Spin</button>
+        <button class="btn-spin" (click)="clickToRotate()"><i class="fa fa-repeat"></i> Spin</button>
       </div>
       <div class="item-add-form">
-        <button class="add but-submit" (click)="toggleIsShow($event)">Add an item</button>
+        <button class="add but-submit" (click)="toggleIsShow($event)"><i class="fa fa-plus"></i> Add an item</button>
         <div *ngIf="isShow">
         <form [formGroup]="addForm" novalidate>
           <div class="cont">
@@ -59,21 +64,24 @@
             <a title="{{image.name}}" class="image-name">{{image.name}}</a>
           </div>
           </div>
-          <button class="but-submit submit" (click)="submit()">Submit</button>
+          <button class="but-submit submit" (click)="submit()"><i class="fa fa-check"></i> Submit</button>
         </form>
         </div>
       </div>
       <div class="statistics">
+        <p><i class="fa fa-area-chart"></i> Statistics</p>
         <canvas baseChart
                 [datasets]="chartData"
                 [labels]="chartLabels"
                 [colors]="chartColors"
                 [options]="chartOptions"
                 [legend]="chartLegend"
-                [chartType]="chartType"></canvas>
+                [chartType]="chartType">
+
+        </canvas>
       </div>
-      <div class="item-list">
-          <div class="list" (click)="getInput(i)" *ngFor="let member of spinner.spinnerMembers; let i = index">
+      <div class="item-list"  >
+          <div class="list" draggable="true" (dragstart)="dragStart($event)" (click)="getInput(i)" *ngFor="let member of spinner.spinnerMembers; let i = index">
             <a title="{{member.name}}" class=""><input id="check{{i}}" type="checkbox" name="member" value="{{member.name}}" (click)="addChosenPartsToWheel($event)">{{member.name}}</a>
             <img src="../../assets/{{member.image}}">
           </div>

@@ -14,10 +14,21 @@ export class SpinnerComponent implements OnInit {
   public chartOptions:any = {
     scaleShowVerticalLines: false,
     responsive: true,
+    legend: {
+      display: false
+    },
     scales: {
       yAxes: [{
         ticks: {
-          beginAtZero:true
+          beginAtZero:true,
+          fontFamily: 'Ubuntu, sans-serif',
+          fontSize: '16'
+        }
+      }],
+      xAxes: [{
+        ticks: {
+          fontFamily: 'Ubuntu, sans-serif',
+          fontSize: '16'
         }
       }]
     }
@@ -41,7 +52,7 @@ export class SpinnerComponent implements OnInit {
   STARTPOSITIONDEGREES = 270;
   CENTER = {x: 144, y: 144};
   RADIUS = 144;
-  RADIUSTEXT = 82;
+  RADIUSTEXT = 120;
   PARTSCOLORS = [
     'rgb(24, 100, 94)',
     'rgba(49, 187, 181, 0.45)',
@@ -107,10 +118,36 @@ export class SpinnerComponent implements OnInit {
     this.addSpinnerItems(form);
   }
 
+  dragStart(event){
+    if(!event.target.getElementsByTagName('input')[0].checked)
+      event.dataTransfer.setData('value', event.target.getElementsByTagName('input')[0].id);
+    event.target.style.backgroundColor ='white';
+  }
+
+  dragExit(event){
+    event.target.parentElement.style.backgroundColor = "white";
+  }
+
+  dragOver(event){
+    event.preventDefault();
+  }
+
+  dragEnter(event){
+    event.target.parentElement.style.backgroundColor = "lightgray";
+  }
+
+  drop(event){
+    if(event.dataTransfer.getData('value'))
+      document.getElementById(event.dataTransfer.getData('value')).click();
+    event.target.parentElement.style.backgroundColor = "white";
+  }
+
   addSpinnerItems(spinnerItem){
     this.http.postData('/addSpinnerItems', spinnerItem).subscribe((res: any) =>{
       this.spinner = res;
       this.addForm.reset();
+      this.image = {};
+      document.getElementById('image-cont').setAttribute('src', `../../assets/${this.DEFAULTIMAGE}` )
     });
   }
 
@@ -165,9 +202,14 @@ export class SpinnerComponent implements OnInit {
       if(this.isClick) {
         this.isClick = false;
         this.catchMouseClick(event, this.endClick);
-        this.initWheelRotation(this.MILLISECONDS, (this.startClick.x - this.endClick.x)*0.33);
+        if(this.endClick.x != this.startClick.x)
+          this.initWheelRotation(this.MILLISECONDS, -(this.endClick.x - this.startClick.x)*0.33);
       }
     });
+  }
+
+  remove(event){
+    console.log(event)
   }
 
   clickToRotate(){
@@ -327,9 +369,9 @@ export class SpinnerComponent implements OnInit {
         ' A144 144 0 0 1' + this.points[i].x1 + ' ' + this.points[i].y1 +
         ' L144 144 Z"></path><path id="path'+ i +'" stroke="none" fill="none" d="' +
         ' M' + this.points[i].a + ' ' + this.points[i].b +
-        ' A72 72 0 0 1' + this.points[i].a1 + " " + this.points[i].b1 +
+        ' A120 120 0 0 1' + this.points[i].a1 + " " + this.points[i].b1 +
         '"></path><text fill="black">' +
-        '<textPath startOffset="30%" xlink:href="#path'+ i +'">'+ this.parts[i] + '</textPath></text></g>';
+        '<textPath startOffset="40%" xlink:href="#path'+ i +'">'+ this.parts[i] + '</textPath></text></g>';
     return result;
   }
 
@@ -346,6 +388,7 @@ export class SpinnerComponent implements OnInit {
     this.isShow = !this.isShow;
     event.target.style.borderBottom = '2px solid #31bbb5';
     this.addForm.reset();
+    this.image = {};
     if(this.isShow)
       event.target.style.borderBottom = 0;
   }
