@@ -1,7 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {HttpService} from "../http.service";
-import {ActivatedRoute} from "@angular/router";
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {DataService} from "../data.service";
 
 @Component({
@@ -9,7 +6,7 @@ import {DataService} from "../data.service";
   templateUrl: './spinner.component.html',
   styleUrls: ['./spinner.component.scss']
 })
-export class SpinnerComponent implements OnInit {
+export class SpinnerComponent implements OnInit, OnDestroy {
 
   public chartOptions:any = {
     scaleShowVerticalLines: false,
@@ -47,7 +44,6 @@ export class SpinnerComponent implements OnInit {
     },
   ];
 
-  DEFAULTIMAGE = 'no-image.svg';
   MILLISECONDS = 4000;
   STARTPOSITIONDEGREES = 270;
   CENTER = {x: 144, y: 144};
@@ -61,67 +57,40 @@ export class SpinnerComponent implements OnInit {
   FILLSTYLE = 'rgba(255, 250, 71, 0.67)';
   RANDOM = Math.random()*10 + 5;
 
-  spinnerId;
-  spinner: any = {};
-  addForm: FormGroup;
-  isShow = false;
   isClick = false;
   isPopUp = false;
   clickNumber = 0;
-  points =[];
+  points = [];
   wheel;
-  parts =[];
+  parts = [];
   topPosition;
   topPositionColor;
   topPositionValue;
   startClick = {x: 0, y: 0};
   endClick = {x: 0, y: 0};
-  image: any = {};
+
   timeout;
   stop;
   radians;
   deltaFromStartPosition = 0;
   collectStat = [];
+  subscription;
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private http: HttpService,
-    private data: DataService,
-    private route: ActivatedRoute) {}
+  constructor(private data: DataService) {}
 
   ngOnInit() {
+    this.subscription = this.data.announceParts.subscribe(parts => {
+      this.parts = parts;
+      this.initStatistics();
+      this.innerWheelParts();
+    });
     this.wheel = document.getElementById('wheel');
-    this.route.params.subscribe(p => this.spinnerId = p.id);
-    this.getSpinner();
-    this.initForm();
     this.onmouseMove();
     this.onmouseUp();
   }
 
-  getSpinner(){
-    this.http.postData('/getSpinner', {id: this.spinnerId})
-      .subscribe((res: any) => this.spinner = res);
-  }
-
-  initForm(){
-    this.addForm = this.formBuilder.group({
-      title: ['', Validators.required],
-      image: ['']
-    });
-  }
-
-  submit() {
-    if(this.addForm.invalid)
-      return this.addForm.get('title').markAsTouched({onlySelf: true});
-    const form = this.setForm();
-    this.sendFileToServer();
-    this.addSpinnerItems(form);
-  }
-
-  dragStart(event){
-    if(!event.target.getElementsByTagName('input')[0].checked)
-      event.dataTransfer.setData('value', event.target.getElementsByTagName('input')[0].id);
-    event.target.style.backgroundColor ='white';
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 
   dragExit(event){
@@ -142,51 +111,10 @@ export class SpinnerComponent implements OnInit {
     event.target.parentElement.style.backgroundColor = "white";
   }
 
-  addSpinnerItems(spinnerItem){
-    this.http.postData('/addSpinnerItems', spinnerItem).subscribe((res: any) =>{
-      this.spinner = res;
-      this.addForm.reset();
-      this.image = {};
-      document.getElementById('image-cont').setAttribute('src', `../../assets/${this.DEFAULTIMAGE}` )
-    });
-  }
-
-
-  setForm(){
-    const form = this.addForm.value;
-    form.image = this.image.name;
-    if(!this.image.name)
-      form.image = this.DEFAULTIMAGE;
-    form.id = this.spinnerId;
-    return form;
-  }
-
-  getInput(event){
-      document.getElementById(`check${event}`).click();
-  }
-
-  addChosenPartsToWheel(event) {
-    if(event.target.checked)
-      this.parts.push(event.target.defaultValue);
-    else{
-      this.parts.splice(this.parts.indexOf(event.target.defaultValue),1);
-      this.innerHtml('wheel-parts', '');
-    }
-    if(this.checkWheelPartsAmount()){
-      this.initStatistics();
-      this.innerWheelParts();
-    }
-  }
-
   innerWheelParts(){
     this.calcWheelParts();
-    this.innerHtml('wheel-parts', this.generateWheelParts());
+    this.data.innerHtml('wheel-parts', this.generateWheelParts());
   }
-
-  innerHtml(id, value){
-    document.getElementById(id).innerHTML = value;
-  }
-
 
   onmouseMove(){
     window.addEventListener("mousemove", (event) =>{
@@ -206,10 +134,6 @@ export class SpinnerComponent implements OnInit {
           this.initWheelRotation(this.MILLISECONDS, -(this.endClick.x - this.startClick.x)*0.33);
       }
     });
-  }
-
-  remove(event){
-    console.log(event)
   }
 
   clickToRotate(){
@@ -290,7 +214,7 @@ export class SpinnerComponent implements OnInit {
   }
 
   calcRadianDefferenceFromStart(){
-    let delta = this.calcDeltaBetweenStartandRotatePosition();
+    let delta = this.calcDeltaBetweenStartAndRotatePosition();
     let partCurveRadians = this.calcRad(360/this.parts.length);
     let rotateRad = partCurveRadians;
     for(let i = 0; i < this.parts.length; i++){
@@ -301,7 +225,7 @@ export class SpinnerComponent implements OnInit {
     this.deltaFromStartPosition = delta;
   }
 
-  calcDeltaBetweenStartandRotatePosition(){
+  calcDeltaBetweenStartAndRotatePosition(){
     const totalRad = 2*Math.PI;
     const rounds = this.radians/(totalRad);
     return (this.radians >= 0)? (rounds - Math.trunc(rounds))*totalRad: ((totalRad + this.radians)/(totalRad) - Math.trunc(rounds))*totalRad;
@@ -381,43 +305,6 @@ export class SpinnerComponent implements OnInit {
     else if (i % 2 != 0) color = this.PARTSCOLORS[1];
     if (this.points.length == i + 1 && this.points.length % 2 != 0) color = this.PARTSCOLORS[2];
     return color;
-  }
-
-
-  toggleIsShow(event) {
-    this.isShow = !this.isShow;
-    event.target.style.borderBottom = '2px solid #31bbb5';
-    this.addForm.reset();
-    this.image = {};
-    if(this.isShow)
-      event.target.style.borderBottom = 0;
-  }
-
-  chooseImg() {
-    document.getElementById('image').click();
-  }
-
-  getImage(event) {
-    this.image = event.target.files[0];
-    this.previewImage(event);
-  }
-
-  sendFileToServer(){
-    const formData: any = new FormData();
-    const file = this.image;
-    formData.append("file", file);
-    this.http.postData('/uploads', formData).subscribe();
-  }
-
-  previewImage(event) {
-    const files = event.target.files[0];
-    if (!files.type.match('image.*'))
-      return;
-    const reader = new FileReader();
-    reader.onload = (theFile => {
-      return e =>  document.getElementById('image-cont').setAttribute('src', e.target.result);
-    })(files);
-    reader.readAsDataURL(files);
   }
 
   close(){

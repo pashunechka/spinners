@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import {HttpService} from "../http.service";
-import {DataService} from "../data.service";
 
 @Component({
   selector: 'app-spinner-list',
@@ -14,21 +13,19 @@ export class SpinnerListComponent implements OnInit {
 
   spinners = [];
 
-  constructor(private http: HttpService, private data: DataService) { }
+  constructor(
+    private http: HttpService) { }
 
   ngOnInit() {
-    this.http.getData('/getSpinners').subscribe((res: any) => {
-      this.data.spinners = res;
-      this.spinners = this.data.spinners;
-    });
+    this.http.getData('/getSpinners').subscribe((res: any) => this.spinners = res);
   }
 
   createSpinner(){
     if(this.spinnerName != '')
-      this.http.postData('/addSpinner', {name: this.spinnerName}).subscribe((res: any) =>{
-        this.data.spinners.push(res);
-        this.spinners = this.data.spinners;
-      });
+      this.http.postData('/addSpinner', {name: this.spinnerName}).subscribe((res: any) => {
+          this.spinners.push(res);
+          this.spinnerName = '';
+        });
     else
       this.error = true;
   }

@@ -1,11 +1,11 @@
-    <div class="grid">
-      <div class="left">
-        <button id="back-btn" routerLink="/"><i class="fa fa-arrow-left"></i> Back</button>
-      </div>
-      <div class="right"></div>
-      <div class="reel">
-        <div class="arrow-cont" id="arrow-cont">
-          <svg id="arrow" height="18px" version="1.1" viewBox="0 0 24 12" width="36px" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<div class="grid">
+  <div class="left">
+     <button id="back-btn" routerLink="/"><i class="fa fa-arrow-left"></i> Back</button>
+  </div>
+  <div class="right"></div>
+  <div class="reel">
+    <div class="arrow-cont" id="arrow-cont">
+        <svg id="arrow" height="18px" version="1.1" viewBox="0 0 24 12" width="36px" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
             <g fill-rule="evenodd" stroke="none" stroke-width="1">
               <g transform="translate(-16.000000, -23.000000)">
                 <g transform="translate(28.000000, 28.000000) rotate(-90.000000) translate(-28.000000, -28.000000)">
@@ -13,83 +13,44 @@
               </g>
               </g>
             </g>
-          </svg>
-        </div>
-        <div class="wheel-cont" id="wheel-cont">
-          <svg class="svg-spinner-parts" id="wheel"
+        </svg>
+      </div>
+    <div class="wheel-cont" id="wheel-cont">
+      <svg class="svg-spinner-parts" id="wheel"
                (drop)="drop($event)"
                (dragenter)="dragEnter($event)"
                (dragover)="dragOver($event)"
                (dragleave)="dragExit($event)"
                (mousedown)="clickDown($event)">
-            <g id="wheel-parts">
-            </g>
-            <circle class="spinner-center" cx="144" cy="144" r="6px"></circle>
-          </svg>
-        </div>
-        <button class="btn-spin" (click)="clickToRotate()"><i class="fa fa-repeat"></i> Spin</button>
-      </div>
-      <div class="item-add-form">
-        <button class="add but-submit" (click)="toggleIsShow($event)"><i class="fa fa-plus"></i> Add an item</button>
-        <div *ngIf="isShow">
-        <form [formGroup]="addForm" novalidate>
-          <div class="cont">
-          <div class="input-cont">
-          <label for="title">Title:</label>
-            <input
-            [class.error]="addForm.controls['title'].invalid && addForm.controls['title'].touched"
-            id="title"
-            type="text"
-            name="title"
-            placeholder="Enter a title"
-            formControlName="title"
-          >
-            <span class="error"
-                  *ngIf="addForm.controls['title'].invalid && addForm.controls['title'].touched">
-              The field shouldn't be empty
-            </span>
-          </div>
-          <div class="input-cont">
-          <span for="image">Image:</span><br />
-          <img id="image-cont" class="image-cont" src="../../assets/no-image.svg" (click)="chooseImg()"/>
-          <input
-            hidden
-            id="image"
-            type="file"
-            accept="image/*"
-            name="image"
-            formControlName="image"
-            (change)="getImage($event)"
-          >
-            <a title="{{image.name}}" class="image-name">{{image.name}}</a>
-          </div>
-          </div>
-          <button class="but-submit submit" (click)="submit()"><i class="fa fa-check"></i> Submit</button>
-        </form>
-        </div>
-      </div>
-      <div class="statistics">
-        <p><i class="fa fa-area-chart"></i> Statistics</p>
-        <canvas baseChart
-                [datasets]="chartData"
-                [labels]="chartLabels"
-                [colors]="chartColors"
-                [options]="chartOptions"
-                [legend]="chartLegend"
-                [chartType]="chartType">
+         <g id="wheel-parts">
+         </g>
+         <circle class="spinner-center" cx="144" cy="144" r="6px"></circle>
+      </svg>
+    </div>
+    <button class="btn-spin" (click)="clickToRotate()"><i class="fa fa-repeat"></i> Spin</button>
+  </div>
+  <div class="item-add-form">
+     <app-add-form></app-add-form>
+  </div>
+  <div class="statistics">
+    <p><i class="fa fa-area-chart"></i> Statistics</p>
+    <canvas baseChart
+            [datasets]="chartData"
+            [labels]="chartLabels"
+            [colors]="chartColors"
+            [options]="chartOptions"
+            [legend]="chartLegend"
+            [chartType]="chartType">
 
-        </canvas>
-      </div>
-      <div class="item-list"  >
-          <div class="list" draggable="true" (dragstart)="dragStart($event)" (click)="getInput(i)" *ngFor="let member of spinner.spinnerMembers; let i = index">
-            <a title="{{member.name}}" class=""><input id="check{{i}}" type="checkbox" name="member" value="{{member.name}}" (click)="addChosenPartsToWheel($event)">{{member.name}}</a>
-            <img src="../../assets/{{member.image}}">
-          </div>
-      </div>
-    </div>
-    <div class="overlay" *ngIf="isPopUp" (click)="close()">
-      <div class="pop-up">
-        {{topPositionValue}}
-      </div>
-      <img src="../../assets/close.png" (click)="close()">
-    </div>
+    </canvas>
+  </div>
+  <div class="item-list">
+     <app-item-list></app-item-list>
+  </div>
+</div>
+<div class="overlay" *ngIf="isPopUp" (click)="close()">
+  <div class="pop-up">
+    {{topPositionValue}}
+  </div>
+  <img src="../../assets/close.png" (click)="close()">
+</div>

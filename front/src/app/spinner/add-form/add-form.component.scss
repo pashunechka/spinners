@@ -1,0 +1,111 @@
+$border-inp: 1px solid gray;
+$color: #31bbb5;
+$whiteColor: white;
+
+.but-submit{
+  background: none;
+  font-weight: 700;
+  color:$color;
+  cursor: pointer;
+  font-size: 1.2em;
+  padding: 0.3em 0.7em;
+  outline: none;
+  transition-timing-function: linear;
+  transition-duration: 200ms;
+}
+.add{
+  border-radius: 0.3em;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border: 2px solid $color;
+  &:hover{
+    color:$whiteColor;
+    border: 2px solid $color;
+    background: $color;
+  }
+}
+
+.submit{
+  width: 100%;
+  border: none;
+  border-top: 2px solid $color;
+
+  &:hover{
+    color:$whiteColor;
+    background: $color;
+  }
+}
+
+form{
+  border: 2px solid $color;
+  border-radius: 0.3em;
+  border-top-left-radius: 0;
+  box-shadow: 3px 3px 8px gray;
+  .cont{
+    padding: 0.5em;
+  }
+}
+#title {
+  background: none;
+  border: none;
+  padding: 0.5em 0 0.5em 0.3em;
+  border-bottom: 2px solid #b0b0b0;
+  width: 100%;
+  outline: none;
+  transition-timing-function: linear;
+  transition-duration: 300ms;
+  &:focus {
+    border-bottom-color: $color;
+  }
+}
+
+.image-cont{
+  width: 9em;
+  height: 7em;
+  border: none;
+  cursor: pointer;
+}
+
+.image-name{
+  vertical-align: top;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-block;
+  max-width: 50%;
+}
+
+.tooltip{
+  display: inline;
+  position: relative;
+  color: black;
+}
+
+.tooltip:hover:after{
+  background: #333;
+  background: rgba(0,0,0,.8);
+  border-radius: 5px;
+  bottom: 26px;
+  content: attr(title);
+  left: 20%;
+  padding: 5px 15px;
+  position: absolute;
+  z-index: 98;
+  width: 220px;
+}
+
+.tooltip:hover:before{
+  border: solid;
+  border-color: #333 transparent;
+  border-width: 6px 6px 0 6px;
+  bottom: 20px;
+  content: "";
+  left: 50%;
+  position: absolute;
+  z-index: 99;
+}
+
+.input-cont{
+  margin-bottom: 1em;
+  vertical-align: top;
+}

@@ -4,10 +4,12 @@ const path = require('path');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
+const app = express();
+const mongoose = require('mongoose');
+
+mongoose.connect('mongodb://127.0.0.1:27017/Spinners');
 
 const index = require('./index');
-
-const app = express();
 
 app.use(logger('dev'));
 app.use(bodyParser.json());

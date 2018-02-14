@@ -1,0 +1,37 @@
+<button class="add but-submit" (click)="toggleIsShow($event)"><i class="fa fa-plus"></i> Add an item</button>
+<div *ngIf="isShow">
+  <form [formGroup]="addForm" novalidate>
+    <div class="cont">
+      <div class="input-cont">
+      <label for="title">Title:</label>
+      <input
+          [class.error]="addForm.controls['title'].invalid && addForm.controls['title'].touched"
+          id="title"
+          type="text"
+          name="title"
+          placeholder="Enter a title"
+          formControlName="title"
+      >
+      <span class="error"
+              *ngIf="addForm.controls['title'].invalid && addForm.controls['title'].touched">
+              The field shouldn't be empty
+      </span>
+      </div>
+      <div class="input-cont">
+        <span for="image">Image:</span><br />
+        <img id="image-cont" class="image-cont" src="../../assets/no-image.svg" (click)="chooseImg()"/>
+        <input
+          hidden
+          id="image"
+          type="file"
+          accept="image/*"
+          name="image"
+          formControlName="image"
+          (change)="getImage($event)"
+        >
+        <a title="{{image.name}}" class="image-name">{{image.name}}</a>
+      </div>
+    </div>
+    <button class="but-submit submit" (click)="submit()"><i class="fa fa-check"></i> Submit</button>
+  </form>
+</div>
