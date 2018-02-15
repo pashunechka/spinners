@@ -5,7 +5,7 @@ $whiteColor: white;
 .grid {
   word-spacing: normal;
   display: grid;
-  margin-top: 4%;
+  margin-top: 2%;
   grid-gap: 1em;
   grid-template-columns: 12% 20% 20% 20% 25%;
   grid-template-areas: "left reel reel item-list right"
@@ -47,7 +47,7 @@ $whiteColor: white;
     width: 100%;
     border: none;
     border-top: 3px solid$color;
-    color: #31bbb5;
+    color: $color;
     background-color: $whiteColor;
     text-transform: uppercase;
     font-size: 1.3em;
@@ -70,7 +70,7 @@ $whiteColor: white;
     margin: 1em 0 0 0;
     width: 100%;
     #arrow{
-      fill: #4bfff9;
+      fill: DarkSeaGreen;
       position: relative;
       z-index: 1000;
     }
@@ -82,15 +82,9 @@ $whiteColor: white;
     height: 288px;
     z-index: 150;
   }
-
-  .spinner-center{
-    z-index: 200;
-    fill: $color;
-  }
-
   .wheel-cont{
+    background-color: rgba(255,235,205, 0.9);
     margin-top: -1em;
-    background-color: $whiteColor;
     width: 18em;
     height: 18em;
     border-radius: 50%;
@@ -98,6 +92,7 @@ $whiteColor: white;
     display: inline-block;
   }
 }
+
 .item-add-form{
   grid-area: item-add-form;
 }
@@ -109,14 +104,21 @@ $whiteColor: white;
     font-size: 2em;
     color: $color;
   }
+
+  .statisticsType{
+    float: right;
+    padding-right: 1em;
+    font-size: 0.7em;
+    padding-top: 0.5em;
+  }
 }
 
 .item-list{
   grid-area: item-list;
-  max-height: 23.5em;
-  overflow-y: scroll;
   border-radius: 0.3em;
+  border-left: 4px solid $color;
   border-right: 4px solid $color;
+  border-bottom: 4px solid $color;
   box-shadow: 3px 3px 8px gray;
 }
 
@@ -140,6 +142,7 @@ $whiteColor: white;
 }
 
 .pop-up{
+  color: $color;
   position: fixed;
   left: 25%;
   top: 20%;

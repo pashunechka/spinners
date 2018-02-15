@@ -8,8 +8,8 @@ import {HttpService} from "../http.service";
 })
 export class SpinnerListComponent implements OnInit {
 
-  spinnerName = '';
-  error = false;
+  spinnerName: string = '';
+  error: boolean = false;
 
   spinners = [];
 
@@ -20,7 +20,7 @@ export class SpinnerListComponent implements OnInit {
     this.http.getData('/getSpinners').subscribe((res: any) => this.spinners = res);
   }
 
-  createSpinner(){
+  createSpinner(): void {
     if(this.spinnerName != '')
       this.http.postData('/addSpinner', {name: this.spinnerName}).subscribe((res: any) => {
           this.spinners.push(res);
@@ -30,7 +30,7 @@ export class SpinnerListComponent implements OnInit {
       this.error = true;
   }
 
-  toggleError(){
+  toggleError(): void {
     this.error = false;
   }
 

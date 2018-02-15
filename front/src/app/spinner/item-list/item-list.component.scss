@@ -9,19 +9,25 @@ $whiteColor: white;
   font-weight: 900;
   i{
     cursor: pointer;
-    font-size: 1.3em;
+    font-size: 1.4em;
     padding-top: 0.1em;
   }
 }
+
+.list-cont{
+  overflow-y: scroll;
+  max-height: 21.9em;
+}
+
 .list{
   user-select: none;
   cursor: pointer;
-  padding: 0.5em 0.4em;
+  padding: 0.4em 0.4em;
   vertical-align: middle;
-  border-left: 4px solid $color;
   border-bottom: 1px solid $color;
   position: relative;
   z-index: 1000;
+  color: $color;
   &:hover{
     box-shadow: inset 2px 2px 5px rgba(160, 160, 160, 0.98);
   }

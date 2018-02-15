@@ -1,5 +1,8 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {DataService} from "../data.service";
+import {Statistics} from "./statistics";
+import {Subscription} from "rxjs/Subscription";
+import {Spinner} from "./spinner";
 
 @Component({
   selector: 'app-spinner',
@@ -8,306 +11,126 @@ import {DataService} from "../data.service";
 })
 export class SpinnerComponent implements OnInit, OnDestroy {
 
-  public chartOptions:any = {
-    scaleShowVerticalLines: false,
-    responsive: true,
-    legend: {
-      display: false
-    },
-    scales: {
-      yAxes: [{
-        ticks: {
-          beginAtZero:true,
-          fontFamily: 'Ubuntu, sans-serif',
-          fontSize: '16'
-        }
-      }],
-      xAxes: [{
-        ticks: {
-          fontFamily: 'Ubuntu, sans-serif',
-          fontSize: '16'
-        }
-      }]
-    }
-  };
-  public chartColors:Array<any> = [{
-      backgroundColor: 'rgba(89, 187, 181, 0.5)',
-    }];
-  public chartLabels:string[] = [];
-  public chartType:string = 'line';
-  public chartLegend:boolean = true;
+  MILLISECONDS: number = 4000;
+  RANDOM: number = Math.random()*10 + 5;
 
-  public chartData:any[] = [
-    {
-      data: [],
-      label: 'Statistics'
-    },
-  ];
+  spinner: Spinner = new Spinner();
+  statistics: Statistics = new Statistics();
+  subscription: Subscription;
 
-  MILLISECONDS = 4000;
-  STARTPOSITIONDEGREES = 270;
-  CENTER = {x: 144, y: 144};
-  RADIUS = 144;
-  RADIUSTEXT = 120;
-  PARTSCOLORS = [
-    'rgb(24, 100, 94)',
-    'rgba(49, 187, 181, 0.45)',
-    'rgb(31, 107, 169)'
-  ];
-  FILLSTYLE = 'rgba(255, 250, 71, 0.67)';
-  RANDOM = Math.random()*10 + 5;
+  isClick: boolean = false;
+  isPopUp: boolean = false;
+  stop: boolean = false;
 
-  isClick = false;
-  isPopUp = false;
-  clickNumber = 0;
-  points = [];
-  wheel;
+  clickNumber: number = 0;
   parts = [];
-  topPosition;
-  topPositionColor;
-  topPositionValue;
   startClick = {x: 0, y: 0};
   endClick = {x: 0, y: 0};
-
-  timeout;
-  stop;
-  radians;
-  deltaFromStartPosition = 0;
-  collectStat = [];
-  subscription;
 
   constructor(private data: DataService) {}
 
   ngOnInit() {
+    this.spinner.spinnerCenterColor = '#31bbb5';
     this.subscription = this.data.announceParts.subscribe(parts => {
       this.parts = parts;
-      this.initStatistics();
-      this.innerWheelParts();
+      this.spinner.initialize('wheel', this.parts);
+      this.statistics.initStatistics(this.parts);
     });
-    this.wheel = document.getElementById('wheel');
     this.onmouseMove();
     this.onmouseUp();
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.subscription.unsubscribe();
   }
 
-  dragExit(event){
-    event.target.parentElement.style.backgroundColor = "white";
-  }
-
-  dragOver(event){
-    event.preventDefault();
-  }
-
-  dragEnter(event){
-    event.target.parentElement.style.backgroundColor = "lightgray";
-  }
-
-  drop(event){
-    if(event.dataTransfer.getData('value'))
-      document.getElementById(event.dataTransfer.getData('value')).click();
-    event.target.parentElement.style.backgroundColor = "white";
-  }
-
-  innerWheelParts(){
-    this.calcWheelParts();
-    this.data.innerHtml('wheel-parts', this.generateWheelParts());
-  }
-
-  onmouseMove(){
+  onmouseMove(): void {
     window.addEventListener("mousemove", (event) =>{
-      if(this.isClick){
-        this.moveWheelOnMouseMove (event.pageX, event.pageY);
-        this.setWheelTransformTime(0);
-      }
+      if(this.isClick)
+        this.spinner.moveWheelOnMouseMove(event.pageX, event.pageY);
     });
   }
 
-  onmouseUp(){
-    window.addEventListener("mouseup", (event) =>{
-      if(this.isClick) {
-        this.isClick = false;
-        this.catchMouseClick(event, this.endClick);
-        if(this.endClick.x != this.startClick.x)
-          this.initWheelRotation(this.MILLISECONDS, -(this.endClick.x - this.startClick.x)*0.33);
-      }
-    });
-  }
-
-  clickToRotate(){
-    clearTimeout(this.timeout);
-    this.clickNumber++;
-    this.stop = true;
-    this.initWheelRotation(this.MILLISECONDS, this.clickNumber*this.RANDOM);
-  }
-
-  moveWheelOnMouseMove (x, y) {
-    let wh = window.innerHeight / 2, ww = window.innerWidth / 2;
-    if(this.checkWheelPartsAmount())
-      this.wheel.style.transform = this.rotateWheel(this.calcRad((360/Math.PI * Math.atan2(y-wh, x-ww))))
-    this.stop = true;
-  }
-
-  clickDown(event){
-    clearTimeout(this.timeout);
-    if(this.stop){
-      this.stop = false;
-      return this.wheel.style.transition = "";
+  clickDown(event: MouseEvent){
+    this.spinner.clearTimeOut();
+    if(this.stop) {
+      this.setStop(false);
+      return this.spinner.stopWheel();
     }
-    this.isClick = true;
+    this.setIsClick(true);
     this.catchMouseClick(event, this.startClick);
   }
 
-  catchMouseClick(event: MouseEvent, coord) {
+  onmouseUp(): void {
+    window.addEventListener("mouseup", (event) => {
+      if(this.isClick) {
+        this.setIsClick(false);
+        this.catchMouseClick(event, this.endClick);
+        this.setStop(true);
+        if(this.endClick.x != this.startClick.x)
+          this.spinner.initWheelRotation(this.MILLISECONDS, -(this.endClick.x - this.startClick.x)*0.33, this.afterWheelRotate);
+      }
+    });
+  }
+
+  clickToRotate(): void {
+    this.spinner.clearTimeOut();
+    this.clickNumber++;
+    this.setStop(true);
+    this.spinner.initWheelRotation(this.MILLISECONDS, this.clickNumber*this.RANDOM, this.afterWheelRotate);
+  }
+
+  afterWheelRotate = (): void => {
+      this.setStop(false);
+      this.setIsPopUp(true);
+      this.statistics.collectStatistics(this.spinner.getValue());
+  };
+
+  dragExit(event): void {
+    this.setDropElementBackground(event,"white");
+  }
+
+  dragOver(event): void {
+    event.preventDefault();
+  }
+
+  dragEnter(event): void {
+    this.setDropElementBackground(event,"lightgray");
+  }
+
+  drop(event): void {
+    if(event.dataTransfer.getData('value'))
+      document.getElementById(event.dataTransfer.getData('value')).click();
+    this.setDropElementBackground(event,"white");
+  }
+
+  setIsClick(value: boolean): void {
+    this.isClick = value;
+  }
+
+  setIsPopUp(value: boolean): void {
+    this.isPopUp = value;
+  }
+
+  setStop(value: boolean): void {
+    this.stop = value;
+  }
+
+  setDropElementBackground(event, color): void {
+    event.target.parentElement.style.backgroundColor = color;
+  }
+
+  catchMouseClick(event: MouseEvent, coord): void  {
     coord.x = event.screenX;
     coord.y = event.screenY;
   }
 
-  initWheelRotation(transformTime, rotateRad){
-    if(this.checkWheelPartsAmount()){
-      if(this.topPositionColor)
-        this.setDefaultStyleToTopPart();
-      this.setWheelTransformTime(transformTime);
-      this.rotateWheel(rotateRad);
-      this.calcRadianDefferenceFromStart();
-      this.topPositionValue = this.topPosition.getElementsByTagName('textPath')[0].innerHTML;
-      this.setTopPositionFill();
-      this.afterWheelRotate();
-    }
-  }
-
-  initStatistics(){
-    this.chartData[0].data = [];
-    this.collectStat = [];
-    this.chartLabels = [];
-      for(let key = 0; key < this.parts.length; key++){
-        this.chartLabels.push(this.parts[key]);
-        this.collectStat.push(0);
-      }
-  }
-
-  collectStatistics(){
-    if(this.topPositionValue)
-      this.collectStat[this.chartLabels.indexOf(this.topPositionValue)]+=1;
-    this.showStatistics();
-  }
-
-  showStatistics() {
-    let clone = JSON.parse(JSON.stringify(this.chartData));
-    clone[0].data = this.collectStat;
-    this.chartData = clone;
-  }
-
-  setDefaultStyleToTopPart(){
-    this.topPosition.style.fill = this.topPositionColor;
-  }
-
-  setWheelTransformTime(ms){
-    this.wheel.style.transition = `transform ${ms}ms cubic-bezier(0.33, 0.66, 0.66, 1)`;
-  }
-
-  rotateWheel(rad){
-    this.radians = rad;
-    return this.wheel.style.transform = `rotate(${rad}rad)`;
-  }
-
-  calcRadianDefferenceFromStart(){
-    let delta = this.calcDeltaBetweenStartAndRotatePosition();
-    let partCurveRadians = this.calcRad(360/this.parts.length);
-    let rotateRad = partCurveRadians;
-    for(let i = 0; i < this.parts.length; i++){
-      if(delta <= rotateRad - this.deltaFromStartPosition)
-        return this.topPosition = document.getElementsByClassName("part")[this.parts.length - 1 - i];
-      rotateRad += partCurveRadians;
-    }
-    this.deltaFromStartPosition = delta;
-  }
-
-  calcDeltaBetweenStartAndRotatePosition(){
-    const totalRad = 2*Math.PI;
-    const rounds = this.radians/(totalRad);
-    return (this.radians >= 0)? (rounds - Math.trunc(rounds))*totalRad: ((totalRad + this.radians)/(totalRad) - Math.trunc(rounds))*totalRad;
-  }
-
-  setTopPositionFill(){
-      this.topPositionColor = this.topPosition.getAttribute('fill');
-  }
-
-  afterWheelRotate() {
-      this.timeout = setTimeout(() => {
-        this.topPosition.style.fill =  this.FILLSTYLE;
-        this.stop = false;
-        this.isPopUp = true;
-        this.collectStatistics();
-      }, this.MILLISECONDS);
-  }
-
-  checkWheelPartsAmount(){
-    if(this.parts.length > 1)
-      return true;
-    return false;
-  }
-
-  calcWheelParts() {
-    this.cleareCurvePoints();
-    for(let i = 0; i < this.parts.length; i++){
-      const startRad = this.calcRad(this.STARTPOSITIONDEGREES + 360/this.parts.length*i);
-      const endRad = this.calcRad(this.STARTPOSITIONDEGREES + 360/this.parts.length*(i+1));
-      const startCoord = this.calcCurvePointCoordinates(this.CENTER, this.RADIUS, startRad);
-      const endCoord = this.calcCurvePointCoordinates(this.CENTER, this.RADIUS, endRad);
-      const startCoordText = this.calcCurvePointCoordinates(this.CENTER, this.RADIUSTEXT, startRad);
-      const endCoordText = this.calcCurvePointCoordinates(this.CENTER, this.RADIUSTEXT, endRad);
-      this.setCurvePoints(startCoord, endCoord, startCoordText, endCoordText);
-    }
-  }
-
-  cleareCurvePoints() {
-    this.points.length = 0;
-  }
-
-  calcRad(degrees){
-    return degrees*Math.PI/180;
-  }
-
-  calcCurvePointCoordinates(center, radius, rad){
-    const x0 = Math.round(center.x + radius*Math.cos(rad));
-    const y0 = Math.round(center.y + radius*Math.sin(rad));
-    return {x: x0, y: y0};
-  }
-
-  setCurvePoints(startCoord, endCoord, startCoordText, endCoordText){
-    this.points.push({
-      x: startCoord.x, y: startCoord.y,
-      x1: endCoord.x, y1: endCoord.y,
-      a: startCoordText.x, b: startCoordText.y,
-      a1: endCoordText.x, b1: endCoordText.y
-    });
-  }
-
-  generateWheelParts(){
-    let result = "";
-    for (let i = 0; i < this.parts.length; i++)
-      result += '<g class="part" fill="' + this.setWheelPartColor(i) +'"><path d="M' + this.points[i].x + ' ' + this.points[i].y +
-        ' A144 144 0 0 1' + this.points[i].x1 + ' ' + this.points[i].y1 +
-        ' L144 144 Z"></path><path id="path'+ i +'" stroke="none" fill="none" d="' +
-        ' M' + this.points[i].a + ' ' + this.points[i].b +
-        ' A120 120 0 0 1' + this.points[i].a1 + " " + this.points[i].b1 +
-        '"></path><text fill="black">' +
-        '<textPath startOffset="40%" xlink:href="#path'+ i +'">'+ this.parts[i] + '</textPath></text></g>';
-    return result;
-  }
-
-  setWheelPartColor(i){
-    let color;
-    if (i % 2 == 0) color = this.PARTSCOLORS[0];
-    else if (i % 2 != 0) color = this.PARTSCOLORS[1];
-    if (this.points.length == i + 1 && this.points.length % 2 != 0) color = this.PARTSCOLORS[2];
-    return color;
-  }
-
-  close(){
+  close(): void {
     this.isPopUp = false;
   }
+
+  changeType(event){
+    this.statistics.chartType = event.target.defaultValue;
+  }
+
 }

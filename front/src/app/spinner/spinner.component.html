@@ -6,7 +6,7 @@
   <div class="reel">
     <div class="arrow-cont" id="arrow-cont">
         <svg id="arrow" height="18px" version="1.1" viewBox="0 0 24 12" width="36px" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-            <g fill-rule="evenodd" stroke="none" stroke-width="1">
+            <g fill-rule="evenodd" stroke="black" stroke-width="1">
               <g transform="translate(-16.000000, -23.000000)">
                 <g transform="translate(28.000000, 28.000000) rotate(-90.000000) translate(-28.000000, -28.000000)">
                 <polygon class="arrow" points="32.6666667 16.3333333 21 28 32.6666667 39.6666667"></polygon>
@@ -22,9 +22,6 @@
                (dragover)="dragOver($event)"
                (dragleave)="dragExit($event)"
                (mousedown)="clickDown($event)">
-         <g id="wheel-parts">
-         </g>
-         <circle class="spinner-center" cx="144" cy="144" r="6px"></circle>
       </svg>
     </div>
     <button class="btn-spin" (click)="clickToRotate()"><i class="fa fa-repeat"></i> Spin</button>
@@ -33,14 +30,19 @@
      <app-add-form></app-add-form>
   </div>
   <div class="statistics">
-    <p><i class="fa fa-area-chart"></i> Statistics</p>
+    <p><i class="fa fa-area-chart"></i> Statistics
+  <span class="statisticsType">
+    <input name="statisticsType" value="line" type="radio" (click)="changeType($event)" checked> line
+    <input name="statisticsType" type="radio" value="bar" (click)="changeType($event)"> bar
+  </span>
+    </p>
     <canvas baseChart
-            [datasets]="chartData"
-            [labels]="chartLabels"
-            [colors]="chartColors"
-            [options]="chartOptions"
-            [legend]="chartLegend"
-            [chartType]="chartType">
+            [datasets]="statistics.chartData"
+            [labels]="statistics.chartLabels"
+            [colors]="statistics.chartColors"
+            [options]="statistics.chartOptions"
+            [legend]="statistics.chartLegend"
+            [chartType]="statistics.chartType">
 
     </canvas>
   </div>
@@ -50,7 +52,7 @@
 </div>
 <div class="overlay" *ngIf="isPopUp" (click)="close()">
   <div class="pop-up">
-    {{topPositionValue}}
+    {{spinner.topPositionValue}}
   </div>
   <img src="../../assets/close.png" (click)="close()">
 </div>

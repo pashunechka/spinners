@@ -2,9 +2,11 @@
   <i class="fa fa-square-o" (click)="checkAll($event)"></i>
   Check all
 </div>
+<div class="list-cont">
 <div class="list" draggable="true" (dragstart)="dragStart($event)" (click)="getInput(i)" *ngFor="let member of spinner; let i = index">
   <a title="{{member.name}}" class="">
     <input id="check{{i}}" type="checkbox" name="member" value="{{member.name}}" (click)="addChosenPartsToWheel($event)">{{member.name}}
   </a>
   <img src="../../assets/{{member.image}}">
+</div>
 </div>

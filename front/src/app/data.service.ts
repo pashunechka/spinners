@@ -20,8 +20,4 @@ export class DataService {
     this.parts.next(parts);
   }
 
-  innerHtml(id, value){
-    document.getElementById(id).innerHTML = value;
-  }
-
 }

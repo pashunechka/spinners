@@ -47,7 +47,7 @@ export class AddFormComponent implements OnInit {
     });
   }
 
-  submit() {
+  submit(): void {
     if(this.addForm.invalid)
       return this.addForm.get('title').markAsTouched({onlySelf: true});
     const form = this.setForm();
@@ -55,7 +55,7 @@ export class AddFormComponent implements OnInit {
     this.addSpinnerItems(form);
   }
 
-  addSpinnerItems(spinnerItem){
+  addSpinnerItems(spinnerItem): void {
     this.http.postData('/addSpinnerItems', spinnerItem).subscribe((res: any) =>{
       this.spinner.push(res);
       this.data.announced(this.spinner);
@@ -65,7 +65,7 @@ export class AddFormComponent implements OnInit {
     });
   }
 
-  setForm(){
+  setForm(): FormGroup {
     const form = this.addForm.value;
     form.image = this.image.name;
     if(!this.image.name)
@@ -74,7 +74,7 @@ export class AddFormComponent implements OnInit {
     return form;
   }
 
-  toggleIsShow(event) {
+  toggleIsShow(event): void {
     this.isShow = !this.isShow;
     event.target.style.borderBottom = '2px solid #31bbb5';
     this.addForm.reset();
@@ -83,20 +83,20 @@ export class AddFormComponent implements OnInit {
       event.target.style.borderBottom = 0;
   }
 
-  chooseImg() {
+  chooseImg(): void {
     document.getElementById('image').click();
   }
 
-  getImage(event) {
+  getImage(event): void {
     this.image = event.target.files[0];
     this.previewImage(event);
   }
 
-  setImage(id, srcURL){
+  setImage(id, srcURL): void {
     document.getElementById(id).setAttribute('src', srcURL)
   }
 
-  sendFileToServer(){
+  sendFileToServer(): void {
     const formData: any = new FormData();
     const file = this.image;
     formData.append("file", file);

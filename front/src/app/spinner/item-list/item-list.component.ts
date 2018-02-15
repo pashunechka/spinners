@@ -1,5 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {DataService} from "../../data.service";
+import {Subscription} from "rxjs/Subscription";
 
 @Component({
   selector: 'app-item-list',
@@ -10,8 +11,8 @@ export class ItemListComponent implements OnInit, OnDestroy {
 
   spinner;
   parts = [];
-  isCheckAll = false;
-  subscription;
+  isCheckAll: boolean = false;
+  subscription: Subscription;
 
   constructor(private data: DataService) { }
 
@@ -23,39 +24,44 @@ export class ItemListComponent implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
-  getInput(event) {
+  getInput(event): void  {
     document.getElementById(`check${event}`).click();
   }
 
-  dragStart(event) {
+  dragStart(event): void  {
     if(!event.target.getElementsByTagName('input')[0].checked)
       event.dataTransfer.setData('value', event.target.getElementsByTagName('input')[0].id);
     event.target.style.backgroundColor ='white';
   }
 
-  addChosenPartsToWheel(event) {
-    if(event.target.checked) {
+  addChosenPartsToWheel(event): void  {
+    if(event.target.checked)
       this.parts.push(event.target.defaultValue);
-      this.data.partAnnounced(this.parts);
-    }
-    else {
+    else
       this.parts.splice(this.parts.indexOf(event.target.defaultValue),1);
-      this.data.partAnnounced(this.parts);
-      this.data.innerHtml('wheel-parts', '');
-    }
+    this.data.partAnnounced(this.parts);
+    this.checkIsAllActive();
   }
 
-  checkAll(event) {
+  checkIsAllActive(): void {
+    let list = document.getElementsByClassName('list');
+    let target = document.getElementById('check-all').getElementsByTagName('i')[0];
+    if(list.length == this.parts.length){
+      this.isCheckAll = true;
+      return target.setAttribute('class', 'fa fa-check-square-o');
+    }
+    this.isCheckAll = false;
+    target.setAttribute('class', 'fa fa-square-o');
+  }
+
+  checkAll(): void  {
     this.isCheckAll = !this.isCheckAll;
-    if(this.isCheckAll)
-      event.target.setAttribute('class', 'fa fa-check-square-o');
-    else
-      event.target.setAttribute('class', 'fa fa-square-o');
     this.addAllParts();
+    this.checkIsAllActive();
     this.data.partAnnounced(this.parts);
   }
 
-  addAllParts() {
+  addAllParts(): void {
     this.parts = [];
     const list = document.getElementsByClassName('list');
     for(let key = 0; key < list.length; key++){

@@ -1,5 +1,5 @@
 $color: #31bbb5;
-
+$whiteColor: white;
 
 .container{
   margin-top: 15em;
@@ -7,7 +7,7 @@ $color: #31bbb5;
 
 .cont{
   border: 5px solid $color;
-  margin: 4% 25% 0 12%;
+  margin: 2% 25% 0 12%;
   p{
     background-color: $color;
     font-size: 1.5em;
@@ -37,6 +37,7 @@ $color: #31bbb5;
   padding: 0.5em 0 0.5em 0.2em;
   border: 1px solid $color;
   outline: none;
+  color: $color;
 }
 
 .add-spinner{
@@ -55,6 +56,7 @@ $color: #31bbb5;
 
 .list-spinners{
   grid-area: list-spinners;
+  padding-left: 0.3em;
 }
 
 .nothing{
@@ -65,11 +67,15 @@ $color: #31bbb5;
   padding: 0.3em 0 0.3em 0.3em;
   margin-top: 0.3em;
   font-size: 1.2em;
-  border-left: 4px solid black;
+  border-left: 4px solid $color;
+  color: $color;
   cursor: pointer;
   outline: none;
   &:hover{
-    background-color: rgba(49, 187, 181, 0.3);
-    border-left: 4px solid $color;
+    background-color: rgba(49, 187, 181, 0.47);
+    border-left: 6px solid $color;
+    color: $whiteColor;
+    box-shadow: 0 4px 6px gray;
+    transform: scale(1.02);
   }
 }
