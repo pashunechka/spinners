@@ -55,7 +55,8 @@ export class SpinnerComponent implements OnInit, OnDestroy {
     this.spinner.clearTimeOut();
     if(this.stop) {
       this.setStop(false);
-      return this.spinner.stopWheel();
+      this.spinner.stopWheel();
+      return this.dissableItems(false);
     }
     this.setIsClick(true);
     this.catchMouseClick(event, this.startClick);
@@ -67,6 +68,7 @@ export class SpinnerComponent implements OnInit, OnDestroy {
         this.setIsClick(false);
         this.catchMouseClick(event, this.endClick);
         this.setStop(true);
+        this.dissableItems(true);
         if(this.endClick.x != this.startClick.x)
           this.spinner.initWheelRotation(this.MILLISECONDS, -(this.endClick.x - this.startClick.x)*0.33, this.afterWheelRotate);
       }
@@ -77,14 +79,22 @@ export class SpinnerComponent implements OnInit, OnDestroy {
     this.spinner.clearTimeOut();
     this.clickNumber++;
     this.setStop(true);
+    this.dissableItems(true);
     this.spinner.initWheelRotation(this.MILLISECONDS, this.clickNumber*this.RANDOM, this.afterWheelRotate);
   }
 
   afterWheelRotate = (): void => {
       this.setStop(false);
       this.setIsPopUp(true);
+      this.dissableItems(false);
       this.statistics.collectStatistics(this.spinner.getValue());
   };
+
+  dissableItems(value: boolean): void{
+    const list = document.getElementsByClassName('list-js');
+    for(let key = 0; key < list.length; key++)
+      list[key].getElementsByTagName('input')[0].disabled = value;
+  }
 
   dragExit(event): void {
     this.setDropElementBackground(event,"white");
@@ -129,8 +139,10 @@ export class SpinnerComponent implements OnInit, OnDestroy {
     this.isPopUp = false;
   }
 
-  changeType(event){
-    this.statistics.chartType = event.target.defaultValue;
+  clickChangeType(value){
+    this.statistics.chartType = value[0];
+    document.getElementById(value[0]).setAttribute('class', 'fa fa-check-circle-o');
+    document.getElementById(value[1]).setAttribute('class', 'fa fa-circle-o');
   }
 
 }

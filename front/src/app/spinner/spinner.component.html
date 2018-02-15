@@ -31,9 +31,9 @@
   </div>
   <div class="statistics">
     <p><i class="fa fa-area-chart"></i> Statistics
-  <span class="statisticsType">
-    <input name="statisticsType" value="line" type="radio" (click)="changeType($event)" checked> line
-    <input name="statisticsType" type="radio" value="bar" (click)="changeType($event)"> bar
+  <span class="statisticsType" id="statisticsType">
+    <i class="fa fa-check-circle-o" id="line" (click)="clickChangeType(['line', 'bar'])"></i> line
+    <i class="fa fa-circle-o" id="bar" (click)="clickChangeType(['bar','line'])"></i> bar
   </span>
     </p>
     <canvas baseChart
@@ -54,5 +54,5 @@
   <div class="pop-up">
     {{spinner.topPositionValue}}
   </div>
-  <img src="../../assets/close.png" (click)="close()">
+  <i class="fa fa-remove" (click)="close()"></i>
 </div>

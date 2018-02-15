@@ -34,6 +34,17 @@ export class ItemListComponent implements OnInit, OnDestroy {
     event.target.style.backgroundColor ='white';
   }
 
+  clickAllInput(){
+    document.getElementById('check-all').getElementsByTagName('input')[0].click();
+  }
+
+  checkAll(): void  {
+    this.isCheckAll = !this.isCheckAll;
+    this.addAllParts();
+    this.checkIsAllActive();
+    this.data.partAnnounced(this.parts);
+  }
+
   addChosenPartsToWheel(event): void  {
     if(event.target.checked)
       this.parts.push(event.target.defaultValue);
@@ -41,6 +52,7 @@ export class ItemListComponent implements OnInit, OnDestroy {
       this.parts.splice(this.parts.indexOf(event.target.defaultValue),1);
     this.data.partAnnounced(this.parts);
     this.checkIsAllActive();
+    this.checkFake(event.target.parentElement);
   }
 
   checkIsAllActive(): void {
@@ -54,22 +66,23 @@ export class ItemListComponent implements OnInit, OnDestroy {
     target.setAttribute('class', 'fa fa-square-o');
   }
 
-  checkAll(): void  {
-    this.isCheckAll = !this.isCheckAll;
-    this.addAllParts();
-    this.checkIsAllActive();
-    this.data.partAnnounced(this.parts);
-  }
-
   addAllParts(): void {
     this.parts = [];
     const list = document.getElementsByClassName('list');
     for(let key = 0; key < list.length; key++){
       let listInput = list[key].getElementsByTagName('input')[0];
       listInput.checked = this.isCheckAll;
-      if(this.isCheckAll)
+      this.checkFake(list[key]);
+      if(listInput.checked)
         this.parts.push(listInput.defaultValue);
     }
+  }
+
+  checkFake(list){
+    const fake = list.getElementsByClassName('fake-check')[0];
+    if(list.getElementsByTagName('input')[0].checked)
+      return fake.setAttribute('class', 'fake-check fa fa-check-square-o');
+    fake.setAttribute('class', 'fake-check fa fa-square-o');
   }
 
 }

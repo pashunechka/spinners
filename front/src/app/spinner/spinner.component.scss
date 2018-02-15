@@ -105,6 +105,10 @@ $whiteColor: white;
     color: $color;
   }
 
+  i{
+    padding-right: 0.1em;
+    padding-left: 0.3em;
+  }
   .statisticsType{
     float: right;
     padding-right: 1em;
@@ -130,14 +134,16 @@ $whiteColor: white;
   top: 0;
   left: 0;
   z-index: 100000;
-  img{
+  i{
     position: relative;
-    top: 2em;
-    right: 2em;
+    top: 1em;
+    right: 1em;
     width: 2%;
     float: right;
     margin: 0.3em;
     cursor: pointer;
+    font-size: 2em;
+    color: $whiteColor;
   }
 }
 

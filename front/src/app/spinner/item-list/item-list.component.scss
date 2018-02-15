@@ -39,8 +39,8 @@ a{
   white-space: nowrap;
   display: inline-block;
   width: 83%;
-  input{
-    margin-right: 0.5em;
+  .fake-check{
+    margin-right: 0.2em;
     position: relative;
     z-index: -1;
   }
