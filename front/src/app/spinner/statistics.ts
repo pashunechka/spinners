@@ -52,12 +52,12 @@ export class Statistics {
   collectStatistics(topPositionValue): void {
     if(topPositionValue)
       this.collectStat[this.chartLabels.indexOf(topPositionValue)]+=1;
-    this.showStatistics();
+    this.showStatistics(this.collectStat);
   }
 
-  private showStatistics(): void {
+  showStatistics(data): void {
     let clone = JSON.parse(JSON.stringify(this.chartData));
-    clone[0].data = this.collectStat;
+    clone[0].data = data;
     this.chartData = clone;
   }
 

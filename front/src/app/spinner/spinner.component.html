@@ -31,10 +31,11 @@
   </div>
   <div class="statistics">
     <p><i class="fa fa-area-chart"></i> Statistics
-  <span class="statisticsType" id="statisticsType">
-    <i class="fa fa-check-circle-o" id="line" (click)="clickChangeType(['line', 'bar'])"></i> line
-    <i class="fa fa-circle-o" id="bar" (click)="clickChangeType(['bar','line'])"></i> bar
-  </span>
+      <span class="statistics-reset" (click)="resetStatistics()"><span>Reset</span></span>
+      <span class="statisticsType" id="statisticsType">
+        <i class="fa fa-check-circle-o" id="line" (click)="clickChangeType(['line', 'bar'])"></i> line
+        <i class="fa fa-circle-o" id="bar" (click)="clickChangeType(['bar','line'])"></i> bar
+      </span>
     </p>
     <canvas baseChart
             [datasets]="statistics.chartData"

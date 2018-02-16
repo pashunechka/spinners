@@ -145,4 +145,8 @@ export class SpinnerComponent implements OnInit, OnDestroy {
     document.getElementById(value[1]).setAttribute('class', 'fa fa-circle-o');
   }
 
+  resetStatistics(){
+    this.statistics.showStatistics([]);
+  }
+
 }
