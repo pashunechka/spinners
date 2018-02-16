@@ -7,8 +7,9 @@ const bodyParser = require('body-parser');
 const app = express();
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb://127.0.0.1:27017/Spinners');
+//mongoose.connect('mongodb://127.0.0.1:27017/Spinners');
 
+mongoose.connect('mongodb://spinner:spinner123@ds225028.mlab.com:25028/spinners');
 const index = require('./index');
 
 app.use(logger('dev'));
@@ -16,7 +17,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(upload());
-app.use(express.static(path.join(__dirname, '/front/src/assets')));
+app.use(express.static(path.join('./front/dist')));
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');

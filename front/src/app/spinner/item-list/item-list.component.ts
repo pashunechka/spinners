@@ -9,7 +9,7 @@ import {Subscription} from "rxjs/Subscription";
 })
 export class ItemListComponent implements OnInit, OnDestroy {
 
-  spinner;
+  spinner = [];
   parts = [];
   isCheckAll: boolean = false;
   subscription: Subscription;

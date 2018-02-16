@@ -1,6 +1,6 @@
 <div id="check-all" class="list-js">
   <i class="fake-check fa fa-square-o" (click)="clickAllInput()"></i>
-  <input hidden type="checkbox" name="memberall" value="" (click)="checkAll($event)">
+  <input hidden type="checkbox" name="memberall" (click)="checkAll()">
   Check all
 </div>
 <div class="list-cont">
@@ -9,6 +9,6 @@
     <i class="fake-check fa fa-square-o"></i>
     <input hidden id="check{{i}}" type="checkbox" name="member" value="{{member.name}}" (click)="addChosenPartsToWheel($event)">{{member.name}}
   </a>
-  <img src="../../assets/{{member.image}}">
+  <img src="assets/{{member.image}}">
 </div>
 </div>
