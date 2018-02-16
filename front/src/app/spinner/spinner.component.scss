@@ -148,6 +148,10 @@ $whiteColor: white;
   box-shadow: 3px 3px 8px gray;
 }
 
+svg{
+  border-radius: 50%;
+}
+
 .overlay{
   position: fixed;
   width: 100%;
