@@ -12,7 +12,6 @@ import {Spinner} from "./spinner";
 export class SpinnerComponent implements OnInit, OnDestroy {
 
   MILLISECONDS: number = 4000;
-  RANDOM: number = Math.random()*10 + 5;
 
   spinner: Spinner = new Spinner();
   statistics: Statistics = new Statistics();
@@ -23,6 +22,7 @@ export class SpinnerComponent implements OnInit, OnDestroy {
   stop: boolean = false;
 
   clickNumber: number = 0;
+  rotateRad: number = 0;
   parts = [];
   startClick = {x: 0, y: 0};
   endClick = {x: 0, y: 0};
@@ -36,8 +36,8 @@ export class SpinnerComponent implements OnInit, OnDestroy {
       this.spinner.initialize('wheel', this.parts);
       this.statistics.initStatistics(this.parts);
     });
-    this.onmouseMove();
-    this.onmouseUp();
+    //this.onmouseMove();
+    //this.onmouseUp();
   }
 
   ngOnDestroy(): void {
@@ -49,17 +49,6 @@ export class SpinnerComponent implements OnInit, OnDestroy {
       if(this.isClick)
         this.spinner.moveWheelOnMouseMove(event.pageX, event.pageY);
     });
-  }
-
-  clickDown(event: MouseEvent){
-    this.spinner.clearTimeOut();
-    if(this.stop) {
-      this.setStop(false);
-      this.spinner.stopWheel();
-      return this.dissableItems(false);
-    }
-    this.setIsClick(true);
-    this.catchMouseClick(event, this.startClick);
   }
 
   onmouseUp(): void {
@@ -75,17 +64,36 @@ export class SpinnerComponent implements OnInit, OnDestroy {
     });
   }
 
+  clickDown(event: MouseEvent){
+    this.spinner.clearTimeOut();
+    if(this.stop) {
+      this.setStop(false);
+      this.clickNumber = 0;
+      this.rotateRad = 0;
+      if(this.spinner.checkWheelPartsAmount())
+        this.spinner.stopWheel();
+      return this.dissableItems(false);
+    }
+    this.setIsClick(true);
+    this.catchMouseClick(event, this.startClick);
+  }
+
   clickToRotate(): void {
     this.spinner.clearTimeOut();
     this.clickNumber++;
     this.setStop(true);
-    this.dissableItems(true);
-    this.spinner.initWheelRotation(this.MILLISECONDS, this.clickNumber*this.RANDOM, this.afterWheelRotate);
+    if(this.spinner.checkWheelPartsAmount())
+      this.dissableItems(true);
+    this.rotateRad += this.clickNumber*Math.random()*20;
+    console.log(this.rotateRad)
+    this.spinner.initWheelRotation(this.MILLISECONDS, this.rotateRad, this.afterWheelRotate);
   }
 
   afterWheelRotate = (): void => {
       this.setStop(false);
       this.setIsPopUp(true);
+      this.clickNumber = 0;
+      this.rotateRad = 0;
       this.dissableItems(false);
       this.statistics.collectStatistics(this.spinner.getValue());
   };

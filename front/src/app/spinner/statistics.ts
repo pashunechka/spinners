@@ -47,6 +47,7 @@ export class Statistics {
       this.chartLabels.push(parts[key]);
       this.collectStat.push(0);
     }
+    this.showStatistics(this.collectStat);
   }
 
   collectStatistics(topPositionValue): void {

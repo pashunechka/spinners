@@ -25,7 +25,7 @@ export class ItemListComponent implements OnInit, OnDestroy {
   }
 
   getInput(event): void  {
-    document.getElementById(`check${event}`).click();
+    document.getElementById(event._id).click();
   }
 
   dragStart(event): void  {
@@ -35,7 +35,8 @@ export class ItemListComponent implements OnInit, OnDestroy {
   }
 
   clickAllInput(){
-    document.getElementById('check-all').getElementsByTagName('input')[0].click();
+    if(this.spinner.length > 0)
+      document.getElementById('check-all').getElementsByTagName('input')[0].click();
   }
 
   checkAll(): void  {

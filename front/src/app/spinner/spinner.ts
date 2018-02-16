@@ -77,6 +77,9 @@ export class Spinner{
     this.calcWheelParts();
     this.fontSize();
     let result = '';
+    if(this.parts.length === 1)
+     return result += `<circle fill="${this.partColors[0]}" cx="${this.center.x}" cy="${this.center.y}" r="${this.radius}"></circle>
+                        <text x="50%" y="50%" text-anchor="middle" dy="-120px">${this.parts[0]}</text>`;
     for (let i = 0; i < this.parts.length; i++)
       result += `<g class="spinner-part" fill="${this.setWheelPartColor(i)}"><path d="M${this.points[i].x} ${this.points[i].y}
         A${this.center.x} ${this.center.y} 0 0 1 ${this.points[i].x1} ${this.points[i].y1}
@@ -180,7 +183,7 @@ export class Spinner{
     return color;
   }
 
-  private checkWheelPartsAmount(): boolean {
+  public checkWheelPartsAmount(): boolean {
     if(this.parts.length > 1)
       return true;
     return false;
