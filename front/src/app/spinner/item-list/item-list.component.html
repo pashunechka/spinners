@@ -3,8 +3,14 @@
   <input hidden type="checkbox" name="memberall" (click)="checkAll()">
   Check all
 </div>
-<div class="list-cont">
-<div class="list list-js" draggable="true" (dragstart)="dragStart($event)" (click)="getInput(member)" *ngFor="let member of spinner; let i = index">
+<div class="list-cont" id="list-cont">
+<div
+  *ngFor="let member of spinner; let i = index"
+  class="list list-js" id="list{{i}}"
+  draggable="true"
+  (dragstart)="dragStart($event)"
+  (click)="getInput(member)"
+  >
   <a title="{{member.name}}" class="">
     <i class="fake-check fa fa-square-o"></i>
     <input hidden id="{{member._id}}" type="checkbox" name="member" value="{{member.name}}" (click)="addChosenPartsToWheel($event)">{{member.name}}

@@ -1,15 +1,94 @@
-<div class="cont">
-   <p>Create a new spinner</p>
-      <div class="arround">
-         <div class="error" *ngIf="error">
-              The field shouldn't be empty
-         </div>
-         <input class="inp-spinners" type="text" name="spinnerName" placeholder="Enter a spinner name" (focus)="toggleError()" [(ngModel)]="spinnerName" >
-         <button class="add-spinner" id="add-spinner" (click)="createSpinner()"><i class="fa fa-plus"></i> Add a spinner</button>
-         <div class="list-spinners">
-          <div class="select-spinner" *ngFor="let spinner of spinners" [routerLink]="['/spinner', spinner._id]">{{spinner.name}}</div>
-         </div>
-       <div class="nothing"></div>
+<div id="spinners-form-dissable">
+  <div class="cont" id="cont" >
+    <p>Create a new spinner</p>
+    <div class="arround">
+      <form class="form-cont" [formGroup]="addSpinnerForm" novalidate>
+        <div class="error" *ngIf="addSpinnerForm.controls['spinnerName'].invalid &&
+                                  addSpinnerForm.controls['spinnerName'].touched">
+          The field shouldn't be empty
+        </div>
+        <input
+          class="inp-spinners"
+          type="text"
+          name="spinnerName"
+          placeholder="Enter a spinner name"
+          formControlName="spinnerName"
+          (keypress.enter)="submit()"
+        >
+        <fieldset formGroupName="password">
+        <div class="isPrivateSpinner">
+          <span id="fake-clickShow" class="fa fa fa-square-o" (click)="clickShowPassword($event)"> </span> <span> Set password</span>
+          <input
+            hidden
+            type="checkbox"
+            id="checkbox-pass"
+            name="isShowPass"
+            value="true"
+            formControlName="isShowPass"
+          >
+        </div>
+        <div class="error" *ngIf="addSpinnerForm.controls['password'].errors && addSpinnerForm.controls['password'].get('spinnerPassword').touched
+        ">
+          The password must be longer than 5 characters
+        </div>
+        <input
+          [hidden]="isSpinnerPassword"
+          class="inp-spinners"
+          type="password"
+          name="spinnerPassword"
+          placeholder="Enter a password"
+          formControlName="spinnerPassword"
+          (keypress.enter)="submit()"
+        >
+        <div>
+          <button class="add-spinner" id="add-spinner"  (click)="submit()"><i class="fa fa-plus"></i> Add a spinner</button>
+        </div>
+        </fieldset>
+      </form>
+      <div class="list-spinners">
+        <div
+          class="select-spinner"
+          *ngFor="let spinner of spinners"
+          (click)="showSpinner(spinner)"
+        >
+          {{spinner.name}}
+          <span *ngIf="spinner.password.private" class="lock fa fa-lock"></span>
+          <span *ngIf="!spinner.password.private" class="unlock fa fa-unlock"></span>
+        </div>
+      </div>
     </div>
+  </div>
+  <button class="show-spinners" id="show-spinners" (click)="showSpinnersForm()">Show</button>
 </div>
 
+
+<div class="authForm cont" id="authForm" [hidden]="isAuthForm">
+  <p>authentication
+  <span class=" auth-close fa fa-close" (click)="closeAuth()"></span>
+  </p>
+  <form class="arround-auth" [formGroup]="authForm" novalidate>
+    <div>
+      <div class="error" *ngIf="authForm.controls['authPassword'].invalid && smallPassword"
+      >
+        The password must be longer than 5 characters
+      </div>
+      <div class="error" *ngIf="invalidPassword"
+      >
+        Invalid password!
+      </div>
+    <input
+      id="auth-inp"
+      class="inp-spinners"
+      type="password"
+      name="password"
+      placeholder="Enter a password"
+      formControlName="authPassword"
+      (keypress.enter)="sendAuth()"
+      (focus)="hideErr()"
+    >
+    </div>
+    <div>
+      <button class="add-spinner" id="auth-but" (click)="sendAuth()">Log in</button>
+    </div>
+  </form>
+</div>

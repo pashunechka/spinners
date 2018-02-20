@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {ActivatedRoute} from "@angular/router";
-import {HttpService} from "../../http.service";
-import {DataService} from "../../data.service";
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {ActivatedRoute} from '@angular/router';
+import {HttpService} from '../../http.service';
+import {DataService} from '../../data.service';
 
 @Component({
   selector: 'app-add-form',
@@ -18,6 +18,7 @@ export class AddFormComponent implements OnInit {
   addForm: FormGroup;
   isShow = false;
   image: any = {};
+  subscription;
 
   constructor(
     private route: ActivatedRoute,
@@ -28,19 +29,14 @@ export class AddFormComponent implements OnInit {
   ngOnInit() {
     this.route.params.subscribe(p => {
       this.spinnerId = p.id;
-      this.getSpinner();
+      this.http.postData('/getSpinner', {auth: sessionStorage.getItem('key'), spinner: {_id: this.spinnerId }})
+        .subscribe(result => this.data.SpinnerItems(result));
     });
+    this.subscription = this.data.spinnerItems.subscribe(spinner => this.spinner = spinner);
     this.initForm();
   }
 
-  getSpinner(){
-    this.http.postData('/getSpinner', {id: this.spinnerId}).subscribe((res: any) => {
-        this.spinner = res;
-        this.data.announced(res);
-      });
-  }
-
-  initForm(){
+  initForm() {
     this.addForm = this.formBuilder.group({
       title: ['', Validators.required],
       image: ['']
@@ -48,28 +44,31 @@ export class AddFormComponent implements OnInit {
   }
 
   submit(): void {
-    if(this.addForm.invalid)
+    if (this.addForm.invalid) {
       return this.addForm.get('title').markAsTouched({onlySelf: true});
+    }
     const form = this.setForm();
     this.sendFileToServer();
     this.addSpinnerItems(form);
   }
 
   addSpinnerItems(spinnerItem): void {
-    this.http.postData('/addSpinnerItems', spinnerItem).subscribe((res: any) =>{
+    this.http.postData('/addSpinnerItems', {spinnerItem: spinnerItem, auth: sessionStorage.getItem('key')})
+      .subscribe((res: any) => {
       this.spinner.push(res);
-      this.data.announced(this.spinner);
+      this.data.SpinnerItems(this.spinner);
       this.addForm.reset();
       this.image = {};
-      this.setImage('image-cont',`../../assets/${this.DEFAULTIMAGE}`);
+      this.setImage('image-cont', `../../assets/${this.DEFAULTIMAGE}`);
     });
   }
 
   setForm(): FormGroup {
     const form = this.addForm.value;
     form.image = this.image.name;
-    if(!this.image.name)
+    if (!this.image.name) {
       form.image = this.DEFAULTIMAGE;
+    }
     form.id = this.spinnerId;
     return form;
   }
@@ -79,8 +78,9 @@ export class AddFormComponent implements OnInit {
     event.target.style.borderBottom = '2px solid #31bbb5';
     this.addForm.reset();
     this.image = {};
-    if(this.isShow)
+    if (this.isShow) {
       event.target.style.borderBottom = 0;
+    }
   }
 
   chooseImg(): void {
@@ -93,20 +93,21 @@ export class AddFormComponent implements OnInit {
   }
 
   setImage(id, srcURL): void {
-    document.getElementById(id).setAttribute('src', srcURL)
+    document.getElementById(id).setAttribute('src', srcURL);
   }
 
   sendFileToServer(): void {
     const formData: any = new FormData();
     const file = this.image;
-    formData.append("file", file);
+    formData.append('file', file);
     this.http.postData('/uploads', formData).subscribe();
   }
 
   previewImage(event) {
     const files = event.target.files[0];
-    if (!files.type.match('image.*'))
+    if (!files.type.match('image.*')) {
       return;
+    }
     const reader = new FileReader();
     reader.onload = (File => {
       return e =>  this.setImage('image-cont', e.target.result);

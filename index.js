@@ -2,69 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Spinners = require('./schemes/Spinners');
 const SpinnerItems = require('./schemes/SpinnerItems');
-/*
-const fs = require('fs');
-let spinners = [];
-
-function write(data){
-    fs.writeFile('spinners.json', data, "utf-8",(err) => {
-        if (err) console.log(err);
-    });
-}
-fs.readFile('spinners.json', 'utf8', (err, data) => {
-    if (err) throw err;
-    spinners = JSON.parse(data);
-});
-
-router.get('/getSpinners', (req, res) => {
-     fs.readFile('spinners.json', 'utf8', (err, data) => {
-       if (err) throw err;
-            spinners = JSON.parse(data);
-       res.send(spinners);
-     });
-});
-
-router.post('/getSpinner', (req, res) => {
-    let id = req.body.id;
-  for(const key in spinners)
-  if(spinners[key].id === +id)
-   return res.send(spinners[key]);
-  res.status(200).send();
-});
-
-router.post('/addSpinner', (req, res) => {
-    let name = req.body.name;
-    if (req.body.name == '')
-    return res.status(400).send('Invalid request');
-    let spinner = {spinnerName: name, id: spinners.length + 1, spinnerMembers: []};
-    spinners.push(spinner);
-    res.send(spinner);
-    write(JSON.stringify(spinners));
-});
-
-router.post('/addSpinnerItems', (req, res) => {
-    let member = req.body;
-    let spinner;
-    if(member.title == '' || member.image == '')
-      return res.status(400).send('Invalid request');
-       for(const key in spinners)
-        if(spinners[key].id === +member.id){
-        spinners[key].spinnerMembers.push({name: member.title, image: member.image});
-        spinner =  spinners[key];
-    }
-    write(JSON.stringify(spinners));
-    res.send(spinner);
-});
-
-router.post('/uploads', (req, res) => {
-    if (!req.files) return;
-    let file = req.files.file;
-    file.mv(`./front/src/assets/${file.name}`, err => {
-        if (err) return res.status(500).send(err);
-        res.status(200).send();
-    });
-});
-*/
+const bcrypt = require('bcrypt');
 
 router.post('/uploads', (req, res) => {
     if (!req.files) return;
@@ -76,36 +14,66 @@ router.post('/uploads', (req, res) => {
 });
 
 router.get('/getSpinners', (req, res) => {
-    Spinners.find({}, (err, result) =>{
-        if(err) res.status(500).send();
-        res.send(result);
+    Spinners.find({}, 'name password.private', (err, result) =>{
+        if(err) return res.status(500).send();
+            res.send(result);
     });
 });
 
 router.post('/addSpinner', (req, res) => {
-    const spinner = new Spinners({name: req.body.name});
     if(req.body.name == '')
         return res.status(400).send('Invalid request');
-    spinner.save().then((data) => res.send(data));
+    const spinner = constractSpinner(req.body);
+    spinner.save().then((data) => {
+        const result = {name: data.name, _id: data._id, password: {private: data.password.private}};
+        res.send(result)
+    });
 });
 
 router.post('/getSpinner', (req, res) => {
-    SpinnerItems.find({spinnerId: req.body.id}, (err, result) =>{
-        if(err) res.status(500).send();
-        res.send(result);
-    })
+    Spinners.findById(req.body.spinner._id, (err, result) =>{
+        if(err) return res.status(500).send('Bad request!');
+        if(result.password)
+            if(result.password.passwordSpinner)
+            if(!validPassword(req.body.auth, result.password.passwordSpinner))
+                return res.status(401).send('Wrong password!');
+        SpinnerItems.find({spinnerId: req.body.spinner._id}, (err, result) =>{
+            if(err) return res.status(500).send('Bad request!');
+                res.send(result);
+        })
+    });
 });
 
 router.post('/addSpinnerItems', (req, res) => {
-    let member = req.body;
-    const item = new SpinnerItems({spinnerId: member.id, name: member.title, image: member.image});
-    if(member.title == '' || member.image == '')
-        return res.status(400).send('Invalid request');
-    item.save().then((data) => res.send(data));
+    let member = req.body.spinnerItem;
+    Spinners.findById(member.id, (err, result) =>{
+        if(err) return res.status(500).send('Bad request!');
+        if(result.password.passwordSpinner)
+            if(!validPassword(req.body.auth, result.password.passwordSpinner))
+                return res.status(401).send('Wrong password!');
+        const item = new SpinnerItems({spinnerId: member.id, name: member.title, image: member.image});
+        if(member.title == '' || member.image == '')
+            return res.status(400).send('Invalid request');
+        item.save().then((data) => res.send(data));
+    });
 });
 
 router.get('/*', (req, res) => {
     res.sendFile(__dirname + '/front/dist/');
 });
+
+
+function constractSpinner(data){
+    const spinner  = new Spinners({
+        name: data.spinnerName,
+        password: {private: data.password.isShowPass, passwordSpinner: ""}});
+    if(data.password.spinnerPassword)
+        spinner.password.passwordSpinner = spinner.generateHash(data.password.spinnerPassword);
+    return spinner;
+}
+
+function validPassword(auth, password) {
+    return bcrypt.compareSync(auth, password);
+};
 
 module.exports = router;

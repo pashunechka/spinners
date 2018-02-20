@@ -1,5 +1,5 @@
 export class Statistics {
-  public chartOptions:any = {
+  public chartOptions: any = {
     scaleShowVerticalLines: false,
     responsive: true,
     legend: {
@@ -8,7 +8,7 @@ export class Statistics {
     scales: {
       yAxes: [{
         ticks: {
-          beginAtZero:true,
+          beginAtZero: true,
           fontFamily: 'Ubuntu, sans-serif',
           fontSize: '16'
         }
@@ -21,14 +21,14 @@ export class Statistics {
       }]
     }
   };
-  public chartColors:Array<any> = [{
+  public chartColors: Array<any> = [{
     backgroundColor: 'rgba(89, 187, 181, 0.5)',
   }];
-  public chartLabels:string[] = [];
-  public chartType:string = 'line';
-  public chartLegend:boolean = true;
+  public chartLabels: string[] = [];
+  public chartType = 'line';
+  public chartLegend = false;
 
-  public chartData:any[] = [
+  public chartData: any[] = [
     {
       data: [],
       label: 'Statistics'
@@ -37,27 +37,28 @@ export class Statistics {
 
   collectStat = [];
 
-  constructor(){}
+  constructor() {}
 
   initStatistics(parts): void {
     this.chartData[0].data = [];
     this.collectStat = [];
     this.chartLabels = [];
     for (let key = 0; key < parts.length; key++) {
-      this.chartLabels.push(parts[key]);
+      this.chartLabels.push(parts[key].name);
       this.collectStat.push(0);
     }
     this.showStatistics(this.collectStat);
   }
 
   collectStatistics(topPositionValue): void {
-    if(topPositionValue)
-      this.collectStat[this.chartLabels.indexOf(topPositionValue)]+=1;
+    if (topPositionValue) {
+      this.collectStat[this.chartLabels.indexOf(topPositionValue)] += 1;
+    }
     this.showStatistics(this.collectStat);
   }
 
   showStatistics(data): void {
-    let clone = JSON.parse(JSON.stringify(this.chartData));
+    const clone = JSON.parse(JSON.stringify(this.chartData));
     clone[0].data = data;
     this.chartData = clone;
   }

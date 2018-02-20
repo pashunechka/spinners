@@ -9,14 +9,14 @@ export class DataService {
 
   constructor() { }
 
-  announce = this.spinner.asObservable();
-  announceParts = this.parts.asObservable();
+  spinnerItems = this.spinner.asObservable();
+  wheelParts = this.parts.asObservable();
 
-  announced(spinner) {
+  SpinnerItems(spinner) {
     this.spinner.next(spinner);
   }
 
-  partAnnounced(parts) {
+  wheelPartsAnnounce(parts) {
     this.parts.next(parts);
   }
 
