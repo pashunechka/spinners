@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {HttpService} from '../http.service';
 import {FormBuilder, FormGroup, ValidatorFn, Validators} from '@angular/forms';
 import {DataService} from '../data.service';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 
 @Component({
   selector: 'app-spinner-list',
@@ -14,6 +14,8 @@ export class SpinnerListComponent implements OnInit {
 
   addSpinnerForm: FormGroup;
   authForm: FormGroup;
+
+  spinnerID: string;
   isSpinnersFormShow = false;
   isSpinnerPassword = true;
   isAuthForm = true;
@@ -21,18 +23,24 @@ export class SpinnerListComponent implements OnInit {
   smallPassword = false;
 
   spinners = [];
-  checkedSpinner;
 
   constructor(
     private http: HttpService,
     private formBuilder: FormBuilder,
     private data: DataService,
-    private router: Router) { }
+    private router: Router,
+    private route: ActivatedRoute) { }
 
   ngOnInit() {
+    this.route.params.subscribe(param => {
+      this.data.setSpinnerId(param.id);
+      if (this.data.getSpinnerId()) {
+        this.getItems(this.data.getSpinnerId()).subscribe((result) => this.data.announceSpinnerItems(result));
+      }
+    });
+    this.http.getData('/getSpinners').subscribe((res: any) => this.spinners = res);
     this.initForm();
     this.initAuthForm();
-    this.http.getData('/getSpinners').subscribe((res: any) => this.spinners = res);
   }
 
   initForm() {
@@ -71,18 +79,39 @@ export class SpinnerListComponent implements OnInit {
   }
 
   showSpinner(spinner) {
-    this.checkedSpinner = spinner;
+    this.spinnerID = spinner._id;
     this.closeAuth();
-    document.getElementById('authForm').style.top = document.getElementById('cont').offsetHeight + 60 + 'px';
     if (!spinner.password.private) {
-      return  this.getSpinner().subscribe((res: any) => {
-        sessionStorage.setItem('key', '');
-        this.router.navigateByUrl(`/${this.checkedSpinner._id}`);
-        console.log(res);
-        this.data.SpinnerItems(res);
-      });
+      this.data.setSpinnerId(this.spinnerID);
+      return  this.getItems(this.data.getSpinnerId()).subscribe((res: any) => this.showSpinnerItems(res));
     }
+    this.setAuthFormPosition();
     this.isAuthForm = false;
+  }
+
+  sendAuth() {
+   this.smallPassword = true;
+    if (this.authForm.valid) {
+      this.getItems(this.spinnerID, this.authForm.get('authPassword').value).subscribe((res: any) => {
+        this.data.setSpinnerId(this.spinnerID);
+        this.showSpinnerItems(res);
+        this.isAuthForm = true;
+      }, () => this.invalidPassword = true);
+    }
+  }
+
+  showSpinnerItems(data) {
+    this.data.announceSpinnerItems(data);
+    this.router.navigateByUrl(`/${this.data.getSpinnerId()}`);
+  }
+
+  getItems(id, auth?) {
+    const sendData = {id: id, auth: auth};
+    return  this.http.postData('/getItems',  sendData);
+  }
+
+  setAuthFormPosition() {
+    document.getElementById('authForm').style.top = document.getElementById('cont').offsetHeight + 60 + 'px';
   }
 
   clickShowPassword(event) {
@@ -107,18 +136,6 @@ export class SpinnerListComponent implements OnInit {
     this.resetForm();
   }
 
-  sendAuth() {
-    this.smallPassword = true;
-    if (this.authForm.valid) {
-      sessionStorage.setItem('key', this.authForm.value.authPassword);
-      this.getSpinner().subscribe((res: any) => {
-        this.router.navigateByUrl(`/${this.checkedSpinner._id}`);
-        this.data.SpinnerItems(res);
-        this.isAuthForm = true;
-      }, () => this.invalidPassword = true);
-    }
-  }
-
   markAsTouch() {
     if (this.addSpinnerForm.invalid) {
       this.addSpinnerForm.get('spinnerName').markAsTouched({onlySelf: true});
@@ -138,10 +155,6 @@ export class SpinnerListComponent implements OnInit {
     this.isAuthForm = true;
     this.authForm.reset();
     this.hideErr();
-  }
-
-  getSpinner() {
-    return  this.http.postData('/getSpinner', {auth: sessionStorage.getItem('key'), spinner: this.checkedSpinner});
   }
 
   hideErr() {

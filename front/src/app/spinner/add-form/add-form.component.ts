@@ -12,27 +12,19 @@ import {DataService} from '../../data.service';
 export class AddFormComponent implements OnInit {
 
   DEFAULTIMAGE = 'no-image.svg';
-
-  spinnerId;
-  spinner;
+  items;
   addForm: FormGroup;
   isShow = false;
   image: any = {};
   subscription;
 
   constructor(
-    private route: ActivatedRoute,
     private formBuilder: FormBuilder,
     private http: HttpService,
     private data: DataService) { }
 
   ngOnInit() {
-    this.route.params.subscribe(p => {
-      this.spinnerId = p.id;
-      this.http.postData('/getSpinner', {auth: sessionStorage.getItem('key'), spinner: {_id: this.spinnerId }})
-        .subscribe(result => this.data.SpinnerItems(result));
-    });
-    this.subscription = this.data.spinnerItems.subscribe(spinner => this.spinner = spinner);
+    this.subscription = this.data.spinnerItems.subscribe(items => this.items = items);
     this.initForm();
   }
 
@@ -53,10 +45,9 @@ export class AddFormComponent implements OnInit {
   }
 
   addSpinnerItems(spinnerItem): void {
-    this.http.postData('/addSpinnerItems', {spinnerItem: spinnerItem, auth: sessionStorage.getItem('key')})
-      .subscribe((res: any) => {
-      this.spinner.push(res);
-      this.data.SpinnerItems(this.spinner);
+    this.http.postData('/addItems', spinnerItem).subscribe((res: any) => {
+      this.items.push(res);
+      this.data.announceAddItem(this.items);
       this.addForm.reset();
       this.image = {};
       this.setImage('image-cont', `../../assets/${this.DEFAULTIMAGE}`);
@@ -69,7 +60,7 @@ export class AddFormComponent implements OnInit {
     if (!this.image.name) {
       form.image = this.DEFAULTIMAGE;
     }
-    form.id = this.spinnerId;
+    form.id = this.data.getSpinnerId();
     return form;
   }
 

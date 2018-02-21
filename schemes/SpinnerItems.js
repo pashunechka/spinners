@@ -16,4 +16,4 @@ const SpinnerItemsSchema = mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model('SpinnerItems', SpinnerItemsSchema);
+module.exports = mongoose.model('announceSpinnerItems', SpinnerItemsSchema);

@@ -12,8 +12,6 @@ import {HttpService} from '../http.service';
 })
 export class SpinnerComponent implements OnInit, OnDestroy {
 
-  spinners = [];
-
   MILLISECONDS = 4000;
   STARTRADIANS: number = Math.round((1 + Math.random()) * ((360 * Math.PI) / 180));
 
@@ -93,12 +91,14 @@ export class SpinnerComponent implements OnInit, OnDestroy {
       this.collectStat.push(0);
     }
   }
+
   collectStatistics() {
     if (this.spinner.getValue()) {
       this.collectStat[this.chartLabels.indexOf(this.spinner.getValue().name)] += 1;
     }
     this.showStatistics();
   }
+
   showStatistics() {
     const clone = JSON.parse(JSON.stringify(this.chartData));
     clone[0].data = this.collectStat;

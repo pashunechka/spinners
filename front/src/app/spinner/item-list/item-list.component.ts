@@ -9,7 +9,7 @@ import {Subscription} from 'rxjs/Subscription';
 })
 export class ItemListComponent implements OnInit, OnDestroy {
 
-  spinner = [];
+  items = [];
   parts = [];
   isCheckAll = false;
   subscription: Subscription;
@@ -18,9 +18,23 @@ export class ItemListComponent implements OnInit, OnDestroy {
   constructor(private data: DataService) { }
 
   ngOnInit() {
-    this.subscription = this.data.spinnerItems.subscribe(spinner => {
-      this.spinner = spinner;
+    this.subscription = this.data.spinnerItems.subscribe(items => {
+      this.data.announceWheelParts([]);
+      this.items = items;
+      this.setStartCondition();
     });
+    this.data.spinnerAddItem.subscribe(item => {
+      this.items = item;
+    });
+    this.subscription = this.data.wheelParts.subscribe(parts => {
+      this.parts = parts;
+    });
+  }
+
+  setStartCondition() {
+    document.getElementById('check-all').getElementsByTagName('i')[0].setAttribute('class', 'fa fa-square-o');
+    document.getElementById('check-all').getElementsByTagName('input')[0].checked = false;
+    this.isCheckAll = false;
   }
 
   ngOnDestroy() {
@@ -28,8 +42,33 @@ export class ItemListComponent implements OnInit, OnDestroy {
   }
 
   getInput(event) {
-    this.clickedCheckbox = event;
-    document.getElementById(event._id).click();
+    const target = event.target.getElementsByTagName('input')[0];
+    this.clickedCheckbox = this.getItemById(target.id);
+    if (target.checked) {
+      target.checked = false;
+    } else {
+      target.checked = true;
+    }
+    this.addChosenPartsToWheel(target);
+  }
+
+  addChosenPartsToWheel(event): void {
+    if (event.checked) {
+      this.parts.push(this.clickedCheckbox);
+    } else {
+      this.parts.splice(this.parts.indexOf(this.clickedCheckbox), 1);
+    }
+    this.data.announceWheelParts(this.parts);
+    this.checkIsAllActive();
+    this.checkFake(event.parentElement);
+  }
+
+  getItemById(id) {
+    for (const key in this.items) {
+      if (this.items[key]._id === id) {
+        return this.items[key];
+      }
+    }
   }
 
   dragStart(event): void  {
@@ -40,7 +79,7 @@ export class ItemListComponent implements OnInit, OnDestroy {
   }
 
   clickAllInput() {
-    if (this.spinner.length > 0) {
+    if (this.items.length > 0) {
       document.getElementById('check-all').getElementsByTagName('input')[0].click();
     }
   }
@@ -49,18 +88,7 @@ export class ItemListComponent implements OnInit, OnDestroy {
     this.isCheckAll = !this.isCheckAll;
     this.addAllParts();
     this.checkIsAllActive();
-    this.data.wheelPartsAnnounce(this.parts);
-  }
-
-  addChosenPartsToWheel(event): void {
-    if (event.target.checked) {
-      this.parts.push(this.clickedCheckbox);
-    } else {
-      this.parts.splice(this.parts.indexOf(this.clickedCheckbox), 1);
-    }
-    this.data.wheelPartsAnnounce(this.parts);
-    this.checkIsAllActive();
-    this.checkFake(event.target.parentElement);
+    this.data.announceWheelParts(this.parts);
   }
 
   checkIsAllActive(): void {
@@ -82,7 +110,7 @@ export class ItemListComponent implements OnInit, OnDestroy {
       listInput.checked = this.isCheckAll;
       this.checkFake(list[key]);
       if (listInput.checked) {
-        this.parts.push(this.spinner[key]);
+        this.parts.push(this.items[key]);
       }
     }
   }

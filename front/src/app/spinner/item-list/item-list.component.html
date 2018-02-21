@@ -1,15 +1,15 @@
 <div id="check-all" class="list-js">
-  <i class="fake-check fa fa-square-o" (click)="clickAllInput()"></i>
-  <input hidden type="checkbox" name="memberall" (click)="checkAll()">
+  <i class="fa fa-square-o" (click)="clickAllInput()"></i>
+  <input hidden id="check-all-inp" type="checkbox" name="memberall" (click)="checkAll()">
   Check all
 </div>
 <div class="list-cont" id="list-cont">
 <div
-  *ngFor="let member of spinner; let i = index"
+  *ngFor="let member of items; let i = index"
   class="list list-js" id="list{{i}}"
   draggable="true"
   (dragstart)="dragStart($event)"
-  (click)="getInput(member)"
+  (click)="getInput($event)"
   >
   <a title="{{member.name}}" class="">
     <i class="fake-check fa fa-square-o"></i>
