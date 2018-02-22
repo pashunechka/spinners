@@ -32,15 +32,22 @@ export class SpinnerListComponent implements OnInit {
     private route: ActivatedRoute) { }
 
   ngOnInit() {
-    this.route.params.subscribe(param => {
-      this.data.setSpinnerId(param.id);
-      if (this.data.getSpinnerId()) {
-        this.getItems(this.data.getSpinnerId()).subscribe((result) => this.data.announceSpinnerItems(result));
-      }
-    });
+    this.data.setSpinnerId(this.route.snapshot.paramMap.get('id'));
     this.http.getData('/getSpinners').subscribe((res: any) => this.spinners = res);
+    if (this.data.getSpinnerId()) {
+      this.getItems(this.data.getSpinnerId())
+        .subscribe((result) => this.data.announceSpinnerItems(result), () => this.initAuthorizationError());
+    }
+    this.data.authorizationError.subscribe(() => this.initAuthorizationError());
     this.initForm();
     this.initAuthForm();
+  }
+
+  initAuthorizationError() {
+    this.setAuthFormPosition();
+    this.spinnerID = this.data.getSpinnerId();
+    this.isAuthForm = false;
+    this.invalidPassword = true;
   }
 
   initForm() {
@@ -107,6 +114,8 @@ export class SpinnerListComponent implements OnInit {
 
   getItems(id, auth?) {
     const sendData = {id: id, auth: auth};
+    /** this is default value for authentication password, because passportjs need 2 parameters **/
+    if (!auth) { sendData.auth = ' '; }
     return  this.http.postData('/getItems',  sendData);
   }
 

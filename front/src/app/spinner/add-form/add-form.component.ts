@@ -51,7 +51,7 @@ export class AddFormComponent implements OnInit {
       this.addForm.reset();
       this.image = {};
       this.setImage('image-cont', `../../assets/${this.DEFAULTIMAGE}`);
-    });
+    }, () => this.data.announceError(false));
   }
 
   setForm(): FormGroup {

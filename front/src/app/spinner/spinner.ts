@@ -4,6 +4,7 @@ export class Spinner {
   private center = {x: 144, y: 144};
   private radius = 144;
   private textRadius = 120;
+  private imageRadius = 95;
   public spinnerCenterColor = 'black';
   public textColor = 'black';
   public topPartFill = 'SteelBlue';
@@ -91,7 +92,8 @@ export class Spinner {
      return result += `<circle id="path" fill="${this.partColors[0]}" cx="${this.center.x}" cy="${this.center.y}"
                         r="${this.radius}"></circle>
                         <text x="50%" y="50%" text-anchor="middle" dy="-120px">${this.parts[0].name}</text>
-     <image x="${(this.points[0].a + this.points[0].a1-20) / 2}" y="${(this.points[0].b + this.points[0].b1+20) / 2}" xlink:href="#path" width="20" href="/assets/${this.parts[0].image}">`;
+     <image x="${(this.points[0].a + this.points[0].a1 - 20) / 2}" y="${(this.points[0].b + this.points[0].b1 + 20) / 2}"
+      xlink:href="#path" width="20" href="/assets/${this.parts[0].image}">`;
     }
     for (let i = 0; i < this.parts.length; i++) {
       result += `<g class="spinner-part" fill="${this.setWheelPartColor(i)}"><path d="M${this.points[i].x} ${this.points[i].y}
@@ -101,10 +103,13 @@ export class Spinner {
         A${this.textRadius} ${this.textRadius} 0 0 1 ${this.points[i].a1} ${this.points[i].b1}
         "></path><text fill="${this.textColor}"><textPath id="${this.parts[i]._id}" style="font-size:${this.fontSize()}px"
          startOffset="${this.setStartTextPosition()}%" xlink:href="#path${i}">${this.parts[i].name}</textPath></text>`;
-      if(this.parts.length === 2)
-        result +=`<image x="${(this.center.x * 1.5) - (i * this.center.x)}" y="${((this.points[i].b + this.points[i].b1) / 2) - 10}" xlink:href="#path${i}" width="20px" height="20px" href="/assets/${this.parts[i].image}"></g>`;
-      else
-        result +=`<image x="${((this.points[i].a + this.points[i].a1) / 2) - 10}" y="${((this.points[i].b + this.points[i].b1) / 2) - 10}" xlink:href="#path${i}" width="20px" height="20px" href="/assets/${this.parts[i].image}"></g>`;
+      if (this.parts.length === 2) {
+        result += `<image x="${(this.center.x * 1.5) - (i * this.center.x)}" y="${((this.points[i].b + this.points[i].b1) / 2) - 10}"
+                    xlink:href="#path${i}" width="20px" height="20px" href="/assets/${this.parts[i].image}"></g>`;
+      } else {
+        result += `<image x="${((this.points[i].q + this.points[i].q1) / 2) - 10}" y="${((this.points[i].w + this.points[i].w1) / 2) - 10}"
+                    xlink:href="#path${i}" width="20px" height="20px" href="/assets/${this.parts[i].image}"></g>`;
+      }
     }
     return result;
   }
@@ -157,7 +162,9 @@ export class Spinner {
       const endCoord = this.calcCurvePointCoordinates(this.center, this.radius, endRad);
       const startCoordText = this.calcCurvePointCoordinates(this.center, this.textRadius, startRad);
       const endCoordText = this.calcCurvePointCoordinates(this.center, this.textRadius, endRad);
-      this.setCurvePoints(startCoord, endCoord, startCoordText, endCoordText);
+      const startCoordImage = this.calcCurvePointCoordinates(this.center, this.imageRadius, startRad);
+      const endCoordImage = this.calcCurvePointCoordinates(this.center, this.imageRadius, endRad);
+      this.setCurvePoints(startCoord, endCoord, startCoordText, endCoordText, startCoordImage, endCoordImage);
     }
   }
 
@@ -176,12 +183,14 @@ export class Spinner {
   }
 
 
-  private setCurvePoints(startCoord, endCoord, startCoordText, endCoordText): void {
+  private setCurvePoints(startCoord, endCoord, startCoordText, endCoordText, startCoordImage, endCoordImage): void {
     this.points.push({
       x: startCoord.x, y: startCoord.y,
       x1: endCoord.x, y1: endCoord.y,
       a: startCoordText.x, b: startCoordText.y,
-      a1: endCoordText.x, b1: endCoordText.y
+      a1: endCoordText.x, b1: endCoordText.y,
+      q: startCoordImage.x, w: startCoordImage.y,
+      q1: endCoordImage.x, w1: endCoordImage.y
     });
   }
 

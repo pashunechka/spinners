@@ -1,9 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {DataService} from '../data.service';
-import {Statistics} from './statistics';
 import {Subscription} from 'rxjs/Subscription';
 import {Spinner} from './spinner';
-import {HttpService} from '../http.service';
 
 @Component({
   selector: 'app-spinner',
@@ -13,15 +11,13 @@ import {HttpService} from '../http.service';
 export class SpinnerComponent implements OnInit, OnDestroy {
 
   MILLISECONDS = 4000;
-  STARTRADIANS: number = Math.round((1 + Math.random()) * ((360 * Math.PI) / 180));
+  STARTRADIANS: number = (1 + Math.random()) * ((360 * Math.PI) / 180);
 
   spinner: Spinner = new Spinner();
-  statistics: Statistics = new Statistics();
   subscription: Subscription;
 
   isClick = false;
   isPopUp = false;
-  isLineStat = true;
   stop = false;
 
   clickNumber = 0;
@@ -30,43 +26,6 @@ export class SpinnerComponent implements OnInit, OnDestroy {
   startClick = {x: 0, y: 0};
   endClick = {x: 0, y: 0};
 
-  public chartOptions: any = {
-    scaleShowVerticalLines: false,
-    responsive: true,
-    legend: {
-      display: false
-    },
-    scales: {
-      yAxes: [{
-        ticks: {
-          beginAtZero: true,
-          fontFamily: 'Ubuntu, sans-serif',
-          fontSize: '16'
-        }
-      }],
-      xAxes: [{
-        ticks: {
-          fontFamily: 'Ubuntu, sans-serif',
-          fontSize: '16'
-        }
-      }]
-    }
-  };
-  public chartColors: Array<any> = [{
-    backgroundColor: 'rgba(89, 187, 181, 0.5)',
-  }];
-  public chartLabels: string[] = [];
-  public chartType = 'line';
-  public chartLegend = false;
-
-  public chartData: any[] = [
-    {
-      data: [],
-      label: 'Statistics'
-    },
-  ];
-  collectStat;
-
   constructor(private data: DataService) {}
 
   ngOnInit() {
@@ -74,37 +33,12 @@ export class SpinnerComponent implements OnInit, OnDestroy {
     this.subscription = this.data.wheelParts.subscribe(parts => {
       this.parts = parts;
       this.spinner.initialize('wheel', this.parts);
-      this.initStatistics();
-      //this.statistics.initStatistics(parts);
     });
-    //this.onmouseMove();
-    //this.onmouseUp();
+    /**
+     * this.onmouseMove();
+     * this.onmouseUp();
+     **/
   }
-
-/** удалить как исправлю статистику**/
-  initStatistics() {
-    this.chartData[0].data = [];
-    this.collectStat = [];
-    this.chartLabels = [];
-    for (let key = 0; key < this.parts.length; key++) {
-      this.chartLabels.push(this.parts[key].name);
-      this.collectStat.push(0);
-    }
-  }
-
-  collectStatistics() {
-    if (this.spinner.getValue()) {
-      this.collectStat[this.chartLabels.indexOf(this.spinner.getValue().name)] += 1;
-    }
-    this.showStatistics();
-  }
-
-  showStatistics() {
-    const clone = JSON.parse(JSON.stringify(this.chartData));
-    clone[0].data = this.collectStat;
-    this.chartData = clone;
-  }
-/** до сюда**/
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
@@ -154,7 +88,7 @@ export class SpinnerComponent implements OnInit, OnDestroy {
     if (this.spinner.checkWheelPartsAmount()) {
       this.dissableItems(true);
     }
-    this.rotateRad += Math.round((2 + Math.random()) * ((360 * Math.PI) / 180));
+    this.rotateRad += (2 + Math.random()) * ((360 * Math.PI) / 180);
     this.spinner.initWheelRotation(this.MILLISECONDS, this.rotateRad, this.afterWheelRotate);
   }
 
@@ -163,8 +97,7 @@ export class SpinnerComponent implements OnInit, OnDestroy {
       this.setIsPopUp(true);
       this.clickNumber = 0;
       this.dissableItems(false);
-      this.collectStatistics();
-      //this.statistics.collectStatistics(this.spinner.getValue().name);
+      this.data.announceSpinnerStatistics(this.spinner.getValue());
   }
 
   dissableItems(value: boolean): void {
@@ -218,17 +151,4 @@ export class SpinnerComponent implements OnInit, OnDestroy {
     this.isPopUp = false;
   }
 
-  toggleStatistics(event) {
-    this.isLineStat = !this.isLineStat;
-    if (this.isLineStat) {
-      this.chartType = 'line';
-      return event.target.setAttribute('src', '/assets/switch-line.svg');
-    }
-    this.chartType = 'bar';
-    event.target.setAttribute('src', '/assets/switch-bar.svg');
-  }
-
-  resetStatistics() {
-    this.statistics.showStatistics([]);
-  }
 }

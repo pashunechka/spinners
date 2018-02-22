@@ -23,12 +23,8 @@ export class ItemListComponent implements OnInit, OnDestroy {
       this.items = items;
       this.setStartCondition();
     });
-    this.data.spinnerAddItem.subscribe(item => {
-      this.items = item;
-    });
-    this.subscription = this.data.wheelParts.subscribe(parts => {
-      this.parts = parts;
-    });
+    this.subscription = this.data.spinnerAddItem.subscribe(item => this.items = item);
+    this.subscription = this.data.wheelParts.subscribe(parts => this.parts = parts);
   }
 
   setStartCondition() {
@@ -43,12 +39,11 @@ export class ItemListComponent implements OnInit, OnDestroy {
 
   getInput(event) {
     const target = event.target.getElementsByTagName('input')[0];
-    this.clickedCheckbox = this.getItemById(target.id);
-    if (target.checked) {
-      target.checked = false;
-    } else {
-      target.checked = true;
+    if (target.disabled) {
+      return;
     }
+    this.clickedCheckbox = this.getItemById(target.id);
+    target.checked = !target.checked;
     this.addChosenPartsToWheel(target);
   }
 

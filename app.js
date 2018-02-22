@@ -19,6 +19,10 @@ const cookieExpirationDate = new Date();
 const cookieExpirationDays = 365;
 cookieExpirationDate.setDate(cookieExpirationDate.getDate() + cookieExpirationDays);
 
+app.use(logger('dev'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser('Lqwoetpxmcdusglewe'));
 app.use(session({
     secret: 'Lqwoetpxmcdusglewe',
     saveUninitialized: true,
@@ -29,14 +33,9 @@ app.use(session({
         expires: cookieExpirationDate,
     },
 }));
-
-app.use(logger('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser('Lqwoetpxmcdusglewe'));
-app.use(express.static(path.join('./front/dist')));
 app.use(passport.initialize());
-app.use(passport.session({ store: sessionStore }));
+app.use(passport.session());
+app.use(express.static(path.join('./front/dist')));
 app.use(upload());
 
 

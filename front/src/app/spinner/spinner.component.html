@@ -30,31 +30,7 @@
      <app-add-form></app-add-form>
   </div>
   <div class="statistics">
-    <p><i class="fa fa-area-chart"></i> Statistics
-      <span class="statistics-reset" (click)="resetStatistics()"><span>Reset</span></span>
-      <span class="statisticsType">
-        line
-        <img class="toggle-statistics" src="/assets/switch-line.svg" (click)="toggleStatistics($event)">
-        <img class="toggle-statistics" style="display: none" src="/assets/switch-bar.svg" (click)="toggleStatistics($event)">
-        bar
-      </span>
-    </p>
-    <!--<canvas baseChart
-            [datasets]="statistics.chartData"
-            [labels]="statistics.chartLabels"
-            [colors]="statistics.chartColors"
-            [options]="statistics.chartOptions"
-            [legend]="statistics.chartLegend"
-            [chartType]="statistics.chartType">
-    </canvas>-->
-    <canvas baseChart
-            [datasets]="chartData"
-            [labels]="chartLabels"
-            [colors]="chartColors"
-            [options]="chartOptions"
-            [legend]="chartLegend"
-            [chartType]="chartType">
-    </canvas>
+    <app-statistics></app-statistics>
   </div>
   <div class="item-list">
      <app-item-list></app-item-list>

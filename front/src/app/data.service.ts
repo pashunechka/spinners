@@ -4,16 +4,25 @@ import {Subject} from 'rxjs/Subject';
 @Injectable()
 export class DataService {
 
+  private spinnerId: string;
+
   private items = new Subject<any>();
   private parts = new Subject<any>();
   private addItem = new Subject<any>();
-  private spinnerId: string;
+  private errorAuth = new Subject<any>();
+  private statistics = new Subject<any>();
 
   constructor() { }
 
   spinnerItems = this.items.asObservable();
   spinnerAddItem = this.items.asObservable();
   wheelParts = this.parts.asObservable();
+  authorizationError = this.errorAuth.asObservable();
+  spinnerStatistics = this.statistics.asObservable();
+
+  announceSpinnerStatistics(statistics) {
+    this.statistics.next(statistics);
+  }
 
   announceSpinnerItems(items) {
     this.items.next(items);
@@ -25,6 +34,10 @@ export class DataService {
 
   announceWheelParts(parts) {
     this.parts.next(parts);
+  }
+
+  announceError(errorAuth) {
+    this.errorAuth.next(errorAuth);
   }
 
   getSpinnerId(): string {

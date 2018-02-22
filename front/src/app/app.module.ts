@@ -13,6 +13,7 @@ import {ChartsModule} from 'ng2-charts';
 import { AddFormComponent } from './spinner/add-form/add-form.component';
 import {DataService} from './data.service';
 import { ItemListComponent } from './spinner/item-list/item-list.component';
+import { StatisticsComponent } from './spinner/statistics/statistics.component';
 
 
 @NgModule({
@@ -21,7 +22,8 @@ import { ItemListComponent } from './spinner/item-list/item-list.component';
     SpinnerListComponent,
     SpinnerComponent,
     AddFormComponent,
-    ItemListComponent
+    ItemListComponent,
+    StatisticsComponent
   ],
   imports: [
     BrowserModule,

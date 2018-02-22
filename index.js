@@ -6,6 +6,10 @@ const bcrypt = require('bcrypt');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 
+router.get('/logout', (req, res) =>{
+    req.logout();
+});
+
 router.post('/uploads', (req, res) => {
     if (!req.files) return;
     let file = req.files.file;
@@ -32,42 +36,45 @@ router.post('/addSpinner', (req, res) => {
     });
 });
 
+router.post('/addItems', /*isLoggedIn,*/ (req, res) => {
+    let member = req.body;
+    const item = new SpinnerItems({spinnerId: member.id /*req.user._id*/, name: member.title, image: member.image});
+    if(member.title == '' || member.image == '')
+       return res.status(400).send('Invalid request');
+    item.save().then((data) => res.send(data));
+});
 
 router.post('/getItems', (req, res) => {
-    SpinnerItems.find({spinnerId: req.body.id}, (err, result) =>{
-       if(err) return res.status(500).send('Bad request!');
-       res.send(result);
+    SpinnerItems.find({spinnerId: req.body.id}, (error, result) => {
+        if (error)  return res.status(500).send(error);
+        return res.send(result);
     });
 });
-
-router.post('/addItems', (req, res) => {
-    let member = req.body;
-        const item = new SpinnerItems({spinnerId: member.id, name: member.title, image: member.image});
-        if(member.title == '' || member.image == '')
-            return res.status(400).send('Invalid request');
-        item.save().then((data) => res.send(data));
-});
-
-router.get('/*', (req, res) => {
-    res.sendFile(__dirname + '/front/dist/');
-});
 /*
-router.post('/getItems', passport.authenticate(), (req, res) => {
-    console.log(req.body)
+router.post('/getItems', passport.authenticate('local'), (req, res) => {
+    SpinnerItems.find({spinnerId: req.body.id}, (error, result) => {
+        if (error)  return res.status(500).send(error);
+        return res.send(result);
+    });
 });
-
-
-passport.use(new LocalStrategy({
-        usernameField : 'email',
-        passwordField : 'password',
+*/
+passport.use('local', new LocalStrategy({
+        usernameField: 'id',
+        passwordField: 'auth',
         passReqToCallback: true
-    },
-    (req, usernameField, passwordField, done) => {
-        Spinners.findById(req.body.id, (err, spinner) => {
-            if (err)  return done(err);
-            if (!spinner) return done(null, false);
-            if (!validPassword('', spinner.password.passwordSpinner)) return done(null, false);
-            return done(null, spinner);
+    }, (req, login, password, done) => {
+        process.nextTick(() => {
+            Spinners.findById(req.body.id, (err, spinner) => {
+                if (err)  return err;
+                if(req.user)
+                    if(req.user.password.passwordSpinner === spinner.password.passwordSpinner)
+                        return done(null, spinner);
+                if(req.body.auth === ' ' &&  !spinner.password.passwordSpinner)
+                    return done(null, spinner);
+                if(validPassword(req.body.auth, spinner.password.passwordSpinner))
+                    return done(null, spinner);
+                done(null, false);
+            });
         });
     }
 ));
@@ -81,12 +88,16 @@ passport.deserializeUser((id, done) => {
         done(err, spinner);
     });
 });
-*/
+
+router.get('/*', (req, res) => {
+    res.sendFile(__dirname + '/front/dist/');
+});
+
 
 function constractSpinner(data){
     const spinner  = new Spinners({
         name: data.spinnerName,
-        password: {private: data.password.isShowPass, passwordSpinner: ""}});
+        password: {private: data.password.isShowPass, passwordSpinner: ''}});
     if(data.password.spinnerPassword)
         spinner.password.passwordSpinner = spinner.generateHash(data.password.spinnerPassword);
     return spinner;
@@ -97,9 +108,12 @@ function validPassword(auth, password) {
 }
 
 function isLoggedIn(req, res, next) {
-    if (req.isAuthenticated())
-        return next();
-    res.redirect('/');
+    Spinners.findById(req.body.id, (err, result) => {
+        if(err) return res.status(500).send(err);
+        if(req.user.password.passwordSpinner === result.password.passwordSpinner)
+            return next();
+        res.status(401).send();
+    });
 }
 
 module.exports = router;
