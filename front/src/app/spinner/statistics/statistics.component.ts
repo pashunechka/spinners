@@ -102,8 +102,4 @@ export class StatisticsComponent implements OnInit, OnDestroy {
     this.showStatistics(this.collectStat);
   }
 
-  resetStatistics() {
-    this.showStatistics([]);
-  }
-
 }

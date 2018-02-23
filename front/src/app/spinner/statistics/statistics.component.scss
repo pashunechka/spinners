@@ -9,27 +9,6 @@ p{
   margin-bottom: 0;
 }
 
-.statistics-reset{
-  margin-left: 1em;
-  border: 2px solid $color;
-  color: $color;
-  background-color: $whiteColor;
-  font-size: 0.6em;
-  text-align: center;
-  border-radius: 0.3em;
-  font-weight: 700;
-  outline: none;
-  transition-timing-function: linear;
-  transition-duration: 300ms;
-  span{
-    padding: 0.3em 0.8em;
-  }
-  &:hover{
-    color: $whiteColor;
-    background-color: $color;
-  }
-}
-
 i{
   padding-right: 0.1em;
   padding-left: 0.3em;

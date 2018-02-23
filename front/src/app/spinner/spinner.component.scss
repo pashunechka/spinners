@@ -14,6 +14,7 @@ $whiteColor: white;
 
 .left{
   grid-area: left;
+  z-index: 10000;
 }
 
 .right{
@@ -141,6 +142,109 @@ $whiteColor: white;
   }
   img{
     width: 30%;
+  }
+}
+
+@media (min-width: 1000px) and (max-width: 1320px) {
+  .grid {
+    grid-template-columns: 10% 40% 40% 10%;
+    grid-template-areas: "left reel  reel right"
+                        "left item-list item-add-form right"
+                        "left statistics statistics right";
+  }
+
+  .left{
+    grid-area: left;
+    z-index: 10000;
+  }
+
+  .right{
+    grid-area: right;
+  }
+
+  .reel {
+    grid-area: reel;
+  }
+
+  .item-list{
+    grid-area: item-list;
+  }
+
+  .item-add-form{
+    grid-area: item-add-form;
+  }
+
+  .statistics{
+    grid-area: statistics;
+  }
+}
+
+@media (min-width: 712px) and (max-width: 1000px) {
+  .grid {
+    grid-template-columns: 5% 40% 50% 5%;
+    grid-template-areas: "left reel  reel right"
+                        "left item-list item-add-form right"
+                        "left statistics statistics right";
+  }
+
+  .left{
+    grid-area: left;
+    z-index: 10000;
+  }
+
+  .right{
+    grid-area: right;
+  }
+
+  .reel {
+    grid-area: reel;
+  }
+
+  .item-list{
+    grid-area: item-list;
+  }
+
+  .item-add-form{
+    grid-area: item-add-form;
+  }
+
+  .statistics{
+    grid-area: statistics;
+  }
+}
+
+@media (max-width: 712px) {
+  .grid {
+    grid-template-columns: 3% 40% 40% 3%;
+    grid-template-areas: "left reel  reel right"
+                          "left item-list item-list right"
+                          "left statistics statistics right"
+                          "left item-add-form item-add-form right";
+  }
+
+  .left{
+    grid-area: left;
+    z-index: 10000;
+  }
+
+  .right{
+    grid-area: right;
+  }
+
+  .reel {
+    grid-area: reel;
+  }
+
+  .item-list{
+    grid-area: item-list;
+  }
+
+  .item-add-form{
+    grid-area: item-add-form;
+  }
+
+  .statistics{
+    grid-area: statistics;
   }
 }
 
