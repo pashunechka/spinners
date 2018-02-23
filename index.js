@@ -36,9 +36,9 @@ router.post('/addSpinner', (req, res) => {
     });
 });
 
-router.post('/addItems', /*isLoggedIn,*/ (req, res) => {
+router.post('/addItems', isLoggedIn, (req, res) => {
     let member = req.body;
-    const item = new SpinnerItems({spinnerId: member.id /*req.user._id*/, name: member.title, image: member.image});
+    const item = new SpinnerItems({spinnerId: /*member.id */req.user._id, name: member.title, image: member.image});
     if(member.title == '' || member.image == '')
        return res.status(400).send('Invalid request');
     item.save().then((data) => res.send(data));
@@ -50,21 +50,21 @@ router.post('/increaseItemStatistics', (req, res) => {
         return res.send(result);
     });
 });
-
+/*
 router.post('/getItems', (req, res) => {
     SpinnerItems.find({spinnerId: req.body.id}, (error, result) => {
         if (error)  return res.status(500).send(error);
         return res.send(result);
     });
 });
-/*
+*/
 router.post('/getItems', passport.authenticate('local'), (req, res) => {
     SpinnerItems.find({spinnerId: req.body.id}, (error, result) => {
         if (error)  return res.status(500).send(error);
         return res.send(result);
     });
 });
-*/
+
 passport.use('local', new LocalStrategy({
         usernameField: 'id',
         passwordField: 'auth',

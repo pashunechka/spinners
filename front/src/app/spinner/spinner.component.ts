@@ -35,10 +35,10 @@ export class SpinnerComponent implements OnInit, OnDestroy {
       this.parts = parts;
       this.spinner.initialize('wheel', this.parts);
     });
-    /**
-     * this.onmouseMove();
-     * this.onmouseUp();
-     **/
+    /*
+      this.onmouseMove();
+      this.onmouseUp();
+     */
   }
 
   ngOnDestroy(): void {
