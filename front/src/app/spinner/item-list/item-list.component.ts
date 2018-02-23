@@ -18,6 +18,7 @@ export class ItemListComponent implements OnInit, OnDestroy {
   constructor(private data: DataService) { }
 
   ngOnInit() {
+    this.subscription = this.data.wheelParts.subscribe(parts => this.parts = parts);
     this.subscription = this.data.spinnerItems.subscribe(items => {
       this.data.announceWheelParts([]);
       this.items = items;
