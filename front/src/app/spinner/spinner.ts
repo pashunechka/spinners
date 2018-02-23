@@ -115,15 +115,19 @@ export class Spinner {
   }
 
   private fontSize() {
-    if (this.parts.length > 5) {
+    if (this.parts.length > 5 && this.parts.length <= 5 ) {
       return 12;
+    } else if (this.parts.length > 10) {
+      return 10;
     }
     return 16;
   }
 
   private setStartTextPosition() {
-    if (this.parts.length > 10) {
+    if (this.parts.length > 10 && this.parts.length <= 15) {
       return  25;
+    } else if (this.parts.length > 15) {
+      return  15;
     }
     return 40;
   }

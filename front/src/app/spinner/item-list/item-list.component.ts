@@ -24,7 +24,13 @@ export class ItemListComponent implements OnInit, OnDestroy {
       this.setStartCondition();
     });
     this.subscription = this.data.spinnerAddItem.subscribe(item => this.items = item);
-    this.subscription = this.data.wheelParts.subscribe(parts => this.parts = parts);
+    this.data.spinnerStatistics.subscribe(item => {
+      for (const key in this.items) {
+        if (this.items[key]._id === item._id) {
+          this.items[key].statistics = item.statistics;
+        }
+      }
+    });
   }
 
   setStartCondition() {

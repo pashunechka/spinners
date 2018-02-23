@@ -49,7 +49,6 @@ export class StatisticsComponent implements OnInit, OnDestroy {
   isLineStat = true;
   subscription;
   parts = [];
-  localParts = [];
 
   constructor(private data: DataService) {}
 
@@ -58,11 +57,7 @@ export class StatisticsComponent implements OnInit, OnDestroy {
       this.parts = parts;
       this.initStatistics(parts);
     });
-    this.data.spinnerStatistics.subscribe(statistics => {
-      this.localParts.push(statistics);
-      this.concatArrays();
-      this.collectStatistics(statistics);
-    });
+    this.data.spinnerStatistics.subscribe(statistics => this.collectStatistics(statistics));
   }
 
   ngOnDestroy() {
@@ -80,28 +75,9 @@ export class StatisticsComponent implements OnInit, OnDestroy {
       }
   }
 
-  concatArrays() {
-    /**const res = [];
-    for (let key = 0; key < this.compareArrayLength(this.localParts, this.parts).length; key++) {
-      console.log('sdgfsd');
-      if (this.localParts[key]._id === this.parts[key]._id) {
-        const x = this.localParts[key];
-        x.statistics += this.parts[key].statistics;
-        console.log(x);
-        res.push(x);
-      }
-    }
-    console.log(res);
-    return res;**/
-  }
-
-  compareArrayLength(arr1, arr2) {
-    return arr1.length >= arr2.length ? arr1 : arr2;
-  }
-
   collectStatistics(spinnerValue): void {
     if (spinnerValue) {
-      this.collectStat[this.chartLabels.indexOf(spinnerValue.name)] += 1;
+      this.collectStat[this.chartLabels.indexOf(spinnerValue.name)] = spinnerValue.statistics;
     }
     this.showStatistics(this.collectStat);
   }

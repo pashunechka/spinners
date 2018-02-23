@@ -44,6 +44,13 @@ router.post('/addItems', /*isLoggedIn,*/ (req, res) => {
     item.save().then((data) => res.send(data));
 });
 
+router.post('/increaseItemStatistics', (req, res) => {
+   SpinnerItems.findOneAndUpdate({ _id: req.body._id },  { $inc: { statistics: 1 } }, {new: true }, (error, result) => {
+        if (error)  return res.status(500).send(error);
+        return res.send(result);
+    });
+});
+
 router.post('/getItems', (req, res) => {
     SpinnerItems.find({spinnerId: req.body.id}, (error, result) => {
         if (error)  return res.status(500).send(error);

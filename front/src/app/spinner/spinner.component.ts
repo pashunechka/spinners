@@ -2,6 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {DataService} from '../data.service';
 import {Subscription} from 'rxjs/Subscription';
 import {Spinner} from './spinner';
+import {HttpService} from '../http.service';
 
 @Component({
   selector: 'app-spinner',
@@ -26,7 +27,7 @@ export class SpinnerComponent implements OnInit, OnDestroy {
   startClick = {x: 0, y: 0};
   endClick = {x: 0, y: 0};
 
-  constructor(private data: DataService) {}
+  constructor(private data: DataService, private http: HttpService) {}
 
   ngOnInit() {
     this.spinner.spinnerCenterColor = '#31bbb5';
@@ -97,7 +98,8 @@ export class SpinnerComponent implements OnInit, OnDestroy {
       this.setIsPopUp(true);
       this.clickNumber = 0;
       this.dissableItems(false);
-      this.data.announceSpinnerStatistics(this.spinner.getValue());
+      this.http.postData('/increaseItemStatistics', this.spinner.getValue())
+        .subscribe(result => this.data.announceSpinnerStatistics(result));
   }
 
   dissableItems(value: boolean): void {
