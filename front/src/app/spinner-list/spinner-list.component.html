@@ -1,5 +1,5 @@
-<div id="spinners-form-dissable">
-  <div class="cont" id="cont" >
+<div id="spinners-form-dissable" #spinnersForm>
+  <div class="cont" id="cont" #cont >
     <p>Create a new spinner</p>
     <div class="arround">
       <form class="form-cont" [formGroup]="addSpinnerForm" novalidate>
@@ -18,11 +18,11 @@
         >
         <fieldset formGroupName="password">
         <div class="isPrivateSpinner">
-          <span id="fake-clickShow" class="fa fa fa-square-o" (click)="clickShowPassword($event)"> </span> <span> Set password</span>
+          <span #fakeClickShow class="fa fa fa-square-o" (click)="clickShowPassword($event)"> </span> <span> Set password</span>
           <input
             hidden
             type="checkbox"
-            id="checkbox-pass"
+            #checkboxPass
             name="isShowPass"
             value="true"
             formControlName="isShowPass"
@@ -60,11 +60,11 @@
       </div>
     </div>
   </div>
-  <button class="show-spinners" id="show-spinners" (click)="showSpinnersForm()">Show</button>
+  <button class="show-spinners" #showSpinners (click)="showSpinnersForm()">Show</button>
 </div>
 
 
-<div class="authForm cont" id="authForm" [hidden]="isAuthForm">
+<div class="authForm cont" id="authForm" #elAuthForm [hidden]="isAuthForm">
   <p>authentication
   <span class=" auth-close fa fa-close" (click)="closeAuth()"></span>
   </p>

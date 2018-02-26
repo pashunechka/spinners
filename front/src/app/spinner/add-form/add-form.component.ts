@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ActivatedRoute} from '@angular/router';
 import {HttpService} from '../../http.service';
@@ -10,6 +10,9 @@ import {DataService} from '../../data.service';
   styleUrls: ['./add-form.component.scss']
 })
 export class AddFormComponent implements OnInit {
+
+  @ViewChild('image')
+  private elImage: ElementRef;
 
   DEFAULTIMAGE = 'no-image.svg';
   items;
@@ -75,7 +78,7 @@ export class AddFormComponent implements OnInit {
   }
 
   chooseImg(): void {
-    document.getElementById('image').click();
+    this.elImage.nativeElement.click();
   }
 
   getImage(event): void {

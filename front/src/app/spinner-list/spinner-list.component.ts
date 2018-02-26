@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {HttpService} from '../http.service';
 import {FormBuilder, FormGroup, ValidatorFn, Validators} from '@angular/forms';
 import {DataService} from '../data.service';
@@ -11,6 +11,24 @@ import {ActivatedRoute, Router} from '@angular/router';
 })
 
 export class SpinnerListComponent implements OnInit {
+
+  @ViewChild('elAuthForm')
+  private elAuthForm: ElementRef;
+
+  @ViewChild('cont')
+  private elCont: ElementRef;
+
+  @ViewChild('checkboxPass')
+  private elCheckboxPass: ElementRef;
+
+  @ViewChild('fakeClickShow')
+  private elFakeClickShow: ElementRef;
+
+  @ViewChild('showSpinners')
+  private elShowSpinners: ElementRef;
+
+  @ViewChild('spinnersForm')
+  private elSpinnersForm: ElementRef;
 
   addSpinnerForm: FormGroup;
   authForm: FormGroup;
@@ -120,28 +138,28 @@ export class SpinnerListComponent implements OnInit {
   }
 
   setAuthFormPosition() {
-    document.getElementById('authForm').style.top = document.getElementById('cont').offsetHeight + 60 + 'px';
+    this.elAuthForm.nativeElement.style.top =  this.elCont.nativeElement.offsetHeight + 60 + 'px';
   }
 
   clickShowPassword(event) {
     if (this.isSpinnerPassword) {
-      event.target.setAttribute('class', 'fa fa fa-check-square-o');
+      this.elFakeClickShow.nativeElement.setAttribute('class', 'fa fa-check-square-o');
     } else {
-      event.target.setAttribute('class', 'fa fa fa-square-o');
+      this.elFakeClickShow.nativeElement.setAttribute('class', 'fa fa-square-o');
     }
     this.addSpinnerForm.get('password').get('spinnerPassword').reset('');
-    document.getElementById('checkbox-pass').click();
+    this.elCheckboxPass.nativeElement.click();
     this.isSpinnerPassword = !this.isSpinnerPassword;
   }
 
   showSpinnersForm() {
     this.isSpinnersFormShow = !this.isSpinnersFormShow;
     if (this.isSpinnersFormShow) {
-      document.getElementById('show-spinners').innerText = 'Hide';
-      return document.getElementById('spinners-form-dissable').setAttribute('id', 'spinners-form-active');
+      this.elShowSpinners.nativeElement.innerText = 'Hide';
+      return this.elSpinnersForm.nativeElement.setAttribute('id', 'spinners-form-active');
     }
-    document.getElementById('show-spinners').innerText = 'Show';
-    document.getElementById('spinners-form-active').setAttribute('id', 'spinners-form-dissable');
+    this.elShowSpinners.nativeElement.innerText = 'Show';
+    this.elSpinnersForm.nativeElement.setAttribute('id', 'spinners-form-dissable');
     this.resetForm();
   }
 
@@ -153,7 +171,7 @@ export class SpinnerListComponent implements OnInit {
   }
 
   resetForm() {
-    document.getElementById('fake-clickShow').setAttribute('class', 'fa fa fa-square-o');
+    this.elFakeClickShow.nativeElement.setAttribute('class', 'fa fa-square-o');
     this.isSpinnerPassword = true;
     this.addSpinnerForm.reset();
     this.addSpinnerForm.get('password').get('isShowPass').reset(false);

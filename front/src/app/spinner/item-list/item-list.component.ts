@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, ElementRef, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import {DataService} from '../../data.service';
 import {Subscription} from 'rxjs/Subscription';
 
@@ -8,6 +8,18 @@ import {Subscription} from 'rxjs/Subscription';
   styleUrls: ['./item-list.component.scss']
 })
 export class ItemListComponent implements OnInit, OnDestroy {
+
+  @ViewChild('fakeCheckAll')
+  private elFakeCheckAll: ElementRef;
+
+  @ViewChild('checkAllInp')
+  private elCheckAllInp: ElementRef;
+
+  @ViewChildren('listInp')
+  private elListInp: QueryList<any>;
+
+  @ViewChildren('fakeCheck')
+  private elFakeCheck: QueryList<any>;
 
   items = [];
   parts = [];
@@ -19,12 +31,20 @@ export class ItemListComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.subscription = this.data.wheelParts.subscribe(parts => this.parts = parts);
+    this.subscribeSpinnerItems();
+    this.subscription = this.data.spinnerAddItem.subscribe(item => this.items = item);
+    this.subscribeSpinnerAddItem();
+  }
+
+  subscribeSpinnerItems() {
     this.subscription = this.data.spinnerItems.subscribe(items => {
       this.data.announceWheelParts([]);
       this.items = items;
       this.setStartCondition();
     });
-    this.subscription = this.data.spinnerAddItem.subscribe(item => this.items = item);
+  }
+
+  subscribeSpinnerAddItem() {
     this.data.spinnerStatistics.subscribe(item => {
       for (const key in this.items) {
         if (this.items[key]._id === item._id) {
@@ -35,8 +55,8 @@ export class ItemListComponent implements OnInit, OnDestroy {
   }
 
   setStartCondition() {
-    document.getElementById('check-all').getElementsByTagName('i')[0].setAttribute('class', 'fa fa-square-o');
-    document.getElementById('check-all').getElementsByTagName('input')[0].checked = false;
+    this.elFakeCheckAll.nativeElement.setAttribute('class', 'fa fa-square-o');
+    this.elCheckAllInp.nativeElement.checked = false;
     this.isCheckAll = false;
   }
 
@@ -82,7 +102,7 @@ export class ItemListComponent implements OnInit, OnDestroy {
 
   clickAllInput() {
     if (this.items.length > 0) {
-      document.getElementById('check-all').getElementsByTagName('input')[0].click();
+      this.elCheckAllInp.nativeElement.click();
     }
   }
 
@@ -94,27 +114,23 @@ export class ItemListComponent implements OnInit, OnDestroy {
   }
 
   checkIsAllActive(): void {
-    const list = document.getElementsByClassName('list');
-    const target = document.getElementById('check-all').getElementsByTagName('i')[0];
-    if (list.length === this.parts.length) {
+    if (this.elListInp.length === this.parts.length) {
       this.isCheckAll = true;
-      return target.setAttribute('class', 'fa fa-check-square-o');
+      return this.elFakeCheckAll.nativeElement.setAttribute('class', 'fa fa-check-square-o');
     }
     this.isCheckAll = false;
-    target.setAttribute('class', 'fa fa-square-o');
+    this.elFakeCheckAll.nativeElement.setAttribute('class', 'fa fa-square-o');
   }
 
   addAllParts(): void {
     this.parts = [];
-    const list = document.getElementsByClassName('list');
-    for (let key = 0; key < list.length; key++) {
-      const listInput = list[key].getElementsByTagName('input')[0];
-      listInput.checked = this.isCheckAll;
-      this.checkFake(list[key]);
-      if (listInput.checked) {
+    this.elListInp.forEach((el, key) => {
+      el.nativeElement.checked = this.isCheckAll;
+      this.checkFake(el.nativeElement.parentElement);
+      if (el.nativeElement.checked) {
         this.parts.push(this.items[key]);
       }
-    }
+    });
   }
 
   checkFake(list) {

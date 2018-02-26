@@ -1,6 +1,12 @@
 <div id="check-all" class="list-js">
-  <i class="fa fa-square-o" (click)="clickAllInput()"></i>
-  <input hidden id="check-all-inp" type="checkbox" name="memberall" (click)="checkAll()">
+  <i class="fa fa-square-o" #fakeCheckAll (click)="clickAllInput()"></i>
+  <input
+    hidden
+    #checkAllInp
+    type="checkbox"
+    name="memberall"
+    (click)="checkAll()"
+  >
   Check all
 </div>
 <div class="list-cont" id="list-cont">
@@ -12,8 +18,16 @@
   (click)="getInput($event)"
   >
   <a title="{{member.name}}" class="">
-    <i class="fake-check fa fa-square-o"></i>
-    <input hidden id="{{member._id}}" type="checkbox" name="member" value="{{member.name}}" (click)="addChosenPartsToWheel($event)">{{member.name}}
+    <i #fakeCheck class="fake-check fa fa-square-o"></i>
+    <input
+      #listInp
+      hidden
+      id="{{member._id}}"
+      type="checkbox"
+      name="member"
+      value="{{member.name}}"
+      (click)="addChosenPartsToWheel($event)"
+    >{{member.name}}
   </a>
   <img src="assets/{{member.image}}">
 </div>
