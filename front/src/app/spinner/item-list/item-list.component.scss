@@ -14,6 +14,14 @@ $whiteColor: white;
   }
 }
 
+.borderBottom {
+  border-bottom: 1px solid $color;
+  vertical-align: middle;
+  &:hover{
+    box-shadow: inset 2px 2px 5px rgba(160, 160, 160, 0.98);
+  }
+}
+
 .list-cont{
   overflow-y: scroll;
   max-height: 21.9em;
@@ -21,16 +29,13 @@ $whiteColor: white;
 
 .list{
   user-select: none;
+  width: 85%;
+  display: inline-block;
   cursor: pointer;
   padding: 0.4em 0.4em;
-  vertical-align: middle;
-  border-bottom: 1px solid $color;
   position: relative;
   z-index: 1000;
   color: $color;
-  &:hover{
-    box-shadow: inset 2px 2px 5px rgba(160, 160, 160, 0.98);
-  }
 }
 a{
   text-transform: uppercase;
@@ -48,4 +53,87 @@ a{
 img{
   width: 10%;
   float: right;
+}
+
+.delete-item{
+  position: relative;
+  bottom: 6px;
+  color: #721c24;
+  font-size: 1.1em;
+  cursor: pointer;
+}
+
+.modify-item{
+  position: relative;
+  margin-right: 0.3em;
+  bottom: 6px;
+  color: #d2a33f;
+  font-size: 1.1em;
+  cursor: pointer;
+}
+
+.overlay{
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(62, 62, 62, 0.76);
+  top: 0;
+  left: 0;
+  z-index: 10000;
+  i{
+    position: relative;
+    top: 1em;
+    right: 1em;
+    width: 2%;
+    float: right;
+    margin: 0.3em;
+    cursor: pointer;
+    font-size: 2em;
+    color: $whiteColor;
+  }
+}
+
+.pop-up{
+  z-index: 10001;
+  color: $color;
+  position: fixed;
+  left: 30%;
+  top: 23%;
+  background-color: $whiteColor;
+  border: 4px solid $color;
+  border-radius: 0.3em;
+  width: 35%;
+  font-weight: 900;
+  font-size: 1em;
+  text-align: center;
+  text-transform: uppercase;
+  p{
+    margin-bottom: 0.2em;
+    color:$whiteColor;
+    background-color: $color;
+    font-size: 1.5em;
+  }
+}
+
+.delete-pop-up{
+  button{
+    border: 2px solid $color;
+    color: $color;
+    font-size: 1.2em;
+    border-radius: 0.3em;
+    background-color: $whiteColor;
+    padding: 0.5em 1em;
+    margin: 1.5em 1em;
+    cursor: pointer;
+    outline: none;
+  }
+}
+
+.modify-pop-up{
+  text-align: left;
+  border: none;
+  p{
+    text-align: center;
+    margin-bottom: -0.1em;
+  }
 }

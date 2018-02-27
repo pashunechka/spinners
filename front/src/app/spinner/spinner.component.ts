@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {DataService} from '../data.service';
 import {Subscription} from 'rxjs/Subscription';
 import {Spinner} from './spinner';
@@ -10,6 +10,9 @@ import {HttpService} from '../http.service';
   styleUrls: ['./spinner.component.scss']
 })
 export class SpinnerComponent implements OnInit, OnDestroy {
+
+  @ViewChild('switchImage')
+  private elSwitchImage: ElementRef;
 
   MILLISECONDS = 4000;
   STARTRADIANS: number = (1 + Math.random()) * ((360 * Math.PI) / 180);
@@ -35,7 +38,7 @@ export class SpinnerComponent implements OnInit, OnDestroy {
       this.parts = parts;
       this.spinner.initialize('wheel', this.parts);
     });
-    /*
+    /* rotate wheel on mouse move
       this.onmouseMove();
       this.onmouseUp();
      */
@@ -151,6 +154,11 @@ export class SpinnerComponent implements OnInit, OnDestroy {
 
   close(): void {
     this.isPopUp = false;
+  }
+
+  toggleWheelAndStat() {
+
+    this.elSwitchImage.nativeElement.src = '/assets/switch-bar.svg';
   }
 
 }

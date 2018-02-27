@@ -46,7 +46,6 @@ export class StatisticsComponent implements OnInit, OnDestroy {
   ];
 
   collectStat = [];
-  isLineStat = true;
   subscription;
   parts = [];
 
@@ -91,14 +90,7 @@ export class StatisticsComponent implements OnInit, OnDestroy {
   }
 
   toggleStatistics(event): void {
-    this.isLineStat = !this.isLineStat;
-    if (this.isLineStat) {
-      this.chartType = 'line';
-      event.target.setAttribute('src', '/assets/switch-line.svg');
-    } else {
-      this.chartType = 'bar';
-      event.target.setAttribute('src', '/assets/switch-bar.svg');
-    }
+    this.chartType = event;
     this.showStatistics(this.collectStat);
   }
 

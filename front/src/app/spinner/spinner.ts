@@ -1,10 +1,12 @@
 export class Spinner {
 
+  DEFAULTIMAGE = 'no-image.svg';
+
   private startDegrees = 270;
-  private center = {x: 144, y: 144};
-  private radius = 144;
-  private textRadius = 120;
-  private imageRadius = 95;
+  private center = {x: 280, y: 280};
+  private radius = 280;
+  private textRadius = 250;
+  private imageRadius = 220;
   public spinnerCenterColor = 'black';
   public textColor = 'black';
   public topPartFill = 'SteelBlue';
@@ -87,14 +89,24 @@ export class Spinner {
   private generateWheelParts(): string {
     this.calcWheelParts();
     this.fontSize();
-    let result = '';
     if (this.parts.length === 1) {
-     return result += `<circle id="path" fill="${this.partColors[0]}" cx="${this.center.x}" cy="${this.center.y}"
-                        r="${this.radius}"></circle>
-                        <text x="50%" y="50%" text-anchor="middle" dy="-120px">${this.parts[0].name}</text>
-     <image x="${(this.points[0].a + this.points[0].a1 - 20) / 2}" y="${(this.points[0].b + this.points[0].b1 + 20) / 2}"
-      xlink:href="#path" width="20" href="/assets/${this.parts[0].image}">`;
+        return this.generateOneWheelPart();
     }
+    return this.generateMoreThenOnePart();
+  }
+
+  generateOneWheelPart(): string {
+    let result = '';
+    result += `<circle id="path" fill="${this.partColors[0]}" cx="${this.center.x}" cy="${this.center.y}"
+        r="${this.radius}"></circle><text x="50%" y="50%" text-anchor="middle" dy="-${this.textRadius}px">${this.parts[0].name}</text>`;
+    if (this.checkOnDefaultImage(this.parts[0].image)) {
+      result += this.generateImagePositionDependOnPartsAmount(0);
+    }
+    return result;
+  }
+
+  generateMoreThenOnePart(): string {
+    let result = '';
     for (let i = 0; i < this.parts.length; i++) {
       result += `<g class="spinner-part" fill="${this.setWheelPartColor(i)}"><path d="M${this.points[i].x} ${this.points[i].y}
         A${this.center.x} ${this.center.y} 0 0 1 ${this.points[i].x1} ${this.points[i].y1}
@@ -103,31 +115,39 @@ export class Spinner {
         A${this.textRadius} ${this.textRadius} 0 0 1 ${this.points[i].a1} ${this.points[i].b1}
         "></path><text fill="${this.textColor}"><textPath id="${this.parts[i]._id}" style="font-size:${this.fontSize()}px"
          startOffset="${this.setStartTextPosition()}%" xlink:href="#path${i}">${this.parts[i].name}</textPath></text>`;
-      if (this.parts.length === 2) {
-        result += `<image x="${(this.center.x * 1.5) - (i * this.center.x)}" y="${((this.points[i].b + this.points[i].b1) / 2) - 10}"
-                    xlink:href="#path${i}" width="20px" height="20px" href="/assets/${this.parts[i].image}"></g>`;
-      } else {
-        result += `<image x="${((this.points[i].q + this.points[i].q1) / 2) - 10}" y="${((this.points[i].w + this.points[i].w1) / 2) - 10}"
-                    xlink:href="#path${i}" width="20px" height="20px" href="/assets/${this.parts[i].image}"></g>`;
+      if (this.checkOnDefaultImage(this.parts[i].image)) {
+        result += this.generateImagePositionDependOnPartsAmount(i);
       }
     }
     return result;
   }
 
+  private checkOnDefaultImage(image) {
+    return image !== this.DEFAULTIMAGE;
+  }
+
+  private generateImagePositionDependOnPartsAmount(index): string {
+    if (this.parts.length === 2) {
+      return `<image x="${(this.center.x * 1.5) - (index * this.center.x)}"
+                        y="${((this.points[index].b + this.points[index].b1 - 35) / 2)}"
+                        xlink:href="#path${index}" width="35px" href="/assets/${this.parts[index].image}"></g>`;
+    } else {
+     return `<image x="${((this.points[index].q + this.points[index].q1 - 35) / 2)}"
+                       y="${((this.points[index].w + this.points[index].w1 - 35) / 2)}" xlink:href="#path${index}" width="35px"
+                        href="/assets/${this.parts[index].image}"></g>`;
+    }
+  }
+
   private fontSize() {
-    if (this.parts.length > 5 && this.parts.length <= 5 ) {
-      return 12;
-    } else if (this.parts.length > 10) {
-      return 10;
+    if (this.parts.length > 5) {
+      return 14;
     }
     return 16;
   }
 
   private setStartTextPosition() {
     if (this.parts.length > 10 && this.parts.length <= 15) {
-      return  25;
-    } else if (this.parts.length > 15) {
-      return  15;
+      return  30;
     }
     return 40;
   }

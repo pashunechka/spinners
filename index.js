@@ -36,9 +36,23 @@ router.post('/addSpinner', (req, res) => {
     });
 });
 
-router.post('/addItems', isLoggedIn, (req, res) => {
+router.post('/modifyItem', /* isLoggedIn, */ (req, res) => {
+    SpinnerItems.findOneAndUpdate({_id: req.body.id}, {$set: { name: req.body.title, image: req.body.image}}, {new: true }, (error, result) => {
+        if (error)  return res.status(500).send(error);
+        return res.send(result);
+    });
+});
+
+router.post('/deleteItem', /* isLoggedIn, */ (req, res) => {
+    SpinnerItems.remove({_id: req.body._id}, err => {
+        if(err) return res.status(500);
+        res.send();
+    })
+});
+
+router.post('/addItems', /* isLoggedIn, */ (req, res) => {
     let member = req.body;
-    const item = new SpinnerItems({spinnerId: /*member.id */req.user._id, name: member.title, image: member.image});
+    const item = new SpinnerItems({spinnerId: member.id /* req.user._id */, name: member.title, image: member.image});
     if(member.title == '' || member.image == '')
        return res.status(400).send('Invalid request');
     item.save().then((data) => res.send(data));

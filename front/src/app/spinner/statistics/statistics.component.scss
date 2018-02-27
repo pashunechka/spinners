@@ -20,9 +20,11 @@ i{
   padding-top: 0.2em;
 }
 
-.toggle-statistics{
-  width: 20%;
-  cursor: pointer;
-  transition-timing-function: linear;
-  transition-duration: 500ms;
+select {
+  background-color: $whiteColor;
+  border: 2px solid $color;
+  color: $color;
+  outline: none;
+  border-radius: 0.3em;
+  padding: 0 0.5em;
 }

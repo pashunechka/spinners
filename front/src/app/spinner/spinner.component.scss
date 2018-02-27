@@ -5,16 +5,30 @@ $whiteColor: white;
 .grid {
   word-spacing: normal;
   display: grid;
-  margin-top: 2%;
-  grid-gap: 1em;
-  grid-template-columns: 20% 20% 20% 20% 15%;
-  grid-template-areas: "left reel reel item-list right"
-                       "left statistics statistics item-add-form right";
+  margin-top: 1%;
+  grid-column-gap: 1em;
+  grid-row-gap: 0.7em;
+  grid-template-columns: 17% 50% 20% 8%;
+  grid-template-areas:  "left toggle toggle right"
+                        "left reel item-list right"
+                        "left reel item-add-form right";
 }
 
 .left{
   grid-area: left;
   z-index: 10000;
+  margin-top: 4em;
+}
+
+.toggle {
+  grid-area: toggle;
+  color: $color;
+  min-height: 1.5em;
+  font-size: 1.2em;
+  font-weight: 700;
+  .switch-wheel {
+    width: 4%;
+  }
 }
 
 .right{
@@ -23,12 +37,42 @@ $whiteColor: white;
 
 .reel{
   grid-area: reel;
+}
+
+.wheel-conatoiner {
+  padding-top: 3em;
   background-color: $color;
   border: $border-inp;
   width: 100%;
+  height: 100%;
   border-radius: 0.5em;
   box-shadow: 0 3px 8px gray;
   text-align: center;
+  .arrow-cont{
+    margin: 1em 0 0 0;
+    width: 100%;
+    #arrow{
+      fill: DarkSeaGreen;
+      position: relative;
+      z-index: 1000;
+    }
+  }
+
+  .svg-spinner-parts{
+    user-select: none;
+    width: 560px;
+    height: 560px;
+    z-index: 150;
+  }
+  .wheel-cont{
+    background-color: $whiteColor;
+    margin-top: -1em;
+    width: 35em;
+    height: 35em;
+    border-radius: 50%;
+    box-shadow: 0 3px 3px #006064;
+    display: inline-block;
+  }
   .btn-spin{
     width: 100%;
     border: none;
@@ -44,6 +88,8 @@ $whiteColor: white;
     border-bottom-right-radius: 0.3em;
     font-weight: 800;
     outline: none;
+    position: relative;
+    z-index: 200;
     transition-timing-function: linear;
     transition-duration: 300ms;
     &:hover{
@@ -51,40 +97,19 @@ $whiteColor: white;
       background-color: $color;
       border-top: 3px solid $whiteColor;
     }
-  }
-  .arrow-cont{
-    margin: 1em 0 0 0;
-    width: 100%;
-    #arrow{
-      fill: DarkSeaGreen;
-      position: relative;
-      z-index: 1000;
+    &:disabled {
+      background-color: #d7d7d7;
+      color: $whiteColor;
+      border-top: 3px solid $whiteColor;
     }
-  }
-
-  .svg-spinner-parts{
-    user-select: none;
-    width: 288px;
-    height: 288px;
-    z-index: 150;
-  }
-  .wheel-cont{
-    background-color: $whiteColor;
-    margin-top: -1em;
-    width: 18em;
-    height: 18em;
-    border-radius: 50%;
-    box-shadow: 0 3px 3px #006064;
-    display: inline-block;
   }
 }
 
 .item-add-form{
   grid-area: item-add-form;
-}
-
-.statistics{
-  grid-area: statistics;
+  app-add-form {
+    height: 100%;
+  }
 }
 
 .item-list{
@@ -149,8 +174,7 @@ $whiteColor: white;
   .grid {
     grid-template-columns: 10% 40% 40% 10%;
     grid-template-areas: "left reel  reel right"
-                        "left item-list item-add-form right"
-                        "left statistics statistics right";
+                        "left item-list item-add-form right";
   }
 
   .left{
@@ -174,17 +198,13 @@ $whiteColor: white;
     grid-area: item-add-form;
   }
 
-  .statistics{
-    grid-area: statistics;
-  }
 }
 
 @media (min-width: 712px) and (max-width: 1000px) {
   .grid {
     grid-template-columns: 5% 40% 50% 5%;
     grid-template-areas: "left reel  reel right"
-                        "left item-list item-add-form right"
-                        "left statistics statistics right";
+                        "left item-list item-add-form right";
   }
 
   .left{
@@ -208,18 +228,14 @@ $whiteColor: white;
     grid-area: item-add-form;
   }
 
-  .statistics{
-    grid-area: statistics;
-  }
 }
 
 @media (max-width: 712px) {
   .grid {
-    grid-template-columns: 3% 40% 40% 3%;
-    grid-template-areas: "left reel  reel right"
-                          "left item-list item-list right"
-                          "left statistics statistics right"
-                          "left item-add-form item-add-form right";
+    grid-template-columns: 3% 80% 3%;
+    grid-template-areas: "left reel right"
+                          "left item-list  right"
+                          "left item-add-form  right";
   }
 
   .left{
@@ -243,9 +259,6 @@ $whiteColor: white;
     grid-area: item-add-form;
   }
 
-  .statistics{
-    grid-area: statistics;
-  }
 }
 
 

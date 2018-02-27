@@ -60,14 +60,14 @@
       </div>
     </div>
   </div>
-  <button class="show-spinners" #showSpinners (click)="showSpinnersForm()">Show</button>
+  <button class="show-spinners" #showSpinners (click)="showSpinnersForm()">Show spinners</button>
+</div>
+<div class="overlay" [hidden]="isAuthForm" (click)="closeAuth()">
+  <i class="fa fa-remove" (click)="closeAuth()"></i>
 </div>
 
-
-<div class="authForm cont" id="authForm" #elAuthForm [hidden]="isAuthForm">
-  <p>authentication
-  <span class=" auth-close fa fa-close" (click)="closeAuth()"></span>
-  </p>
+<div class="pop-up" id="authForm" #elAuthForm [hidden]="isAuthForm">
+  <p>authentication</p>
   <form class="arround-auth" [formGroup]="authForm" novalidate>
     <div>
       <div class="error" *ngIf="authForm.controls['authPassword'].invalid && smallPassword"
@@ -78,17 +78,17 @@
       >
         Invalid password!
       </div>
-    <input
-      id="auth-inp"
-      class="inp-spinners"
-      autocomplete="off"
-      type="password"
-      name="password"
-      placeholder="Enter a password"
-      formControlName="authPassword"
-      (keypress.enter)="sendAuth()"
-      (focus)="hideErr()"
-    >
+      <input
+        id="auth-inp"
+        class="inp-spinners"
+        autocomplete="off"
+        type="password"
+        name="password"
+        placeholder="Enter a password"
+        formControlName="authPassword"
+        (keypress.enter)="sendAuth()"
+        (focus)="hideErr()"
+      >
     </div>
     <div>
       <button class="add-spinner" id="auth-but" (click)="sendAuth()">Log in</button>

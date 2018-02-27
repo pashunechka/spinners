@@ -1,13 +1,13 @@
 <div>
   <p><i class="fa fa-area-chart"></i> Statistics
     <span class="statisticsType">
-          line
-          <img class="toggle-statistics" src="/assets/switch-line.svg" (click)="toggleStatistics($event)">
-          <img class="toggle-statistics" style="display: none" src="/assets/switch-bar.svg" (click)="toggleStatistics($event)">
-          bar
+      <select (click)="toggleStatistics($event.target.value)">
+        <option class="statisticsType" value='line'>line</option>
+        <option class="statisticsType" value='bar'>bar</option>
+      </select>
         </span>
   </p>
-    <canvas  baseChart
+    <canvas  baseChart height="220px"
             [data]="chartData"
             [labels]="chartLabels"
             [colors]="chartColors"

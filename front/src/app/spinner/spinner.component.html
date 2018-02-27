@@ -3,34 +3,48 @@
     <app-spinner-list></app-spinner-list>
   </div>
   <div class="right"></div>
+  <div class="toggle">
+    Spinner
+    <img #switchImage
+         [hidden]="isWheel"
+         class="switch-wheel"
+         src="/assets/switch-line.svg"
+         (click)="isWheel = true"
+    >
+    <img  [hidden]="!isWheel"
+          class="switch-wheel"
+          src="/assets/switch-bar.svg"
+          (click)="isWheel = false"
+    >Statistics
+  </div>
   <div class="reel">
-    <div class="arrow-cont" id="arrow-cont">
+    <div class="wheel-conatoiner" [hidden]="isWheel">
+      <div class="arrow-cont" id="arrow-cont">
         <svg id="arrow" height="18px" version="1.1" viewBox="0 0 24 12" width="36px" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-            <g fill-rule="evenodd" stroke="black" stroke-width="1">
-              <g transform="translate(-16.000000, -23.000000)">
-                <g transform="translate(28.000000, 28.000000) rotate(-90.000000) translate(-28.000000, -28.000000)">
+          <g fill-rule="evenodd" stroke="black" stroke-width="1">
+            <g transform="translate(-16.000000, -23.000000)">
+              <g transform="translate(28.000000, 28.000000) rotate(-90.000000) translate(-28.000000, -28.000000)">
                 <polygon class="arrow" points="32.6666667 16.3333333 21 28 32.6666667 39.6666667"></polygon>
               </g>
-              </g>
             </g>
+          </g>
         </svg>
       </div>
-    <div class="wheel-cont" id="wheel-cont">
-      <svg class="svg-spinner-parts" id="wheel"
-               (drop)="drop($event)"
-               (dragenter)="dragEnter($event)"
-               (dragover)="dragOver($event)"
-               (dragleave)="dragExit($event)"
-               (mousedown)="clickDown($event)">
-      </svg>
+      <div class="wheel-cont" id="wheel-cont">
+        <svg class="svg-spinner-parts" id="wheel"
+             (drop)="drop($event)"
+             (dragenter)="dragEnter($event)"
+             (dragover)="dragOver($event)"
+             (dragleave)="dragExit($event)"
+             (mousedown)="clickDown($event)">
+        </svg>
+      </div>
+      <button class="btn-spin" (click)="clickToRotate()" [disabled]="parts.length < 2"><i class="fa fa-repeat"></i> Spin</button>
     </div>
-    <button class="btn-spin" (click)="clickToRotate()"><i class="fa fa-repeat"></i> Spin</button>
+    <app-statistics [hidden]="!isWheel"></app-statistics>
   </div>
   <div class="item-add-form">
      <app-add-form></app-add-form>
-  </div>
-  <div class="statistics">
-    <app-statistics></app-statistics>
   </div>
   <div class="item-list">
      <app-item-list></app-item-list>

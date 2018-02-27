@@ -1,7 +1,11 @@
+
+<!--
 <button class="add but-submit" (click)="toggleIsShow($event)">
   <i class="fa fa-plus"></i> Add an item
 </button>
-<div *ngIf="isShow">
+-->
+
+<div>
   <form [formGroup]="addForm" novalidate>
     <div class="cont">
       <div class="input-cont">
@@ -19,10 +23,14 @@
               *ngIf="addForm.controls['title'].invalid && addForm.controls['title'].touched">
               The field shouldn't be empty
       </span>
+        <span class="error"
+              *ngIf="exceedLimit">
+              The number of items has exceeded the max value
+      </span>
       </div>
       <div class="input-cont">
         <span for="image">Image:</span><br />
-        <img id="image-cont" class="image-cont" src="../../assets/no-image.svg" (click)="chooseImg()"/>
+        <img #imageCont class="image-cont" src="../../assets/no-image.svg" (click)="chooseImg()"/>
         <input
           hidden
           #image
@@ -32,7 +40,7 @@
           formControlName="image"
           (change)="getImage($event)"
         >
-        <a title="{{image.name}}" class="image-name">{{image.name}}</a>
+        <a title="{{loadImage.name}}" class="image-name">{{loadImage.name}}</a>
       </div>
     </div>
     <button class="but-submit submit" (click)="submit()"><i class="fa fa-check"></i> Submit</button>

@@ -4,6 +4,7 @@ import {Subject} from 'rxjs/Subject';
 @Injectable()
 export class DataService {
 
+  DEFAULTIMAGE = 'no-image.svg';
   private spinnerId: string;
 
   private items = new Subject<any>();

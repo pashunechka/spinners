@@ -62,7 +62,6 @@ export class SpinnerListComponent implements OnInit {
   }
 
   initAuthorizationError() {
-    this.setAuthFormPosition();
     this.spinnerID = this.data.getSpinnerId();
     this.isAuthForm = false;
     this.invalidPassword = true;
@@ -99,6 +98,10 @@ export class SpinnerListComponent implements OnInit {
       this.http.postData('/addSpinner', this.addSpinnerForm.value).subscribe((res: any) => {
         this.spinners.push(res);
         this.resetForm();
+        this.router.navigateByUrl(`/${res._id}`);
+        this.data.setSpinnerId(res._id);
+        this.getItems(this.data.getSpinnerId())
+          .subscribe((result) => this.data.announceSpinnerItems(result), () => this.initAuthorizationError());
       });
     }
   }
@@ -110,7 +113,6 @@ export class SpinnerListComponent implements OnInit {
       this.data.setSpinnerId(this.spinnerID);
       return  this.getItems(this.data.getSpinnerId()).subscribe((res: any) => this.showSpinnerItems(res));
     }
-    this.setAuthFormPosition();
     this.isAuthForm = false;
   }
 
@@ -137,11 +139,7 @@ export class SpinnerListComponent implements OnInit {
     return  this.http.postData('/getItems',  sendData);
   }
 
-  setAuthFormPosition() {
-    this.elAuthForm.nativeElement.style.top =  this.elCont.nativeElement.offsetHeight + 60 + 'px';
-  }
-
-  clickShowPassword(event) {
+  clickShowPassword() {
     if (this.isSpinnerPassword) {
       this.elFakeClickShow.nativeElement.setAttribute('class', 'fa fa-check-square-o');
     } else {
@@ -155,10 +153,10 @@ export class SpinnerListComponent implements OnInit {
   showSpinnersForm() {
     this.isSpinnersFormShow = !this.isSpinnersFormShow;
     if (this.isSpinnersFormShow) {
-      this.elShowSpinners.nativeElement.innerText = 'Hide';
+      this.elShowSpinners.nativeElement.innerText = 'Hide spinners';
       return this.elSpinnersForm.nativeElement.setAttribute('id', 'spinners-form-active');
     }
-    this.elShowSpinners.nativeElement.innerText = 'Show';
+    this.elShowSpinners.nativeElement.innerText = 'Show spinners';
     this.elSpinnersForm.nativeElement.setAttribute('id', 'spinners-form-dissable');
     this.resetForm();
   }

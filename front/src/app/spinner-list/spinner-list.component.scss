@@ -48,8 +48,8 @@ $whiteColor: white;
   border-top-right-radius: 0.3em;
   color: $whiteColor;
   font-size: 1.2em;
-  margin-top: 2.6em;
-  margin-left: -0.75em;
+  margin-top: 4.6em;
+  margin-left: -2.75em;
   box-shadow: 3px -1px 5px gray;
   outline: none;
   &:hover{
@@ -76,7 +76,7 @@ $whiteColor: white;
 .error{
   grid-area: error;
   font-size: 0.8em;
-  width: 16.5em;
+  max-width: 16.5em;
 }
 
 .inp-spinners{
@@ -143,29 +143,61 @@ $whiteColor: white;
   color: #721c24;
 }
 
-.authForm{
+.overlay{
   position: fixed;
-  top: 15%;
-  background-color: $whiteColor;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(62, 62, 62, 0.76);
+  top: 0;
+  left: 0;
+  z-index: 100000;
+  i{
+    position: relative;
+    top: 1em;
+    right: 1em;
+    width: 2%;
+    float: right;
+    margin: 0.3em;
+    cursor: pointer;
+    font-size: 2em;
+    color: $whiteColor;
+  }
+}
 
-  .arround-auth{
-    font-size: 1em;
-    padding: 0.5em;
+.pop-up{
+  color: $color;
+  position: fixed;
+  left: 33%;
+  top: 23%;
+  background-color: $whiteColor;
+  border: 4px solid $color;
+  border-radius: 0.3em;
+  width: 30%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  z-index: 100001;
+  .error{
+    position: absolute;
+    max-width: 100%;
   }
   p{
+    margin-bottom: 0.2em;
     text-align: center;
     background-color: $color;
     color: $whiteColor;
-    .auth-close{
-      float: right;
-      padding-right: 0.2em;
-      padding-top: 0.2em;
-    }
+    font-size: 1.5em;
+  }
+  .arround-auth{
+    font-size: 1.2em;
+    padding: 0.5em;
+  }
+  input{
+    padding-top: 1.3em;
   }
   #auth-but{
     padding: 0.5em;
   }
 }
-
 
 

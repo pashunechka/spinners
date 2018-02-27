@@ -1,6 +1,5 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {ActivatedRoute} from '@angular/router';
 import {HttpService} from '../../http.service';
 import {DataService} from '../../data.service';
 
@@ -14,11 +13,18 @@ export class AddFormComponent implements OnInit {
   @ViewChild('image')
   private elImage: ElementRef;
 
-  DEFAULTIMAGE = 'no-image.svg';
+  @ViewChild('imageCont')
+  private elImageCont: ElementRef;
+
+  @Input() member;
+  @Output() modifyItem: EventEmitter<any> = new EventEmitter();
+
+  limitMaxItems = 15;
+  exceedLimit = false;
   items;
   addForm: FormGroup;
   isShow = false;
-  image: any = {};
+  loadImage: any = {};
   subscription;
 
   constructor(
@@ -27,24 +33,38 @@ export class AddFormComponent implements OnInit {
     private data: DataService) { }
 
   ngOnInit() {
+    this.member ? this.loadImage.name = this.member.image : this.loadImage.name = '';
     this.subscription = this.data.spinnerItems.subscribe(items => this.items = items);
     this.initForm();
   }
 
   initForm() {
     this.addForm = this.formBuilder.group({
-      title: ['', Validators.required],
+      title: [this.member ? this.member.name : '' , Validators.required],
       image: ['']
     });
   }
 
-  submit(): void {
+  submit() {
     if (this.addForm.invalid) {
       return this.addForm.get('title').markAsTouched({onlySelf: true});
     }
-    const form = this.setForm();
     this.sendFileToServer();
-    this.addSpinnerItems(form);
+    if (this.member) {
+      const form = this.setForm(this.member._id);
+      this.modifySpinnerItem(form);
+    } else {
+      if (this.items.length >= this.limitMaxItems) {
+        return this.exceedLimit = true;
+      }
+      const form = this.setForm(this.data.getSpinnerId());
+      this.addSpinnerItems(form);
+    }
+  }
+
+  modifySpinnerItem(spinnerItem) {
+    this.http.postData('/modifyItem', spinnerItem).subscribe((res: any) => this.modifyItem.emit(res),
+      () => this.data.announceError(false));
   }
 
   addSpinnerItems(spinnerItem): void {
@@ -52,18 +72,18 @@ export class AddFormComponent implements OnInit {
       this.items.push(res);
       this.data.announceAddItem(this.items);
       this.addForm.reset();
-      this.image = {};
-      this.setImage('image-cont', `../../assets/${this.DEFAULTIMAGE}`);
+      this.loadImage = {};
+      this.setImage('image-cont', `../../assets/${this.data.DEFAULTIMAGE}`);
     }, () => this.data.announceError(false));
   }
 
-  setForm(): FormGroup {
+  setForm(id): FormGroup {
     const form = this.addForm.value;
-    form.image = this.image.name;
-    if (!this.image.name) {
-      form.image = this.DEFAULTIMAGE;
+    form.image = this.loadImage.name;
+    if (!this.loadImage.name) {
+      form.image = this.data.DEFAULTIMAGE;
     }
-    form.id = this.data.getSpinnerId();
+    form.id = id;
     return form;
   }
 
@@ -71,7 +91,7 @@ export class AddFormComponent implements OnInit {
     this.isShow = !this.isShow;
     event.target.style.borderBottom = '2px solid #31bbb5';
     this.addForm.reset();
-    this.image = {};
+    this.loadImage = {};
     if (this.isShow) {
       event.target.style.borderBottom = 0;
     }
@@ -82,17 +102,17 @@ export class AddFormComponent implements OnInit {
   }
 
   getImage(event): void {
-    this.image = event.target.files[0];
+    this.loadImage = event.target.files[0];
     this.previewImage(event);
   }
 
   setImage(id, srcURL): void {
-    document.getElementById(id).setAttribute('src', srcURL);
+    this.elImageCont.nativeElement.setAttribute('src', srcURL);
   }
 
   sendFileToServer(): void {
     const formData: any = new FormData();
-    const file = this.image;
+    const file = this.loadImage;
     formData.append('file', file);
     this.http.postData('/uploads', formData).subscribe();
   }

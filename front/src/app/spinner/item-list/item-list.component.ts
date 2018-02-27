@@ -1,6 +1,7 @@
 import {Component, ElementRef, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import {DataService} from '../../data.service';
 import {Subscription} from 'rxjs/Subscription';
+import {HttpService} from '../../http.service';
 
 @Component({
   selector: 'app-item-list',
@@ -24,16 +25,19 @@ export class ItemListComponent implements OnInit, OnDestroy {
   items = [];
   parts = [];
   isCheckAll = false;
+  isDelete = false;
+  isModify = false;
+  member;
   subscription: Subscription;
   clickedCheckbox;
 
-  constructor(private data: DataService) { }
+  constructor(private data: DataService, private http: HttpService) { }
 
   ngOnInit() {
     this.subscription = this.data.wheelParts.subscribe(parts => this.parts = parts);
     this.subscribeSpinnerItems();
     this.subscription = this.data.spinnerAddItem.subscribe(item => this.items = item);
-    this.subscribeSpinnerAddItem();
+    this.subscribeSpinnerStatistics();
   }
 
   subscribeSpinnerItems() {
@@ -44,7 +48,7 @@ export class ItemListComponent implements OnInit, OnDestroy {
     });
   }
 
-  subscribeSpinnerAddItem() {
+  subscribeSpinnerStatistics() {
     this.data.spinnerStatistics.subscribe(item => {
       for (const key in this.items) {
         if (this.items[key]._id === item._id) {
@@ -139,6 +143,42 @@ export class ItemListComponent implements OnInit, OnDestroy {
       return fake.setAttribute('class', 'fake-check fa fa-check-square-o');
     }
     fake.setAttribute('class', 'fake-check fa fa-square-o');
+  }
+
+  showModifyPopUp(member) {
+    this.isModify = true;
+    this.member = member;
+  }
+
+  setModifyItem(event) {
+    this.isModify = false;
+    const removedItem = this.items.find((item) => {
+      return item._id === event._id;
+    });
+    this.items[this.items.indexOf(removedItem)].name = event.name;
+    this.items[this.items.indexOf(removedItem)].image = event.image;
+    if ( this.parts[this.parts.indexOf(removedItem)]) {
+      this.parts[this.parts.indexOf(removedItem)].name = event.name;
+      this.parts[this.parts.indexOf(removedItem)].image = event.image;
+      this.data.announceWheelParts(this.parts);
+    }
+  }
+
+  showDeletePopUp(member) {
+    this.isDelete = true;
+    this.member = member;
+  }
+
+  deleteItem(member) {
+    this.http.postData('/deleteItem', member).subscribe((res: any) => {
+      const removedItem = this.items.find((item) => {
+        return item._id === member._id;
+      });
+      this.items.splice(this.items.indexOf(removedItem), 1);
+      this.parts.splice(this.items.indexOf(removedItem), 1);
+      this.data.announceWheelParts(this.parts);
+      this.isDelete = false;
+    });
   }
 
 }
