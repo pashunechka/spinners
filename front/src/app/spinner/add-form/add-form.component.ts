@@ -23,7 +23,6 @@ export class AddFormComponent implements OnInit {
   exceedLimit = false;
   items;
   addForm: FormGroup;
-  isShow = false;
   loadImage: any = {};
   subscription;
 
@@ -40,9 +39,22 @@ export class AddFormComponent implements OnInit {
 
   initForm() {
     this.addForm = this.formBuilder.group({
-      title: [this.member ? this.member.name : '' , Validators.required],
+      title: [this.member ? this.member.name : '', {
+        validators: [Validators.required, this.validateForm()]
+      }],
       image: ['']
     });
+  }
+
+  validateForm() {
+    return(): {[key: string]: any} => {
+      if (!this.member && this.items) {
+        if (this.items.length >= this.limitMaxItems) {
+          return {invalid: true};
+        }
+      }
+      return null;
+    };
   }
 
   submit() {
@@ -85,16 +97,6 @@ export class AddFormComponent implements OnInit {
     }
     form.id = id;
     return form;
-  }
-
-  toggleIsShow(event): void {
-    this.isShow = !this.isShow;
-    event.target.style.borderBottom = '2px solid #31bbb5';
-    this.addForm.reset();
-    this.loadImage = {};
-    if (this.isShow) {
-      event.target.style.borderBottom = 0;
-    }
   }
 
   chooseImg(): void {

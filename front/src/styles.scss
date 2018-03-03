@@ -1,13 +1,33 @@
 @import url('https://fonts.googleapis.com/css?family=Ubuntu');
 @import "../node_modules/bootstrap/scss/bootstrap.scss";
 
+@import '~@angular/material/theming';
+@include mat-core();
+
+$my-app-primary: mat-palette($mat-teal);
+$my-app-accent:  mat-palette($mat-cyan);
+$my-app-warn:    mat-palette($mat-red);
+
+$my-app-theme: mat-light-theme($my-app-primary, $my-app-accent, $my-app-warn);
+
+@include angular-material-theme($my-app-theme);
+
 body{
   font-family: 'Ubuntu', sans-serif;
   user-select: none;
+  background-color: #fafafa;
 }
 
 
 .error{
   color: #721c24;
   border-bottom-color: #721c24 !important;
+}
+
+.mat-input-invalid .mat-input-placeholder, .mat-error {
+  color:  #721c24;
+}
+
+.mat-input-invalid .mat-input-ripple {
+  background-color:  #721c24;
 }

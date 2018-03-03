@@ -2,23 +2,18 @@
   <div class="left">
     <app-spinner-list></app-spinner-list>
   </div>
-  <div class="right"></div>
   <div class="toggle">
     Spinner
-    <img #switchImage
-         [hidden]="isWheel"
-         class="switch-wheel"
-         src="/assets/switch-line.svg"
-         (click)="isWheel = true"
-    >
-    <img  [hidden]="!isWheel"
-          class="switch-wheel"
-          src="/assets/switch-bar.svg"
-          (click)="isWheel = false"
-    >Statistics
+    <mat-slide-toggle [color]="color" [(ngModel)]="isWheel">
+    </mat-slide-toggle>
+    Statistics
   </div>
   <div class="reel">
+    <mat-card>
     <div class="wheel-conatoiner" [hidden]="isWheel">
+      <mat-card-header>
+        <p><i class="material-icons">rotate_right</i> Spinner</p>
+      </mat-card-header>
       <div class="arrow-cont" id="arrow-cont">
         <svg id="arrow" height="18px" version="1.1" viewBox="0 0 24 12" width="36px" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
           <g fill-rule="evenodd" stroke="black" stroke-width="1">
@@ -39,21 +34,31 @@
              (mousedown)="clickDown($event)">
         </svg>
       </div>
-      <button class="btn-spin" (click)="clickToRotate()" [disabled]="parts.length < 2"><i class="fa fa-repeat"></i> Spin</button>
+      <mat-card-actions>
+        <button class="btn-spin" mat-raised-button (click)="clickToRotate()" [disabled]="parts.length < 2"><i class="fa fa-repeat"></i> Spin</button>
+      </mat-card-actions>
     </div>
     <app-statistics [hidden]="!isWheel"></app-statistics>
+    </mat-card>
   </div>
   <div class="item-add-form">
      <app-add-form></app-add-form>
   </div>
   <div class="item-list">
-     <app-item-list></app-item-list>
+     <app-item-list [disableItemsList]="disableItemsList"></app-item-list>
   </div>
 </div>
+
 <div class="overlay" *ngIf="isPopUp" (click)="close()">
   <div class="pop-up">
-    <p>{{spinner.topPositionValue.name}}</p>
-    <img src="/assets/{{spinner.topPositionValue.image}}">
+    <mat-card>
+        <p>
+          {{spinner.topPositionValue.name}}
+        </p>
+      <mat-card-content>
+        <img src="/assets/{{spinner.topPositionValue.image}}">
+      </mat-card-content>
+    </mat-card>
   </div>
   <i class="fa fa-remove" (click)="close()"></i>
 </div>

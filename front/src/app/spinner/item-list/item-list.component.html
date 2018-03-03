@@ -1,52 +1,52 @@
+<mat-card>
 <div id="check-all" class="list-js">
-  <i class="fa fa-square-o" #fakeCheckAll (click)="clickAllInput()"></i>
-  <input
-    hidden
+  <mat-checkbox
+    [disabled]="items.length < 1 || disableItemsList"
     #checkAllInp
-    type="checkbox"
-    name="memberall"
-    (click)="checkAll()"
-  >
-  Check all
+    (change)="checkAll($event)"
+  >Check all</mat-checkbox>
 </div>
 <div class="list-cont" id="list-cont">
-  <div class="borderBottom"  *ngFor="let member of items; let i = index">
-<div
-  class="list list-js" id="list{{i}}"
-  draggable="true"
-  (dragstart)="dragStart($event)"
-  (click)="getInput($event)"
-  >
-  <a title="{{member.name}}" class="">
-    <i #fakeCheck class="fake-check fa fa-square-o"></i>
-    <input
-      #listInp
-      hidden
-      id="{{member._id}}"
-      type="checkbox"
-      name="member"
-      value="{{member.name}}"
-      (click)="addChosenPartsToWheel($event)"
-    >{{member.name}}
-  </a>
-  <img src="assets/{{member.image}}">
+  <mat-selection-list #itemsList>
+    <div *ngFor="let member of items">
+      <mat-list-option
+        [disabled]="disableItemsList"
+        [checkboxPosition]="before"
+        id="{{member._id}}"
+        draggable="true"
+        (dragstart)="dragStart($event)"
+        (selectionChange)="getInput($event)"
+      >
+        <p>{{member.name}}<img src="assets/{{member.image}}"></p>
+      </mat-list-option>
+    <button mat-icon-button class="show-mod-menu" [matMenuTriggerFor]="menu"><i class="material-icons">more_vert</i></button>
+    <mat-menu #menu="matMenu">
+      <span class="delete-item"  mat-menu-item (click)="showDeletePopUp(member)"><i class="material-icons">delete_forever</i> Delete</span>
+      <span class="modify-item"  mat-menu-item (click)="showModifyPopUp(member)"><i class="material-icons">create</i> Modify</span>
+    </mat-menu>
+    </div>
+  </mat-selection-list>
 </div>
-    <span class="fa fa-pencil modify-item" (click)="showModifyPopUp(member)"></span>
-    <span class="fa fa-close delete-item" (click)="showDeletePopUp(member)"></span>
-</div>
-</div>
+</mat-card>
 
 <div class="overlay" *ngIf="isDelete || isModify" (click)="isDelete = false" (click)="isModify = false">
   <i class="fa fa-remove" (click)="isDelete = false" (click)="isModify = false"></i>
 </div>
 
-<div class="delete-pop-up pop-up" *ngIf="isDelete">
-  <p>Delete item?</p>
-  <button (click)="deleteItem(member)">Delete</button>
-  <button (click)="isDelete = false">Cancel</button>
+<div class="pop-up" *ngIf="isDelete">
+  <mat-card class="example-card">
+    <mat-card-header>
+      <p>
+        Are you sure you want to delete an item?
+      </p>
+    </mat-card-header>
+    <mat-card-actions>
+      <button [color]="colorWarn" mat-raised-button (click)="deleteItem(member)">Delete</button>
+      <button [color]="color" mat-raised-button (click)="isDelete = false">Cancel</button>
+    </mat-card-actions>
+  </mat-card>
 </div>
 
 <div class="modify-pop-up pop-up" *ngIf="isModify">
-  <p>Modify item</p>
   <app-add-form [member]="member" (modifyItem)="setModifyItem($event)"></app-add-form>
 </div>

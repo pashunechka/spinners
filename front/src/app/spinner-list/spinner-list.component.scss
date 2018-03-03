@@ -1,37 +1,64 @@
-$color: #31bbb5;
+$color: #009688;
 $whiteColor: white;
 
-.cont{
-  float: left;
-  border: 4px solid $color;
-  border-left: none;
-  border-top-right-radius: 0.3em;
-  border-bottom-right-radius: 0.3em;
-  box-shadow: 3px 3px 5px gray;
-  background-color: $whiteColor;
-  p{
-    background-color: $color;
+.sidenav-content {
+  display: flex;
+  height: 100%;
+  mat-drawer {
+    background-color: #fafafa;
+    mat-card{
+      height: 100%;
+    }
+  }
+}
+
+.full-width{
+  width: 100%;
+}
+
+.toolbar {
+  position: fixed;
+  top: 0;
+  z-index: 99999;
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.77);
+  h1 {
+    margin-left: 1em;
+    font-weight: 700;
+  }
+  button {
+    outline: none;
+  }
+}
+
+.list-spinners{
+  button {
+    width: 100%;
+    color: $color;
     font-size: 1.2em;
-    padding: 0.2em 0;
+    font-weight: 700;
+    text-align: left;
+    outline: none;
+    padding: 0.2em 0.5em;
+  }
+  span{
+    margin-top: 0.2em;
+  }
+}
+
+.cont{
+  p{
+    color: $color;
+    font-size: 1em;
+    font-weight: 700;
+    padding: 0.2em 1em;
     text-align: center;
     text-transform: uppercase;
-    color: white;
     margin-bottom: 0;
-  }
-
-  .form-cont{
-    grid-area: inp-spinners;
   }
 
   .arround{
     font-size: 1em;
     padding: 0.5em;
-    display: grid;
-    max-height: 35em;
-    grid-template-columns: 80% 20%;
-    grid-template-areas:  "error error"
-    "inp-spinners inp-spinners"
-    "list-spinners list-spinners";
   }
 }
 
@@ -40,79 +67,13 @@ $whiteColor: white;
   font-size: 0.9em;
 }
 
-.show-spinners{
-  transform: rotate(90deg);
-  background-color: $color;
-  border: 2px solid $color;
-  border-top-left-radius: 0.3em;
-  border-top-right-radius: 0.3em;
-  color: $whiteColor;
-  font-size: 1.2em;
-  margin-top: 4.6em;
-  margin-left: -2.75em;
-  box-shadow: 3px -1px 5px gray;
-  outline: none;
-  &:hover{
-    background-color: $whiteColor;
-    color: $color;
-    border-color: $color;
-  }
-}
-
-#spinners-form-active{
-  transition-timing-function: linear;
-  transition-duration: 400ms;
-  position: fixed;
-  left: 0%
-}
-
-#spinners-form-dissable{
-  transition-timing-function: linear;
-  transition-duration: 400ms;
-  position: fixed;
-  left: -15.5em
-}
-
-.error{
-  grid-area: error;
-  font-size: 0.8em;
-  max-width: 16.5em;
-}
-
-.inp-spinners{
-  width: 100%;
-  font-size: 0.9em;
-  padding: 0.5em 0 0.5em 0.2em;
-  border: none;
-  border-bottom: 2px solid gray;
-  outline: none;
-  color: $color;
-  &:focus {
-    border-bottom-color: $color;
-  }
-}
-
 .add-spinner{
-  background-color: white;
-  width: 100%;
-  border: none;
-  border-radius: 0.2em;
   margin-top: 0.5em;
-  color: $color;
+  margin-bottom: 0.5em;
+  width: 100%;
+  font-size: 1em;
+  font-weight: 700;
   outline: none;
-  cursor: pointer;
-  font-weight: 800;
-  &:hover{
-    color: white;
-    background-color: $color;
-  }
-
-}
-
-.list-spinners{
-  grid-area: list-spinners;
-  overflow-y: scroll;
-  overflow-x: hidden;
 }
 
 .select-spinner{
@@ -135,11 +96,10 @@ $whiteColor: white;
 .lock,.unlock{
   float: right;
   padding-right: 1em;
-  margin-top: 0.2em;
+
 }
 
 .lock{
-  padding-right: 1.3em;
   color: #721c24;
 }
 
@@ -150,7 +110,7 @@ $whiteColor: white;
   background-color: rgba(62, 62, 62, 0.76);
   top: 0;
   left: 0;
-  z-index: 100000;
+  z-index: 100000000;
   i{
     position: relative;
     top: 1em;
@@ -169,34 +129,39 @@ $whiteColor: white;
   position: fixed;
   left: 33%;
   top: 23%;
-  background-color: $whiteColor;
-  border: 4px solid $color;
-  border-radius: 0.3em;
   width: 30%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  text-transform: uppercase;
-  z-index: 100001;
-  .error{
-    position: absolute;
-    max-width: 100%;
-  }
+  z-index: 1000000001;
   p{
     margin-bottom: 0.2em;
     text-align: center;
-    background-color: $color;
-    color: $whiteColor;
+    color: $color;
     font-size: 1.5em;
+    text-transform: uppercase;
   }
   .arround-auth{
     font-size: 1.2em;
     padding: 0.5em;
   }
-  input{
-    padding-top: 1.3em;
+  button{
+    margin-top: 0.5em;
   }
-  #auth-but{
-    padding: 0.5em;
+
+}
+
+
+@media (min-width: 900px) and (max-width: 1250px) {
+  .pop-up{
+    left: 25%;
+    top: 25%;
+    width: 50%;
+  }
+}
+
+@media (max-width:900px) {
+  .pop-up{
+    left: 20%;
+    top: 20%;
+    width: 60%;
   }
 }
 

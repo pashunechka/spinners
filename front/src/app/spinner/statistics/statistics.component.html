@@ -1,13 +1,16 @@
 <div>
-  <p><i class="fa fa-area-chart"></i> Statistics
+  <p><i class="material-icons">pie_chart</i> Statistics
     <span class="statisticsType">
-      <select (click)="toggleStatistics($event.target.value)">
-        <option class="statisticsType" value='line'>line</option>
-        <option class="statisticsType" value='bar'>bar</option>
-      </select>
+    <mat-form-field>
+      <mat-select [(value)]="select">
+        <mat-option *ngFor="let type of types" [value]="type" (onSelectionChange)="toggleStatistics($event, type)">
+          {{ type }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
         </span>
   </p>
-    <canvas  baseChart height="220px"
+    <canvas  baseChart height="200px"
             [data]="chartData"
             [labels]="chartLabels"
             [colors]="chartColors"

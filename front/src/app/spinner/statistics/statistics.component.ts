@@ -8,6 +8,9 @@ import {DataService} from '../../data.service';
 })
 export class StatisticsComponent implements OnInit, OnDestroy {
 
+  types = ['line', 'bar' ];
+  select = 'line';
+
   public chartOptions: any = {
     scaleShowVerticalLines: false,
     responsive: true,
@@ -89,9 +92,11 @@ export class StatisticsComponent implements OnInit, OnDestroy {
     }, 1);
   }
 
-  toggleStatistics(event): void {
-    this.chartType = event;
-    this.showStatistics(this.collectStat);
+  toggleStatistics(event, type): void {
+    if (event.isUserInput) {
+      this.chartType = type;
+      this.showStatistics(this.collectStat);
+    }
   }
 
 }

@@ -1,14 +1,17 @@
-<div id="spinners-form-dissable" #spinnersForm>
+<mat-toolbar class="toolbar" [color]="color">
+  <button mat-icon-button (click)="drawer.toggle()" (click)="resetForm()"><mat-icon>menu</mat-icon></button>
+  <h1>Spinners app</h1>
+</mat-toolbar>
+<mat-drawer-container class="sidenav-content">
+  <mat-drawer #drawer class="sidenav" mode="side">
+    <mat-card>
+<div #spinnersForm>
   <div class="cont" id="cont" #cont >
     <p>Create a new spinner</p>
     <div class="arround">
       <form class="form-cont" [formGroup]="addSpinnerForm" novalidate>
-        <div class="error" *ngIf="addSpinnerForm.controls['spinnerName'].invalid &&
-                                  addSpinnerForm.controls['spinnerName'].touched">
-          The field shouldn't be empty
-        </div>
-        <input
-          class="inp-spinners"
+        <mat-form-field class="full-width">
+          <input matInput
           type="text"
           autocomplete="off"
           name="spinnerName"
@@ -16,9 +19,13 @@
           formControlName="spinnerName"
           (keypress.enter)="submit()"
         >
+          <mat-error *ngIf="addSpinnerForm.controls['spinnerName'].getError('required') && addSpinnerForm.controls['spinnerName'].touched">
+            The field shouldn't be empty
+          </mat-error>
+        </mat-form-field>
         <fieldset formGroupName="password">
         <div class="isPrivateSpinner">
-          <span #fakeClickShow class="fa fa fa-square-o" (click)="clickShowPassword($event)"> </span> <span> Set password</span>
+          <mat-checkbox #checkBox (change)="clickShowPassword()">Set password</mat-checkbox>
           <input
             hidden
             type="checkbox"
@@ -28,70 +35,72 @@
             formControlName="isShowPass"
           >
         </div>
-        <div class="error" *ngIf="addSpinnerForm.controls['password'].errors && addSpinnerForm.controls['password'].get('spinnerPassword').touched
-        ">
-          The password must be longer than 5 characters
-        </div>
-        <input
-          [hidden]="isSpinnerPassword"
-          autocomplete="off"
-          class="inp-spinners"
-          type="password"
-          name="spinnerPassword"
-          placeholder="Enter a password"
-          formControlName="spinnerPassword"
-          (keypress.enter)="submit()"
-        >
-        <div>
-          <button class="add-spinner" id="add-spinner"  (click)="submit()"><i class="fa fa-plus"></i> Add a spinner</button>
-        </div>
+          <mat-form-field class="full-width" [hidden]="isSpinnerPassword">
+            <input matInput
+              autocomplete="off"
+              [errorStateMatcher]="confirmValidParentMatcher"
+              [type]="hidepass ? 'password' : 'text'"
+              name="spinnerPassword"
+              placeholder="Enter a password"
+              formControlName="spinnerPassword"
+              (keypress.enter)="submit()"
+            >
+            <mat-icon [color]="color" matSuffix (click)="hidepass = !hidepass">{{hidepass ? 'visibility' : 'visibility_off'}}</mat-icon>
+            <mat-error *ngIf="addSpinnerForm.controls['password'].hasError('invalid')">
+              The password must be longer than 5 letter
+            </mat-error>
+          </mat-form-field>
+          <button class="add-spinner" mat-raised-button color="primary" (click)="submit()"><mat-icon>add</mat-icon> Add a spinner</button>
         </fieldset>
       </form>
       <div class="list-spinners">
-        <div
-          class="select-spinner"
-          *ngFor="let spinner of spinners"
-          (click)="showSpinner(spinner)"
-        >
+        <button *ngFor="let spinner of spinners" mat-raised-button (click)="showSpinner(spinner)"n>
           {{spinner.name}}
-          <span *ngIf="spinner.password.private" class="lock fa fa-lock"></span>
-          <span *ngIf="!spinner.password.private" class="unlock fa fa-unlock"></span>
-        </div>
+          <span *ngIf="spinner.password.private" class="lock material-icons">lock</span>
+          <span *ngIf="!spinner.password.private" class="unlock material-icons">lock_open</span>
+        </button>
       </div>
     </div>
   </div>
-  <button class="show-spinners" #showSpinners (click)="showSpinnersForm()">Show spinners</button>
 </div>
+</mat-card>
+</mat-drawer>
+</mat-drawer-container>
+
+
 <div class="overlay" [hidden]="isAuthForm" (click)="closeAuth()">
   <i class="fa fa-remove" (click)="closeAuth()"></i>
 </div>
-
 <div class="pop-up" id="authForm" #elAuthForm [hidden]="isAuthForm">
-  <p>authentication</p>
-  <form class="arround-auth" [formGroup]="authForm" novalidate>
-    <div>
-      <div class="error" *ngIf="authForm.controls['authPassword'].invalid && smallPassword"
-      >
-        The password must be longer than 5 characters
-      </div>
-      <div class="error" *ngIf="invalidPassword"
-      >
-        Invalid password!
-      </div>
-      <input
-        id="auth-inp"
-        class="inp-spinners"
-        autocomplete="off"
-        type="password"
-        name="password"
-        placeholder="Enter a password"
-        formControlName="authPassword"
-        (keypress.enter)="sendAuth()"
-        (focus)="hideErr()"
-      >
-    </div>
-    <div>
-      <button class="add-spinner" id="auth-but" (click)="sendAuth()">Log in</button>
-    </div>
-  </form>
+  <mat-card>
+    <p>
+      authentication
+    </p>
+    <mat-card-content>
+      <form class="arround-auth" [formGroup]="authForm" novalidate>
+        <div>
+          <mat-form-field class="full-width">
+            <input matInput
+                   autocomplete="off"
+                   [type]="hideauth ? 'password' : 'text'"
+                   name="password"
+                   placeholder="Enter a password"
+                   formControlName="authPassword"
+                   (keypress.enter)="sendAuth()"
+            >
+            <mat-icon [color]="color" matSuffix (click)="hideauth = !hideauth">{{hideauth ? 'visibility' : 'visibility_off'}}</mat-icon>
+            <mat-error  *ngIf="authForm.controls['authPassword'].getError('invalid')">
+              Invalid password!
+            </mat-error>
+            <mat-error  *ngIf="authForm.controls['authPassword'].getError('required') || authForm.controls['authPassword'].getError('minlength')">
+              The password must be longer than 5 letter
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div>
+          <button class="add-spinner" id="auth-but" mat-raised-button color="primary" (click)="sendAuth()"><mat-icon>account circle</mat-icon>Log in</button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
 </div>

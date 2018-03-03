@@ -1,8 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-
 import { AppRoutingModule } from './app-routing.module';
-
+import 'hammerjs';
 import { AppComponent } from './app.component';
 import { SpinnerListComponent } from './spinner-list/spinner-list.component';
 import { SpinnerComponent } from './spinner/spinner.component';
@@ -14,6 +13,14 @@ import { AddFormComponent } from './spinner/add-form/add-form.component';
 import {DataService} from './data.service';
 import { ItemListComponent } from './spinner/item-list/item-list.component';
 import { StatisticsComponent } from './spinner/statistics/statistics.component';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {
+  MatButtonModule, MatCardModule, MatCheckboxModule, MatGridListModule, MatIconModule, MatInputModule, MatListModule,
+  MatMenuModule,
+  MatSelectModule,
+  MatSidenavModule,
+  MatSlideToggleModule, MatToolbarModule
+} from '@angular/material';
 
 
 @NgModule({
@@ -31,7 +38,20 @@ import { StatisticsComponent } from './spinner/statistics/statistics.component';
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
-    ChartsModule
+    ChartsModule,
+    BrowserAnimationsModule,
+    MatInputModule,
+    MatButtonModule,
+    MatSelectModule,
+    MatIconModule,
+    MatSlideToggleModule,
+    MatSidenavModule,
+    MatToolbarModule,
+    MatCheckboxModule,
+    MatListModule,
+    MatCardModule,
+    MatMenuModule,
+    MatGridListModule
   ],
   providers: [
     DataService,

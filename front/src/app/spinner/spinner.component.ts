@@ -11,9 +11,7 @@ import {HttpService} from '../http.service';
 })
 export class SpinnerComponent implements OnInit, OnDestroy {
 
-  @ViewChild('switchImage')
-  private elSwitchImage: ElementRef;
-
+  color = 'primary';
   MILLISECONDS = 4000;
   STARTRADIANS: number = (1 + Math.random()) * ((360 * Math.PI) / 180);
 
@@ -23,6 +21,9 @@ export class SpinnerComponent implements OnInit, OnDestroy {
   isClick = false;
   isPopUp = false;
   stop = false;
+  isWheel;
+
+  disableItemsList: boolean;
 
   clickNumber = 0;
   rotateRad: number = this.STARTRADIANS;
@@ -33,7 +34,7 @@ export class SpinnerComponent implements OnInit, OnDestroy {
   constructor(private data: DataService, private http: HttpService) {}
 
   ngOnInit() {
-    this.spinner.spinnerCenterColor = '#31bbb5';
+    this.spinner.spinnerCenterColor = '#266096';
     this.subscription = this.data.wheelParts.subscribe(parts => {
       this.parts = parts;
       this.spinner.initialize('wheel', this.parts);
@@ -106,14 +107,11 @@ export class SpinnerComponent implements OnInit, OnDestroy {
   }
 
   dissableItems(value: boolean): void {
-    const list = document.getElementsByClassName('list-js');
-    for (let key = 0; key < list.length; key++) {
-      list[key].getElementsByTagName('input')[0].disabled = value;
-    }
+      this.disableItemsList = value;
   }
 
   dragExit(event): void {
-    this.setDropElementBackground(event, 'white');
+   this.setDropElementBackground(event, '#009688');
   }
 
   dragOver(event): void {
@@ -128,7 +126,7 @@ export class SpinnerComponent implements OnInit, OnDestroy {
     if (event.dataTransfer.getData('value')) {
       document.getElementById(event.dataTransfer.getData('value')).click();
     }
-    this.setDropElementBackground(event, 'white');
+    this.setDropElementBackground(event, '#009688');
   }
 
   setIsClick(value: boolean): void {
@@ -155,10 +153,4 @@ export class SpinnerComponent implements OnInit, OnDestroy {
   close(): void {
     this.isPopUp = false;
   }
-
-  toggleWheelAndStat() {
-
-    this.elSwitchImage.nativeElement.src = '/assets/switch-bar.svg';
-  }
-
 }

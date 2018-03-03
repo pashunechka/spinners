@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
+import {Component, Input, OnChanges, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {DataService} from '../../data.service';
 import {Subscription} from 'rxjs/Subscription';
 import {HttpService} from '../../http.service';
@@ -10,26 +10,23 @@ import {HttpService} from '../../http.service';
 })
 export class ItemListComponent implements OnInit, OnDestroy {
 
-  @ViewChild('fakeCheckAll')
-  private elFakeCheckAll: ElementRef;
-
   @ViewChild('checkAllInp')
-  private elCheckAllInp: ElementRef;
+  private elCheckAllInp;
 
-  @ViewChildren('listInp')
-  private elListInp: QueryList<any>;
+  @ViewChild('itemsList')
+  private elItemsList;
 
-  @ViewChildren('fakeCheck')
-  private elFakeCheck: QueryList<any>;
+  color = 'primary';
+  colorWarn = 'warn';
+
+  @Input() disableItemsList: boolean;
 
   items = [];
   parts = [];
-  isCheckAll = false;
   isDelete = false;
   isModify = false;
   member;
   subscription: Subscription;
-  clickedCheckbox;
 
   constructor(private data: DataService, private http: HttpService) { }
 
@@ -44,7 +41,7 @@ export class ItemListComponent implements OnInit, OnDestroy {
     this.subscription = this.data.spinnerItems.subscribe(items => {
       this.data.announceWheelParts([]);
       this.items = items;
-      this.setStartCondition();
+      this.elCheckAllInp.checked = false;
     });
   }
 
@@ -58,92 +55,48 @@ export class ItemListComponent implements OnInit, OnDestroy {
     });
   }
 
-  setStartCondition() {
-    this.elFakeCheckAll.nativeElement.setAttribute('class', 'fa fa-square-o');
-    this.elCheckAllInp.nativeElement.checked = false;
-    this.isCheckAll = false;
-  }
-
   ngOnDestroy() {
     this.subscription.unsubscribe();
   }
 
-  getInput(event) {
-    const target = event.target.getElementsByTagName('input')[0];
-    if (target.disabled) {
-      return;
-    }
-    this.clickedCheckbox = this.getItemById(target.id);
-    target.checked = !target.checked;
-    this.addChosenPartsToWheel(target);
-  }
-
-  addChosenPartsToWheel(event): void {
-    if (event.checked) {
-      this.parts.push(this.clickedCheckbox);
-    } else {
-      this.parts.splice(this.parts.indexOf(this.clickedCheckbox), 1);
-    }
-    this.data.announceWheelParts(this.parts);
-    this.checkIsAllActive();
-    this.checkFake(event.parentElement);
-  }
-
-  getItemById(id) {
-    for (const key in this.items) {
-      if (this.items[key]._id === id) {
-        return this.items[key];
+  checkAll(event) {
+      if (event.checked) {
+        this.elItemsList.selectAll();
+        this.items.forEach(el => {
+          this.parts.push(el);
+        });
+      } else {
+        this.elItemsList.deselectAll();
+        this.parts = [];
       }
+      this.data.announceWheelParts(this.parts);
+  }
+
+
+  getInput(event) {
+      this.items.forEach(el => {
+        if (el._id === event.source._element.nativeElement.id) {
+          event.selected ? this.parts.push(el) : this.parts.splice(this.parts.indexOf(el), 1);
+        }
+      });
+      this.data.announceWheelParts(this.parts);
+      this.isAllChecked();
+  }
+
+  isAllChecked() {
+    if (this.elItemsList.selectedOptions.selected.length === this.items.length) {
+      this.elItemsList.selectAll();
+      return this.elCheckAllInp.checked = true;
     }
+    this.elCheckAllInp.checked = false;
   }
 
   dragStart(event): void  {
-    if (!event.target.getElementsByTagName('input')[0].checked) {
+    if (event.target.getAttribute('aria-selected').toString() === 'false') {
       event.dataTransfer.setData('value', event.target.id);
     }
-    event.target.style.backgroundColor = 'white';
   }
 
-  clickAllInput() {
-    if (this.items.length > 0) {
-      this.elCheckAllInp.nativeElement.click();
-    }
-  }
-
-  checkAll(): void  {
-    this.isCheckAll = !this.isCheckAll;
-    this.addAllParts();
-    this.checkIsAllActive();
-    this.data.announceWheelParts(this.parts);
-  }
-
-  checkIsAllActive(): void {
-    if (this.elListInp.length === this.parts.length) {
-      this.isCheckAll = true;
-      return this.elFakeCheckAll.nativeElement.setAttribute('class', 'fa fa-check-square-o');
-    }
-    this.isCheckAll = false;
-    this.elFakeCheckAll.nativeElement.setAttribute('class', 'fa fa-square-o');
-  }
-
-  addAllParts(): void {
-    this.parts = [];
-    this.elListInp.forEach((el, key) => {
-      el.nativeElement.checked = this.isCheckAll;
-      this.checkFake(el.nativeElement.parentElement);
-      if (el.nativeElement.checked) {
-        this.parts.push(this.items[key]);
-      }
-    });
-  }
-
-  checkFake(list) {
-    const fake = list.getElementsByClassName('fake-check')[0];
-    if (list.getElementsByTagName('input')[0].checked) {
-      return fake.setAttribute('class', 'fake-check fa fa-check-square-o');
-    }
-    fake.setAttribute('class', 'fake-check fa fa-square-o');
-  }
 
   showModifyPopUp(member) {
     this.isModify = true;
