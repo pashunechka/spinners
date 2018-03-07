@@ -9,9 +9,10 @@ const app = express();
 const mongoose = require('mongoose');
 const passport = require('passport');
 const MongoStore = require('connect-mongo')(session);
-//mongoose.connect('mongodb://127.0.0.1:27017/Spinners');
 
-mongoose.connect('mongodb://spinner:spinner123@ds225028.mlab.com:25028/spinners');
+const dbconnection = require('./DBconnection');
+mongoose.connect(dbconnection);
+
 const sessionStore = new MongoStore({ mongooseConnection: mongoose.connection });
 const index = require('./index');
 

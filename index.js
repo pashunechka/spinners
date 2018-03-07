@@ -6,10 +6,6 @@ const bcrypt = require('bcrypt');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 
-router.get('/logout', (req, res) =>{
-    req.logout();
-});
-
 router.post('/uploads', (req, res) => {
     if (!req.files) return;
     let file = req.files.file;
@@ -37,7 +33,9 @@ router.post('/addSpinner', (req, res) => {
 });
 
 router.post('/modifyItem', (req, res) => {
-    SpinnerItems.findOneAndUpdate({_id: req.body.id}, {$set: { name: req.body.title, image: req.body.image}}, {new: true }, (error, result) => {
+    SpinnerItems.findOneAndUpdate({_id: req.body.id},
+        {$set: { name: req.body.title, image: req.body.image, color: req.body.color}},
+        {new: true }, (error, result) => {
         if (error)  return res.status(500).send(error);
         return res.send(result);
     });
@@ -50,9 +48,16 @@ router.post('/deleteItem', (req, res) => {
     })
 });
 
-router.post('/addItems', isLoggedIn, (req, res) => {
+router.post('/deleteSpinner', (req, res) => {
+    Spinners.remove({_id: req.body._id}, err => {
+        if(err) return res.status(500);
+        res.send(req.body);
+    })
+});
+
+router.post('/addItems',/* isLoggedIn,*/ (req, res) => {
     let member = req.body;
-    const item = new SpinnerItems({spinnerId:/* member.id */ req.user._id , name: member.title, image: member.image});
+    const item = new SpinnerItems({spinnerId: member.id /*req.user._id */, name: member.title, image: member.image, color: member.color});
     if(member.title == '' || member.image == '')
        return res.status(400).send('Invalid request');
     item.save().then((data) => res.send(data));
@@ -90,14 +95,16 @@ passport.use('local', new LocalStrategy({
         process.nextTick(() => {
             Spinners.findById(req.body.id, (err, spinner) => {
                 if (err)  return err;
-                if(req.user)
-                    if(req.user.password.passwordSpinner === spinner.password.passwordSpinner)
+                if(spinner) {
+                    if(req.user)
+                        if(req.user.password.passwordSpinner === spinner.password.passwordSpinner)
+                            return done(null, spinner);
+                    if(req.body.auth === ' ' &&  !spinner.password.passwordSpinner)
                         return done(null, spinner);
-                if(req.body.auth === ' ' &&  !spinner.password.passwordSpinner)
-                    return done(null, spinner);
-                if(validPassword(req.body.auth, spinner.password.passwordSpinner))
-                    return done(null, spinner);
-                done(null, false);
+                    if(validPassword(req.body.auth, spinner.password.passwordSpinner))
+                        return done(null, spinner);
+                    done(null, false);
+                }
             });
         });
     }

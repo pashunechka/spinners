@@ -14,6 +14,10 @@ const SpinnerItemsSchema = mongoose.Schema({
         required: true,
         default: 'no-image.png'
     },
+    color: {
+        type: String,
+        required: true
+    },
     statistics: {
         type: Number,
         default: 0

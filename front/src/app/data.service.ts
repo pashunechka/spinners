@@ -9,14 +9,12 @@ export class DataService {
 
   private items = new Subject<any>();
   private parts = new Subject<any>();
-  private addItem = new Subject<any>();
   private errorAuth = new Subject<any>();
   private statistics = new Subject<any>();
 
   constructor() { }
 
   spinnerItems = this.items.asObservable();
-  spinnerAddItem = this.items.asObservable();
   wheelParts = this.parts.asObservable();
   authorizationError = this.errorAuth.asObservable();
   spinnerStatistics = this.statistics.asObservable();
@@ -27,10 +25,6 @@ export class DataService {
 
   announceSpinnerItems(items) {
     this.items.next(items);
-  }
-
-  announceAddItem(addItem) {
-    this.addItem.next(addItem);
   }
 
   announceWheelParts(parts) {

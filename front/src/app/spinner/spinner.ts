@@ -3,17 +3,24 @@ export class Spinner {
   DEFAULTIMAGE = 'no-image.svg';
 
   private startDegrees = 270;
-  private center = {x: 280, y: 280};
-  private radius = 280;
-  private textRadius = 250;
-  private imageRadius = 220;
+  private center = {x: 350, y: 350};
+  private radius = 350;
+  private textRadius = 300;
+  private imageRadius = 250;
   public spinnerCenterColor = 'black';
   public textColor = 'black';
   public topPartFill = 'SteelBlue';
   public partColors = [
-    'NavajoWhite',
-    'BurlyWood',
-    'RosyBrown'
+      '#71CC51',
+    '#B3EAAF',
+    '#CADFA1',
+    '#40C575',
+    '#CCD97A',
+    '#B9D146',
+    '#64BA92',
+    '#B6EBA0',
+    '#CBEC7D',
+    '#78D77C'
   ];
 
   private wheel;
@@ -32,7 +39,7 @@ export class Spinner {
     this.wheel = document.getElementById(id);
     this.parts = parts;
     document.getElementById(id).innerHTML = `<g id="spinner-parts"></g>
-                                <circle fill="${this.spinnerCenterColor}" cx="${this.center.x}" cy="${this.center.y}" r="6px"></circle>`;
+                                <circle fill="${this.spinnerCenterColor}" cx="${this.center.x}" cy="${this.center.y}" r="8px"></circle>`;
     document.getElementById('spinner-parts').innerHTML = this.generateWheelParts();
   }
 
@@ -97,8 +104,13 @@ export class Spinner {
 
   generateOneWheelPart(): string {
     let result = '';
-    result += `<circle id="path" fill="${this.partColors[0]}" cx="${this.center.x}" cy="${this.center.y}"
-        r="${this.radius}"></circle><text x="50%" y="50%" text-anchor="middle" dy="-${this.textRadius}px">${this.parts[0].name}</text>`;
+   result += `<circle id="path" fill="${this.parts[0].color ? this.parts[0].color : this.partColors[0]}"
+        cx="${this.center.x}" cy="${this.center.y}"
+        r="${this.radius}"></circle>
+        <text x="50%" y="50%" text-anchor="middle" dy="-${this.textRadius}px">
+        ${this.substrWheelPartName(this.parts[0].name, 14)}
+        <title>${this.parts[0].name}</title>
+        </text>`;
     if (this.checkOnDefaultImage(this.parts[0].image)) {
       result += this.generateImagePositionDependOnPartsAmount(0);
     }
@@ -108,18 +120,25 @@ export class Spinner {
   generateMoreThenOnePart(): string {
     let result = '';
     for (let i = 0; i < this.parts.length; i++) {
-      result += `<g class="spinner-part" fill="${this.setWheelPartColor(i)}"><path d="M${this.points[i].x} ${this.points[i].y}
+      result += `<g class="spinner-part" fill="${this.parts[i].color ? this.parts[i].color : this.setWheelPartColor(i)}">
+        <path d="M${this.points[i].x} ${this.points[i].y}
         A${this.center.x} ${this.center.y} 0 0 1 ${this.points[i].x1} ${this.points[i].y1}
         L${this.center.x} ${this.center.y} Z"></path><path id="path${i}" stroke="none" fill="none" d="
         M${this.points[i].a} ${this.points[i].b}
         A${this.textRadius} ${this.textRadius} 0 0 1 ${this.points[i].a1} ${this.points[i].b1}
-        "></path><text fill="${this.textColor}"><textPath id="${this.parts[i]._id}" style="font-size:${this.fontSize()}px"
-         startOffset="${this.setStartTextPosition()}%" xlink:href="#path${i}">${this.parts[i].name}</textPath></text>`;
+        "></path><text fill="${this.textColor}">
+        <textPath id="${this.parts[i]._id}" style="font-size: ${this.fontSize()}px"
+         startOffset="${this.setStartTextPosition()}%" xlink:href="#path${i}">
+        ${this.substrWheelPartName(this.parts[i].name, 7)}</textPath><title>${this.parts[i].name}</title></text>`;
       if (this.checkOnDefaultImage(this.parts[i].image)) {
         result += this.generateImagePositionDependOnPartsAmount(i);
       }
     }
     return result;
+  }
+
+  substrWheelPartName(name, value) {
+    return name.length > value ? `${name.substring(0, value)}...` : name;
   }
 
   private checkOnDefaultImage(image) {
@@ -129,27 +148,27 @@ export class Spinner {
   private generateImagePositionDependOnPartsAmount(index): string {
     if (this.parts.length === 2) {
       return `<image x="${(this.center.x * 1.5) - (index * this.center.x)}"
-                        y="${((this.points[index].b + this.points[index].b1 - 35) / 2)}"
-                        xlink:href="#path${index}" width="35px" href="/assets/${this.parts[index].image}"></g>`;
+                        y="${((this.points[index].b + this.points[index].b1 - 50) / 2)}"
+                        xlink:href="#path${index}" width="50px" href="/assets/${this.parts[index].image}"></g>`;
     } else {
-     return `<image x="${((this.points[index].q + this.points[index].q1 - 35) / 2)}"
-                       y="${((this.points[index].w + this.points[index].w1 - 35) / 2)}" xlink:href="#path${index}" width="35px"
+     return `<image x="${((this.points[index].q + this.points[index].q1 - 50) / 2)}"
+                       y="${((this.points[index].w + this.points[index].w1 - 50) / 2)}" xlink:href="#path${index}" width="50px"
                         href="/assets/${this.parts[index].image}"></g>`;
     }
   }
 
   private fontSize() {
-    if (this.parts.length > 5) {
-      return 14;
+    if (this.parts.length > 7) {
+      return 18;
     }
-    return 16;
+    return 20;
   }
 
   private setStartTextPosition() {
     if (this.parts.length > 10 && this.parts.length <= 15) {
-      return  30;
+      return  27;
     }
-    return 40;
+    return 35;
   }
 
   public rotateWheel(rad): string {

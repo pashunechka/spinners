@@ -1,16 +1,12 @@
 $color: #009688;
 $whiteColor: white;
 
-.sidenav-content {
-  display: flex;
+mat-card{
   height: 100%;
-  mat-drawer {
-    background-color: #fafafa;
-    mat-card{
-      height: 100%;
-    }
-  }
+  padding-right: 10px;
+  padding-left: 10px;
 }
+
 
 .full-width{
   width: 100%;
@@ -25,27 +21,36 @@ $whiteColor: white;
     margin-left: 1em;
     font-weight: 700;
   }
-  button {
-    outline: none;
-  }
+}
+
+button {
+  outline: none;
 }
 
 .list-spinners{
-  button {
-    width: 100%;
+  .spinner-list-name{
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 78%;
+  }
+  .but-choose {
     color: $color;
     font-size: 1.2em;
     font-weight: 700;
     text-align: left;
     outline: none;
     padding: 0.2em 0.5em;
+    width: 82%;
+  }
+  .delete-spinner{
+    outline: none;
   }
   span{
     margin-top: 0.2em;
   }
 }
 
-.cont{
   p{
     color: $color;
     font-size: 1em;
@@ -55,12 +60,6 @@ $whiteColor: white;
     text-transform: uppercase;
     margin-bottom: 0;
   }
-
-  .arround{
-    font-size: 1em;
-    padding: 0.5em;
-  }
-}
 
 .isPrivateSpinner{
   color: $color;
@@ -76,26 +75,9 @@ $whiteColor: white;
   outline: none;
 }
 
-.select-spinner{
-  padding: 0.3em 0 0.3em 0.3em;
-  margin-top: 0.3em;
-  font-size: 1.2em;
-  border-left: 4px solid $color;
-  color: $color;
-  cursor: pointer;
-  outline: none;
-  &:hover{
-    background-color: rgba(49, 187, 181, 0.47);
-    border-left: 6px solid $color;
-    color: $whiteColor;
-    box-shadow: 0 4px 6px gray;
-    transform: scale(1.02);
-  }
-}
-
 .lock,.unlock{
   float: right;
-  padding-right: 1em;
+  padding-right: 0.5em;
 
 }
 
@@ -149,19 +131,29 @@ $whiteColor: white;
 }
 
 
-@media (min-width: 900px) and (max-width: 1250px) {
+@media (min-width: 1120px) and (max-width: 1500px) {
   .pop-up{
     left: 25%;
     top: 25%;
     width: 50%;
   }
+  .list-spinners {
+    .but-choose {
+      width: 95%;
+    }
+  }
 }
 
-@media (max-width:900px) {
+@media (max-width:1120px) {
   .pop-up{
     left: 20%;
     top: 20%;
     width: 60%;
+  }
+  .list-spinners {
+    .but-choose {
+      width: 95%;
+    }
   }
 }
 

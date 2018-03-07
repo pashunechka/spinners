@@ -1,15 +1,12 @@
 <div class="grid">
-  <div class="left">
-    <app-spinner-list></app-spinner-list>
-  </div>
-  <div class="toggle">
-    Spinner
-    <mat-slide-toggle [color]="color" [(ngModel)]="isWheel">
-    </mat-slide-toggle>
-    Statistics
-  </div>
   <div class="reel">
     <mat-card>
+      <div class="toggle">
+        Spinner
+        <mat-slide-toggle [color]="color" [(ngModel)]="isWheel">
+        </mat-slide-toggle>
+        Statistics
+      </div>
     <div class="wheel-conatoiner" [hidden]="isWheel">
       <mat-card-header>
         <p><i class="material-icons">rotate_right</i> Spinner</p>
@@ -40,9 +37,6 @@
     </div>
     <app-statistics [hidden]="!isWheel"></app-statistics>
     </mat-card>
-  </div>
-  <div class="item-add-form">
-     <app-add-form></app-add-form>
   </div>
   <div class="item-list">
      <app-item-list [disableItemsList]="disableItemsList"></app-item-list>

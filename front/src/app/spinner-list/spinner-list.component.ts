@@ -5,6 +5,7 @@ import {DataService} from '../data.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import { map } from 'rxjs/operators';
 import {ErrorStateMatcher} from '@angular/material';
+import {Observable} from 'rxjs/Observable';
 
 export class ConfirmValidParentMatcher implements ErrorStateMatcher {
   isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
@@ -22,11 +23,10 @@ export class ConfirmValidParentMatcher implements ErrorStateMatcher {
 export class SpinnerListComponent implements OnInit {
 
   color = 'primary';
+  warnColor = 'warn';
 
   @ViewChild('elAuthForm')
   private elAuthForm: ElementRef;
-  @ViewChild('drawer')
-  private elDrawer;
 
   @ViewChild('cont')
   private elCont: ElementRef;
@@ -46,9 +46,9 @@ export class SpinnerListComponent implements OnInit {
   hidepass = true;
   hideauth = true;
   spinnerID: string;
+  isDelete = false;
   isSpinnerPassword = true;
   isAuthForm = true;
-  invalidPassword = false;
 
   confirmValidParentMatcher = new ConfirmValidParentMatcher();
 
@@ -62,26 +62,21 @@ export class SpinnerListComponent implements OnInit {
     private route: ActivatedRoute) { }
 
   ngOnInit() {
-    this.data.setSpinnerId(this.route.snapshot.paramMap.get('id'));
     this.http.getData('/getSpinners').subscribe((res: any) => {
       this.spinners = res;
-      if (this.data.getSpinnerId()) {
-        this.getItems(this.data.getSpinnerId())
-          .subscribe((result) => this.data.announceSpinnerItems(result), () => this.initAuthorizationError());
-      }
+      this.router.navigateByUrl(`/${res[0]._id}`);
     });
     this.data.authorizationError.subscribe(() => this.initAuthorizationError());
     this.initForm();
     this.initAuthForm();
   }
 
-  initAuthorizationError() {
+  initAuthorizationError(): void {
     this.spinnerID = this.data.getSpinnerId();
     this.isAuthForm = false;
-    this.invalidPassword = true;
   }
 
-  initForm() {
+  initForm(): void {
     this.addSpinnerForm = this.formBuilder.group({
       spinnerName: ['', Validators.required],
       password: this.formBuilder.group({
@@ -91,7 +86,7 @@ export class SpinnerListComponent implements OnInit {
     });
   }
 
-  initAuthForm() {
+  initAuthForm(): void {
     this.authForm = this.formBuilder.group({
       authPassword: ['', {
         updateOn: 'submit',
@@ -110,7 +105,7 @@ export class SpinnerListComponent implements OnInit {
     };
   }
 
-  validateAuth() {
+  validateAuth(): Observable<object | null> {
     return this.http.postData('/checkAuth', {id: this.spinnerID, auth: this.authForm.get('authPassword').value})
       .pipe(map(res => {
       return  res ? null : {invalid: true};
@@ -124,59 +119,83 @@ export class SpinnerListComponent implements OnInit {
         this.spinners.push(res);
         this.showSpinner(res);
         this.resetForm();
-        this.elDrawer.close();
       });
     }
   }
 
-  showSpinner(spinner) {
+  showSpinner(spinner): void  {
     this.spinnerID = spinner._id;
     this.closeAuth();
     if (!spinner.password.private) {
       this.data.setSpinnerId(this.spinnerID);
-      return  this.getItems(this.data.getSpinnerId()).subscribe((res: any) => this.showSpinnerItems(res));
+      this.http.getItems(this.data.getSpinnerId()).subscribe((res: any) => this.showSpinnerItems(res, this.data.getSpinnerId()));
+    } else {
+      this.showAuthForm();
     }
-    this.isAuthForm = false;
   }
 
   sendAuth() {
     this.interval = setInterval(() => {
       if (this.authForm.valid) {
-        this.getItems(this.spinnerID, this.authForm.get('authPassword').value).subscribe((res: any) => {
-          this.data.setSpinnerId(this.spinnerID);
-          this.showSpinnerItems(res);
-          this.isAuthForm = true;
-          clearInterval(this.interval);
-        });
+        this.isDelete ?
+          this.deleteSpinnerById({_id: this.spinnerID, authPassword: this.authForm.get('authPassword').value}) :
+          this.getPrivateSpinnerItems();
+        clearInterval(this.interval);
       }
     }, 200);
   }
 
-  showSpinnerItems(data) {
+  deleteSpinnerById(deletedSpinner) {
+    this.http.postData('/deleteSpinner', deletedSpinner).subscribe((result: any) => {
+      this.spinners.forEach(spinner => {
+        if (spinner._id === deletedSpinner._id) {
+          this.spinners.splice(this.spinners.indexOf(spinner), 1);
+          if (this.data.getSpinnerId() === result._id) {
+            this.http.getItems(this.spinners[0]._id).subscribe((res: any) => this.showSpinnerItems(res, this.spinners[0]._id));
+          }
+        }
+      });
+      this.isDelete = false;
+      this.closeAuth();
+    });
+  }
+
+  deleteSpinner(deletedSpinner) {
+    if (!deletedSpinner.password.private) {
+      this.deleteSpinnerById(deletedSpinner);
+    } else {
+      this.isDelete = true;
+      this.showAuthForm();
+    }
+  }
+
+  getPrivateSpinnerItems() {
+    this.http.getItems(this.spinnerID, this.authForm.get('authPassword').value).subscribe((res: any) => {
+      this.data.setSpinnerId(this.spinnerID);
+      this.showSpinnerItems(res, this.data.getSpinnerId());
+      this.closeAuth();
+    });
+  }
+
+  showSpinnerItems(data: DataService, navURL): void {
     this.data.announceSpinnerItems(data);
-    this.router.navigateByUrl(`/${this.data.getSpinnerId()}`);
+    this.router.navigateByUrl(`/${navURL}`);
   }
 
-  getItems(id, auth?) {
-    const sendData = {id: id, auth: auth};
-    if (!auth) { sendData.auth = ' '; }
-    return  this.http.postData('/getItems',  sendData);
-  }
-
-  clickShowPassword() {
+  clickShowPassword(): void {
     this.elCheckboxPass.nativeElement.click();
     this.isSpinnerPassword = !this.isSpinnerPassword;
     this.addSpinnerForm.get('password').get('spinnerPassword').reset('');
   }
 
-  markAsTouch() {
+  markAsTouch(): void {
     if (this.addSpinnerForm.invalid) {
       this.addSpinnerForm.get('spinnerName').markAsTouched({onlySelf: true});
       this.addSpinnerForm.controls['password'].get('spinnerPassword').markAsTouched({onlySelf: true});
     }
   }
 
-  resetForm() {
+  resetForm(): void {
     this.isSpinnerPassword = true;
     this.addSpinnerForm.reset();
     this.addSpinnerForm.get('spinnerName').reset('');
@@ -185,14 +204,17 @@ export class SpinnerListComponent implements OnInit {
     this.addSpinnerForm.get('password').get('spinnerPassword').reset('');
   }
 
-  closeAuth() {
-    this.isAuthForm = true;
-    this.authForm.reset();
-    this.hideErr();
+  closeAuth(): void {
+    this.hideAuthForm();
+    this.authForm.reset('');
   }
 
-  hideErr() {
-    this.invalidPassword = false;
+  showAuthForm() {
+    this.isAuthForm = false;
+  }
+
+  hideAuthForm() {
+    this.isAuthForm = true;
   }
 
 }

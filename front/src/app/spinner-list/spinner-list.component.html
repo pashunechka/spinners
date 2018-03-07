@@ -1,10 +1,4 @@
-<mat-toolbar class="toolbar" [color]="color">
-  <button mat-icon-button (click)="drawer.toggle()" (click)="resetForm()"><mat-icon>menu</mat-icon></button>
-  <h1>Spinners app</h1>
-</mat-toolbar>
-<mat-drawer-container class="sidenav-content">
-  <mat-drawer #drawer class="sidenav" mode="side">
-    <mat-card>
+<mat-card>
 <div #spinnersForm>
   <div class="cont" id="cont" #cont >
     <p>Create a new spinner</p>
@@ -50,22 +44,26 @@
               The password must be longer than 5 letter
             </mat-error>
           </mat-form-field>
-          <button class="add-spinner" mat-raised-button color="primary" (click)="submit()"><mat-icon>add</mat-icon> Add a spinner</button>
+          <button class="add-spinner" mat-raised-button [color]="color" (click)="submit()"><mat-icon>add</mat-icon> Add a spinner</button>
         </fieldset>
       </form>
       <div class="list-spinners">
-        <button *ngFor="let spinner of spinners" mat-raised-button (click)="showSpinner(spinner)"n>
-          {{spinner.name}}
+        <div *ngFor="let spinner of spinners">
+        <button class="but-choose" mat-raised-button (click)="showSpinner(spinner)">
+          <span class="spinner-list-name"><a title="{{spinner.name}}">{{spinner.name}}</a></span>
           <span *ngIf="spinner.password.private" class="lock material-icons">lock</span>
           <span *ngIf="!spinner.password.private" class="unlock material-icons">lock_open</span>
         </button>
+        <button
+          class="delete-spinner"
+          (click)="deleteSpinner(spinner)"
+          mat-icon-button><mat-icon [color]="warnColor">delete</mat-icon></button>
+        </div>
       </div>
     </div>
   </div>
 </div>
 </mat-card>
-</mat-drawer>
-</mat-drawer-container>
 
 
 <div class="overlay" [hidden]="isAuthForm" (click)="closeAuth()">
@@ -92,7 +90,7 @@
             <mat-error  *ngIf="authForm.controls['authPassword'].getError('invalid')">
               Invalid password!
             </mat-error>
-            <mat-error  *ngIf="authForm.controls['authPassword'].getError('required') || authForm.controls['authPassword'].getError('minlength')">
+            <mat-error  *ngIf="authForm.controls['authPassword'].getError('minlength') && !authForm.touched">
               The password must be longer than 5 letter
             </mat-error>
           </mat-form-field>

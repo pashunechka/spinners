@@ -2,8 +2,16 @@
   "name": "fgd",
   "version": "0.0.0",
   "private": true,
+  "config": {
+    "login": "spinner",
+    "password": "spinner123",
+    "host": "ds225028.mlab.com",
+    "port": "25028",
+    "db": "spinners"
+  },
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "dbconf": "node ./DBconnection"
   },
   "dependencies": {
     "bcrypt": "^1.0.3",

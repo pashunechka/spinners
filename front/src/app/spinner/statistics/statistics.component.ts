@@ -1,5 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {DataService} from '../../data.service';
+import {Subscription} from 'rxjs/Subscription';
 
 @Component({
   selector: 'app-statistics',
@@ -49,7 +50,7 @@ export class StatisticsComponent implements OnInit, OnDestroy {
   ];
 
   collectStat = [];
-  subscription;
+  subscription: Subscription;
   parts = [];
 
   constructor(private data: DataService) {}
@@ -71,7 +72,7 @@ export class StatisticsComponent implements OnInit, OnDestroy {
       this.collectStat = [];
       this.chartLabels = [];
       for (let key = 0; key < parts.length; key++) {
-        this.chartLabels.push(parts[key].name);
+        this.chartLabels.push(parts[key].name.substring(0, 14));
         this.collectStat.push(parts[key].statistics);
         this.showStatistics(this.collectStat);
       }

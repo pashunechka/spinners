@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {DataService} from '../data.service';
 import {Subscription} from 'rxjs/Subscription';
 import {Spinner} from './spinner';
@@ -31,7 +31,9 @@ export class SpinnerComponent implements OnInit, OnDestroy {
   startClick = {x: 0, y: 0};
   endClick = {x: 0, y: 0};
 
-  constructor(private data: DataService, private http: HttpService) {}
+  constructor(
+    private data: DataService,
+    private http: HttpService) {}
 
   ngOnInit() {
     this.spinner.spinnerCenterColor = '#266096';
@@ -39,10 +41,6 @@ export class SpinnerComponent implements OnInit, OnDestroy {
       this.parts = parts;
       this.spinner.initialize('wheel', this.parts);
     });
-    /* rotate wheel on mouse move
-      this.onmouseMove();
-      this.onmouseUp();
-     */
   }
 
   ngOnDestroy(): void {
