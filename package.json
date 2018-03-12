@@ -10,8 +10,7 @@
     "db": "spinners"
   },
   "scripts": {
-    "start": "node ./bin/www",
-    "dbconf": "node ./DBconnection"
+    "start": "node ./bin/www"
   },
   "dependencies": {
     "bcrypt": "^1.0.3",

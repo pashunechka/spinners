@@ -8,3 +8,7 @@ To run the application, at first you need to download the github repository. The
 4. next, run the command `ng build --prod`;
 5. go back to the root dirrectory with the command `cd ..` and run the `npm start` command; 
 6. go to the browser and enter http://localhost:3000
+
+
+### To configure a MongoDB connection run the following command 
+`npm start login password host port db`
