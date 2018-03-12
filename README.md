@@ -12,3 +12,4 @@ To run the application, at first you need to download the github repository. The
 
 ### To start the application and configure the connection to the MongoDB run the following command 
 `npm start login password host port db`
+or change config variables in package.json
