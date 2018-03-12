@@ -10,5 +10,5 @@ To run the application, at first you need to download the github repository. The
 6. go to the browser and enter http://localhost:3000
 
 
-### To configure a MongoDB connection run the following command 
+### To start the application and configure the connection to the MongoDB run the following command 
 `npm start login password host port db`
