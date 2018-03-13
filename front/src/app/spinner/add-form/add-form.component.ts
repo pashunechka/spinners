@@ -19,8 +19,8 @@ export class AddFormComponent implements OnInit, OnChanges {
   private elImageCont: ElementRef;
 
   @Input() member;
-  @Output() modifyItem: EventEmitter<any> = new EventEmitter();
-  @Output() addItem: EventEmitter<any> = new EventEmitter();
+  @Output() modifyItem: EventEmitter<SpinnerItem> = new EventEmitter();
+  @Output() addItem: EventEmitter<SpinnerItem> = new EventEmitter();
 
   limitMaxItems = 15;
   items: Array<SpinnerItem> = [];
@@ -51,7 +51,7 @@ export class AddFormComponent implements OnInit, OnChanges {
   initForm(): void {
     this.addForm = this.formBuilder.group({
       title: ['', {validators: [Validators.required, this.validateForm()]}],
-      color: [''],
+      color: ['#ffffff'],
       image: ['']
     });
   }
@@ -98,7 +98,7 @@ export class AddFormComponent implements OnInit, OnChanges {
   }
 
   resetAddForm(): void {
-    this.addForm.reset('');
+    this.addForm.reset();
     this.loadImage = {};
     this.setImage(`../../assets/${this.data.DEFAULTIMAGE}`);
   }

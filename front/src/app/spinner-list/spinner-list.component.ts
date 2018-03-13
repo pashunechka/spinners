@@ -6,7 +6,6 @@ import {Router} from '@angular/router';
 import { map } from 'rxjs/operators';
 import {ErrorStateMatcher} from '@angular/material';
 import {Observable} from 'rxjs/Observable';
-import Timer = NodeJS.Timer;
 import {Spinner} from '../spinner';
 import {SpinnerItem} from '../spinnerItem';
 
@@ -44,7 +43,7 @@ export class SpinnerListComponent implements OnInit {
 
   addSpinnerForm: FormGroup;
   authForm: FormGroup;
-  interval: Timer;
+  interval;
   hidePass = true;
   hideAuth = true;
   spinnerID: string;
@@ -117,7 +116,12 @@ export class SpinnerListComponent implements OnInit {
     if (this.addSpinnerForm.valid) {
       this.http.postData('/addSpinner', this.addSpinnerForm.value).subscribe((res: any) => {
         this.spinners.push(res);
-        this.showSpinner(res);
+        this.http.getItems(res._id, this.addSpinnerForm.get('password').get('spinnerPassword').value)
+          .subscribe( (result: Array<SpinnerItem>) => {
+          this.showSpinnerItems(result, res._id);
+          this.spinnerID = res._id;
+          this.data.setSpinnerId(res._id);
+        });
         this.resetForm();
       });
     }
@@ -125,6 +129,7 @@ export class SpinnerListComponent implements OnInit {
 
   showSpinner(spinner: Spinner): void  {
     this.spinnerID = spinner._id;
+    this.isDelete = false;
     this.closeAuth();
     if (!spinner.password.private) {
       this.data.setSpinnerId(this.spinnerID);
@@ -140,7 +145,7 @@ export class SpinnerListComponent implements OnInit {
       if (this.authForm.valid) {
         this.isDelete ?
           this.deleteSpinnerById({_id: this.spinnerID, authPassword: this.authForm.get('authPassword').value}) :
-          this.getPrivateSpinnerItems();
+          this.getPrivateSpinnerItems(this.spinnerID, this.authForm.get('authPassword').value);
         clearInterval(this.interval);
       }
     }, 200);
@@ -151,10 +156,7 @@ export class SpinnerListComponent implements OnInit {
       this.spinners.forEach(spinner => {
         if (spinner._id === deletedSpinner._id) {
           this.spinners.splice(this.spinners.indexOf(spinner), 1);
-          if (this.data.getSpinnerId() === deletedSpinner._id) {
-            this.http.getItems(this.spinners[0]._id)
-              .subscribe((res: Array<SpinnerItem>) => this.showSpinnerItems(res, this.spinners[0]._id));
-          }
+          this.checkDeleteSpinnerIsCurrentSpinner(deletedSpinner);
         }
       });
       this.isDelete = false;
@@ -162,7 +164,15 @@ export class SpinnerListComponent implements OnInit {
     });
   }
 
+  checkDeleteSpinnerIsCurrentSpinner(deletedSpinner) {
+    if (this.data.getSpinnerId() === deletedSpinner._id) {
+      this.http.getItems(this.spinners[0]._id)
+        .subscribe((res: Array<SpinnerItem>) => this.showSpinnerItems(res, this.spinners[0]._id));
+    }
+  }
+
   deleteSpinner(deletedSpinner): void {
+    this.spinnerID = deletedSpinner._id;
     if (!deletedSpinner.password.private) {
       this.deleteSpinnerById(deletedSpinner);
     } else {
@@ -171,10 +181,10 @@ export class SpinnerListComponent implements OnInit {
     }
   }
 
-  getPrivateSpinnerItems(): void {
-    this.http.getItems(this.spinnerID, this.authForm.get('authPassword').value).subscribe((res: Array<SpinnerItem>) => {
+  getPrivateSpinnerItems(id, auth): void {
+    this.http.getItems(id, auth).subscribe((result: Array<SpinnerItem>) => {
       this.data.setSpinnerId(this.spinnerID);
-      this.showSpinnerItems(res, this.data.getSpinnerId());
+      this.showSpinnerItems(result, this.data.getSpinnerId());
       this.closeAuth();
     });
   }

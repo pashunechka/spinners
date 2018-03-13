@@ -120,7 +120,7 @@ export class ItemListComponent implements OnInit, OnDestroy {
     }
   }
 
-  setModifyItem(newItem): void {
+  setModifyItem(newItem: SpinnerItem): void {
     this.resetMember();
     const modItem = this.items.find((item: SpinnerItem) => {
       return item._id === newItem._id;
@@ -131,8 +131,6 @@ export class ItemListComponent implements OnInit, OnDestroy {
       this.data.announceWheelParts(this.parts);
     }
   }
-
-
 
   deleteItem(): void {
     this.http.postData('/deleteItem', this.deletedItem).subscribe(() => {

@@ -39,7 +39,7 @@
               formControlName="spinnerPassword"
               (keypress.enter)="submit()"
             >
-            <mat-icon [color]="color" matSuffix (click)="hidePass = !hidePass">{{hidepass ? 'visibility' : 'visibility_off'}}</mat-icon>
+            <mat-icon [color]="color" matSuffix (click)="hidePass = !hidePass">{{hidePass ? 'visibility' : 'visibility_off'}}</mat-icon>
             <mat-error *ngIf="addSpinnerForm.controls['password'].hasError('invalid')">
               The password must be longer than 5 letter
             </mat-error>
@@ -86,7 +86,7 @@
                    formControlName="authPassword"
                    (keypress.enter)="sendAuth()"
             >
-            <mat-icon [color]="color" matSuffix (click)="hideAuth = !hideAuth">{{hideauth ? 'visibility' : 'visibility_off'}}</mat-icon>
+            <mat-icon [color]="color" matSuffix (click)="hideAuth = !hideAuth">{{hideAuth ? 'visibility' : 'visibility_off'}}</mat-icon>
             <mat-error  *ngIf="authForm.controls['authPassword'].getError('invalid')">
               Invalid password!
             </mat-error>
