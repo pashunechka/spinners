@@ -3,6 +3,7 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {HttpService} from '../../http.service';
 import {DataService} from '../../data.service';
 import {Subscription} from 'rxjs/Subscription';
+import {SpinnerItem} from '../../spinnerItem';
 
 @Component({
   selector: 'app-add-form',
@@ -22,8 +23,7 @@ export class AddFormComponent implements OnInit, OnChanges {
   @Output() addItem: EventEmitter<any> = new EventEmitter();
 
   limitMaxItems = 15;
-  exceedLimit = false;
-  items = [];
+  items: Array<SpinnerItem> = [];
   addForm: FormGroup;
   loadImage: any = {};
   subscription: Subscription;
@@ -34,14 +34,15 @@ export class AddFormComponent implements OnInit, OnChanges {
     private data: DataService) { }
 
   ngOnInit() {
-    this.subscription = this.data.spinnerItems.subscribe(items => this.items = items);
+    this.subscription = this.data.spinnerItems
+      .subscribe(items => this.items = items);
     this.initForm();
   }
 
   ngOnChanges() {
     if (this.member) {
       this.loadImage.name = this.member.image;
-      this.setImage('image-cont', `../../assets/${this.member.image}`);
+      this.setImage(`../../assets/${this.member.image}`);
       this.addForm.get('title').setValue(this.member.name);
       this.addForm.get('color').setValue(this.member.color);
     }
@@ -49,15 +50,13 @@ export class AddFormComponent implements OnInit, OnChanges {
 
   initForm(): void {
     this.addForm = this.formBuilder.group({
-      title: ['', {
-        validators: [Validators.required, this.validateForm()]
-      }],
+      title: ['', {validators: [Validators.required, this.validateForm()]}],
       color: [''],
       image: ['']
     });
   }
 
-  validateForm() {
+  validateForm(): null | object {
     return(): {[key: string]: any} => {
       if (!this.member && this.items) {
         if (this.items.length >= this.limitMaxItems) {
@@ -69,46 +68,44 @@ export class AddFormComponent implements OnInit, OnChanges {
   }
 
   submit(): void {
-    console.log(this.addForm);
-    if (this.addForm.invalid) {
-      return this.addForm.get('title').markAsTouched({onlySelf: true});
-    }
-    this.sendFileToServer();
-    if (this.member) {
-      const form = this.setForm(this.member._id);
-      this.modifySpinnerItem(form);
-    } else {
-        const form = this.setForm(this.data.getSpinnerId());
-        this.addSpinnerItems(form);
+    if (this.checkFormValidation()) {
+      this.sendFileToServer();
+      this.member ? this.modifySpinnerItem(this.setForm(this.member._id)) :
+        this.addSpinnerItems(this.setForm(this.data.getSpinnerId()));
     }
   }
 
+  checkFormValidation(): boolean {
+    if (this.addForm.invalid) {
+      this.addForm.get('title').markAsTouched({onlySelf: true});
+      return false;
+    }
+    return true;
+  }
+
   modifySpinnerItem(spinnerItem: FormGroup): void {
-    this.http.postData('/modifyItem', spinnerItem).subscribe((res: any) => {
+    this.http.postData('/modifyItem', spinnerItem).subscribe((res: SpinnerItem) => {
       this.modifyItem.emit(res);
       this.resetAddForm();
       }, () => this.data.announceError(false));
   }
 
   addSpinnerItems(spinnerItem: FormGroup): void {
-    this.http.postData('/addItems', spinnerItem).subscribe((res: any) => {
+    this.http.postData('/addItems', spinnerItem).subscribe((res: SpinnerItem) => {
       this.addItem.emit(res);
       this.resetAddForm();
     }, () => this.data.announceError(false));
   }
 
-  resetAddForm() {
+  resetAddForm(): void {
     this.addForm.reset('');
     this.loadImage = {};
-    this.setImage('image-cont', `../../assets/${this.data.DEFAULTIMAGE}`);
+    this.setImage(`../../assets/${this.data.DEFAULTIMAGE}`);
   }
 
-  setForm(id): FormGroup {
+  setForm(id: string): FormGroup {
     const form = this.addForm.value;
-    form.image = this.loadImage.name;
-    if (!this.loadImage.name) {
-      form.image = this.data.DEFAULTIMAGE;
-    }
+    this.loadImage.name ?  form.image = this.loadImage.name : form.image = this.data.DEFAULTIMAGE;
     form.id = id;
     return form;
   }
@@ -122,7 +119,7 @@ export class AddFormComponent implements OnInit, OnChanges {
     this.previewImage(event);
   }
 
-  setImage(id, srcURL): void {
+  setImage(srcURL: string): void {
     this.elImageCont.nativeElement.setAttribute('src', srcURL);
   }
 
@@ -133,14 +130,12 @@ export class AddFormComponent implements OnInit, OnChanges {
     this.http.postData('/uploads', formData).subscribe();
   }
 
-  previewImage(event) {
+  previewImage(event): void {
     const files = event.target.files[0];
-    if (!files.type.match('image.*')) {
-      return;
-    }
     const reader = new FileReader();
+    if (!files.type.match('image.*')) { return; }
     reader.onload = (File => {
-      return e =>  this.setImage('image-cont', e.target.result);
+      return e =>  this.setImage(e.target.result);
     })(files);
     reader.readAsDataURL(files);
   }

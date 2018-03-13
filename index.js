@@ -73,8 +73,10 @@ router.post('/increaseItemStatistics', (req, res) => {
 router.post('/checkAuth', (req, res) => {
     Spinners.findById(req.body.id, (error, result) => {
         if (error)  return res.status(500).send(error);
-        if(validPassword(req.body.auth, result.password.passwordSpinner)) {
-            return res.send(result);
+        if(result) {
+            if(validPassword(req.body.auth, result.password.passwordSpinner)) {
+                return res.send(result);
+            }
         }
         return res.send(null);
     });

@@ -1,6 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {DataService} from '../../data.service';
 import {Subscription} from 'rxjs/Subscription';
+import {SpinnerItem} from '../../spinnerItem';
 
 @Component({
   selector: 'app-statistics',
@@ -9,7 +10,7 @@ import {Subscription} from 'rxjs/Subscription';
 })
 export class StatisticsComponent implements OnInit, OnDestroy {
 
-  types = ['line', 'bar' ];
+  types: Array<string> = ['line', 'bar' ];
   select = 'line';
 
   public chartOptions: any = {
@@ -49,9 +50,9 @@ export class StatisticsComponent implements OnInit, OnDestroy {
     },
   ];
 
-  collectStat = [];
+  collectStat: Array<number> = [];
+  parts: Array<any> = [];
   subscription: Subscription;
-  parts = [];
 
   constructor(private data: DataService) {}
 
@@ -60,17 +61,16 @@ export class StatisticsComponent implements OnInit, OnDestroy {
       this.parts = parts;
       this.initStatistics(parts);
     });
-    this.data.spinnerStatistics.subscribe(statistics => this.collectStatistics(statistics));
+    this.data.spinnerStatistics
+      .subscribe(statistics => this.collectStatistics(statistics));
   }
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
   }
 
-  initStatistics(parts): void {
-      this.chartData[0].data = [];
-      this.collectStat = [];
-      this.chartLabels = [];
+  initStatistics(parts: Array<SpinnerItem>): void {
+      this.setInitialValues();
       for (let key = 0; key < parts.length; key++) {
         this.chartLabels.push(parts[key].name.substring(0, 14));
         this.collectStat.push(parts[key].statistics);
@@ -78,14 +78,20 @@ export class StatisticsComponent implements OnInit, OnDestroy {
       }
   }
 
-  collectStatistics(spinnerValue): void {
+  setInitialValues(): void {
+    this.chartData[0].data = [];
+    this.collectStat = [];
+    this.chartLabels = [];
+  }
+
+  collectStatistics(spinnerValue: SpinnerItem): void {
     if (spinnerValue) {
       this.collectStat[this.chartLabels.indexOf(spinnerValue.name)] = spinnerValue.statistics;
     }
     this.showStatistics(this.collectStat);
   }
 
-  showStatistics(data): void {
+  showStatistics(data: Array<number>): void {
     setTimeout(() => {
       const clone = JSON.parse(JSON.stringify(this.chartData));
       clone[0].data = data;
@@ -93,7 +99,7 @@ export class StatisticsComponent implements OnInit, OnDestroy {
     }, 1);
   }
 
-  toggleStatistics(event, type): void {
+  toggleStatistics(event, type: string): void {
     if (event.isUserInput) {
       this.chartType = type;
       this.showStatistics(this.collectStat);

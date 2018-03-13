@@ -3,6 +3,7 @@ import {DataService} from '../data.service';
 import {Subscription} from 'rxjs/Subscription';
 import {Spinner} from './spinner';
 import {HttpService} from '../http.service';
+import {SpinnerItem} from '../spinnerItem';
 
 @Component({
   selector: 'app-spinner',
@@ -12,31 +13,35 @@ import {HttpService} from '../http.service';
 export class SpinnerComponent implements OnInit, OnDestroy {
 
   color = 'primary';
+  spinnerCenterColor = '#266096';
+  dragExitColor = '#009688';
+  dragEnterColor = 'lightgray';
+
   MILLISECONDS = 4000;
-  STARTRADIANS: number = (1 + Math.random()) * ((360 * Math.PI) / 180);
+  startRadians: number = (1 + Math.random()) * ((360 * Math.PI) / 180);
+  rotateRad: number = this.startRadians;
 
   spinner: Spinner = new Spinner();
   subscription: Subscription;
 
-  isClick = false;
   isPopUp = false;
   stop = false;
-  isWheel;
-
+  isWheel: boolean;
   disableItemsList: boolean;
 
   clickNumber = 0;
-  rotateRad: number = this.STARTRADIANS;
-  parts = [];
-  startClick = {x: 0, y: 0};
-  endClick = {x: 0, y: 0};
+  parts: Array<SpinnerItem> = [];
 
   constructor(
     private data: DataService,
     private http: HttpService) {}
 
-  ngOnInit() {
-    this.spinner.spinnerCenterColor = '#266096';
+  static setDropElementBackground(event, color: string): void {
+    event.target.parentElement.style.backgroundColor = color;
+  }
+
+  ngOnInit(): void {
+    this.spinner.spinnerCenterColor = this.spinnerCenterColor;
     this.subscription = this.data.wheelParts.subscribe(parts => {
       this.parts = parts;
       this.spinner.initialize('wheel', this.parts);
@@ -47,50 +52,29 @@ export class SpinnerComponent implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
-  onmouseMove(): void {
-    window.addEventListener('mousemove', (event) => {
-      if (this.isClick) {
-        this.spinner.moveWheelOnMouseMove(event.pageX, event.pageY);
-      }
-    });
-  }
-
-  onmouseUp(): void {
-    window.addEventListener('mouseup', (event) => {
-      if (this.isClick) {
-        this.setIsClick(false);
-        this.catchMouseClick(event, this.endClick);
-        this.setStop(true);
-        this.dissableItems(true);
-        if (this.endClick.x !== this.startClick.x) {
-          this.spinner.initWheelRotation(this.MILLISECONDS, -(this.endClick.x - this.startClick.x) * 0.33, this.afterWheelRotate);
-        }
-      }
-    });
-  }
-
-  clickDown(event: MouseEvent) {
+  clickDown(): void {
     this.spinner.clearTimeOut();
     if (this.stop) {
-      this.setStop(false);
-      this.clickNumber = 0;
-      this.rotateRad = 0;
-      if (this.spinner.checkWheelPartsAmount()) {
-        this.spinner.stopWheel();
-      }
-      return this.dissableItems(false);
+      this.resetWheelRotation();
     }
-    this.setIsClick(true);
-    this.catchMouseClick(event, this.startClick);
+  }
+
+  resetWheelRotation(): void {
+    this.setStop(false);
+    this.clickNumber = 0;
+    this.spinner.stopWheel();
+    this.disableItems(false);
   }
 
   clickToRotate(): void {
     this.spinner.clearTimeOut();
     this.clickNumber++;
     this.setStop(true);
-    if (this.spinner.checkWheelPartsAmount()) {
-      this.dissableItems(true);
-    }
+    this.disableItems(true);
+    this.rotateWheel();
+  }
+
+  rotateWheel(): void {
     this.rotateRad += (2 + Math.random()) * ((360 * Math.PI) / 180);
     this.spinner.initWheelRotation(this.MILLISECONDS, this.rotateRad, this.afterWheelRotate);
   }
@@ -99,36 +83,34 @@ export class SpinnerComponent implements OnInit, OnDestroy {
       this.setStop(false);
       this.setIsPopUp(true);
       this.clickNumber = 0;
-      this.dissableItems(false);
+      this.disableItems(false);
       this.http.postData('/increaseItemStatistics', this.spinner.getValue())
         .subscribe(result => this.data.announceSpinnerStatistics(result));
   }
 
-  dissableItems(value: boolean): void {
+  disableItems(value: boolean): void {
+    if (this.spinner.checkWheelPartsAmount()) {
       this.disableItemsList = value;
+    }
   }
 
-  dragExit(event): void {
-   this.setDropElementBackground(event, '#009688');
+  dragExit(event: DragEvent): void {
+    SpinnerComponent.setDropElementBackground(event, this.dragExitColor);
   }
 
-  dragOver(event): void {
+  dragOver(event: DragEvent): void {
     event.preventDefault();
   }
 
-  dragEnter(event): void {
-    this.setDropElementBackground(event, 'lightgray');
+  dragEnter(event: DragEvent): void {
+    SpinnerComponent.setDropElementBackground(event, this.dragEnterColor);
   }
 
-  drop(event): void {
+  drop(event: DragEvent): void {
     if (event.dataTransfer.getData('value')) {
       document.getElementById(event.dataTransfer.getData('value')).click();
     }
-    this.setDropElementBackground(event, '#009688');
-  }
-
-  setIsClick(value: boolean): void {
-    this.isClick = value;
+    SpinnerComponent.setDropElementBackground(event, this.dragExitColor);
   }
 
   setIsPopUp(value: boolean): void {
@@ -137,18 +119,5 @@ export class SpinnerComponent implements OnInit, OnDestroy {
 
   setStop(value: boolean): void {
     this.stop = value;
-  }
-
-  setDropElementBackground(event, color): void {
-    event.target.parentElement.style.backgroundColor = color;
-  }
-
-  catchMouseClick(event: MouseEvent, coord): void  {
-    coord.x = event.screenX;
-    coord.y = event.screenY;
-  }
-
-  close(): void {
-    this.isPopUp = false;
   }
 }

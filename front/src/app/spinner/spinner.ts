@@ -1,3 +1,5 @@
+import {SpinnerItem} from '../spinnerItem';
+
 export class Spinner {
 
   DEFAULTIMAGE = 'no-image.svg';
@@ -24,31 +26,50 @@ export class Spinner {
   ];
 
   private wheel;
-  private parts = [];
-  private points = [];
+  private parts: Array<SpinnerItem> = [];
+  private points: Array<{
+    x: number,
+    x1: number,
+    y: number,
+    y1: number
+    a: number,
+    a1: number,
+    b: number,
+    b1: number,
+    q: number,
+    q1: number,
+    w: number,
+    w1: number
+  }> = [];
   private radians: number;
   private deltaFromStartPosition = 0;
   private topPosition;
-  private topPositionColor;
-  private topPositionValue;
+  private topPositionColor: string;
+  private topPositionValue: SpinnerItem;
   public timeout;
 
   constructor() {}
 
-  public initialize(id, parts): void {
-    this.wheel = document.getElementById(id);
-    this.parts = parts;
-    document.getElementById(id).innerHTML = `<g id="spinner-parts"></g>
-                                <circle fill="${this.spinnerCenterColor}" cx="${this.center.x}" cy="${this.center.y}" r="8px"></circle>`;
-    document.getElementById('spinner-parts').innerHTML = this.generateWheelParts();
+  private static calcRad(degrees: number): number {
+    return degrees * Math.PI / 180;
   }
 
-  public moveWheelOnMouseMove (x, y): void {
-    const wh = window.innerHeight / 2, ww = window.innerWidth / 2;
-    if (this.checkWheelPartsAmount()) {
-      this.wheel.style.transform = this.rotateWheel(this.calcRad((360 / Math.PI * Math.atan2(y - wh, x - ww))));
-    }
-    this.setWheelTransformTime(0);
+  private  static calcCurvePointCoordinates(center: {x: number, y: number}, radius: number, rad: number): object {
+    const x0 = Math.round(center.x + radius * Math.cos(rad));
+    const y0 = Math.round(center.y + radius * Math.sin(rad));
+    return {x: x0, y: y0};
+  }
+
+  private static substrWheelPartName(name: string, value: number) {
+    return name.length > value ? `${name.substring(0, value)}...` : name;
+  }
+
+  public initialize(id: string, parts: Array<SpinnerItem>): void {
+    this.wheel = document.getElementById(id);
+    this.parts = parts;
+    document.getElementById(id).innerHTML = `<g id="spinner-parts"></g><circle fill="${this.spinnerCenterColor}"
+                                                cx="${this.center.x}" cy="${this.center.y}" r="8px"></circle>`;
+    document.getElementById('spinner-parts').innerHTML = this.generateWheelParts();
   }
 
   public initWheelRotation(transformTime, rotateRad, cb): void {
@@ -66,19 +87,19 @@ export class Spinner {
     }
   }
 
-  getTopPositionValue() {
+  getTopPositionValue(): SpinnerItem {
     for (const key in this.parts) {
       if (this.parts[key]._id === this.topPosition.getElementsByTagName('textPath')[0].id) {
         return this.parts[key];
-    }
       }
+    }
   }
 
   public stopWheel(): void {
     this.wheel.style.transition = '';
   }
 
-  public getValue(): any {
+  public getValue(): SpinnerItem {
     return this.topPositionValue;
   }
 
@@ -86,7 +107,7 @@ export class Spinner {
     clearTimeout(this.timeout);
   }
 
-  private afterRotate(transformTime, cb) {
+  private afterRotate(transformTime: number, cb: Function) {
     this.timeout = setTimeout(() => {
       this.setTopPositionStyle(this.topPartFill);
       cb();
@@ -108,7 +129,7 @@ export class Spinner {
         cx="${this.center.x}" cy="${this.center.y}"
         r="${this.radius}"></circle>
         <text x="50%" y="50%" text-anchor="middle" dy="-${this.textRadius}px">
-        ${this.substrWheelPartName(this.parts[0].name, 14)}
+        ${Spinner.substrWheelPartName(this.parts[0].name, 14)}
         <title>${this.parts[0].name}</title>
         </text>`;
     if (this.checkOnDefaultImage(this.parts[0].image)) {
@@ -127,9 +148,9 @@ export class Spinner {
         M${this.points[i].a} ${this.points[i].b}
         A${this.textRadius} ${this.textRadius} 0 0 1 ${this.points[i].a1} ${this.points[i].b1}
         "></path><text fill="${this.textColor}">
-        <textPath id="${this.parts[i]._id}" style="font-size: ${this.fontSize()}px"
+        <textPath id="${this.parts[i]._id}" style="font-size:${this.fontSize()}"
          startOffset="${this.setStartTextPosition()}%" xlink:href="#path${i}">
-        ${this.substrWheelPartName(this.parts[i].name, 7)}</textPath><title>${this.parts[i].name}</title></text>`;
+        ${Spinner.substrWheelPartName(this.parts[i].name, 7)}</textPath><title>${this.parts[i].name}</title></text>`;
       if (this.checkOnDefaultImage(this.parts[i].image)) {
         result += this.generateImagePositionDependOnPartsAmount(i);
       }
@@ -137,15 +158,11 @@ export class Spinner {
     return result;
   }
 
-  substrWheelPartName(name, value) {
-    return name.length > value ? `${name.substring(0, value)}...` : name;
-  }
-
-  private checkOnDefaultImage(image) {
+  private checkOnDefaultImage(image: string) {
     return image !== this.DEFAULTIMAGE;
   }
 
-  private generateImagePositionDependOnPartsAmount(index): string {
+  private generateImagePositionDependOnPartsAmount(index: number): string {
     if (this.parts.length === 2) {
       return `<image x="${(this.center.x * 1.5) - (index * this.center.x)}"
                         y="${((this.points[index].b + this.points[index].b1 - 50) / 2)}"
@@ -157,28 +174,22 @@ export class Spinner {
     }
   }
 
-  private fontSize() {
-    if (this.parts.length > 7) {
-      return 18;
-    }
-    return 20;
+  private fontSize(): string {
+    return this.parts.length > 7 ? '18px' : '20px';
   }
 
-  private setStartTextPosition() {
-    if (this.parts.length > 10 && this.parts.length <= 15) {
-      return  27;
-    }
-    return 35;
+  private setStartTextPosition(): number {
+    return this.parts.length > 10 && this.parts.length <= 15 ? 27 : 35;
   }
 
-  public rotateWheel(rad): string {
+  public rotateWheel(rad: number): string {
     this.radians = rad;
     return this.wheel.style.transform = `rotate(${rad}rad)`;
   }
 
   private calcRadianDefferenceFromStart() {
     const delta: number = this.calcDeltaBetweenStartAndRotatePosition();
-    const partCurveRadians: number = this.calcRad(360 / this.parts.length);
+    const partCurveRadians: number = Spinner.calcRad(360 / this.parts.length);
     let rotateRad: number = partCurveRadians;
     for (let i = 0; i < this.parts.length; i++) {
       if (delta <= rotateRad - this.deltaFromStartPosition) {
@@ -199,32 +210,17 @@ export class Spinner {
   private calcWheelParts(): void {
     this.cleareCurvePoints();
     for (let i = 0; i < this.parts.length; i++) {
-      const startRad = this.calcRad(this.startDegrees + 360 / this.parts.length * i);
-      const endRad = this.calcRad(this.startDegrees + 360 / this.parts.length * (i + 1));
-      const startCoord = this.calcCurvePointCoordinates(this.center, this.radius, startRad);
-      const endCoord = this.calcCurvePointCoordinates(this.center, this.radius, endRad);
-      const startCoordText = this.calcCurvePointCoordinates(this.center, this.textRadius, startRad);
-      const endCoordText = this.calcCurvePointCoordinates(this.center, this.textRadius, endRad);
-      const startCoordImage = this.calcCurvePointCoordinates(this.center, this.imageRadius, startRad);
-      const endCoordImage = this.calcCurvePointCoordinates(this.center, this.imageRadius, endRad);
+      const startRad = Spinner.calcRad(this.startDegrees + 360 / this.parts.length * i);
+      const endRad = Spinner.calcRad(this.startDegrees + 360 / this.parts.length * (i + 1));
+      const startCoord = Spinner.calcCurvePointCoordinates(this.center, this.radius, startRad);
+      const endCoord = Spinner.calcCurvePointCoordinates(this.center, this.radius, endRad);
+      const startCoordText = Spinner.calcCurvePointCoordinates(this.center, this.textRadius, startRad);
+      const endCoordText = Spinner.calcCurvePointCoordinates(this.center, this.textRadius, endRad);
+      const startCoordImage = Spinner.calcCurvePointCoordinates(this.center, this.imageRadius, startRad);
+      const endCoordImage = Spinner.calcCurvePointCoordinates(this.center, this.imageRadius, endRad);
       this.setCurvePoints(startCoord, endCoord, startCoordText, endCoordText, startCoordImage, endCoordImage);
     }
   }
-
-  private cleareCurvePoints(): void {
-    this.points.length = 0;
-  }
-
-  private calcRad(degrees): number {
-    return degrees * Math.PI / 180;
-  }
-
-  private calcCurvePointCoordinates(center, radius, rad): object {
-    const x0 = Math.round(center.x + radius * Math.cos(rad));
-    const y0 = Math.round(center.y + radius * Math.sin(rad));
-    return {x: x0, y: y0};
-  }
-
 
   private setCurvePoints(startCoord, endCoord, startCoordText, endCoordText, startCoordImage, endCoordImage): void {
     this.points.push({
@@ -237,7 +233,11 @@ export class Spinner {
     });
   }
 
-  private setTopPositionStyle(color): void {
+  private cleareCurvePoints(): void {
+    this.points.length = 0;
+  }
+
+  private setTopPositionStyle(color: string): void {
     this.topPosition.style.fill =  color;
   }
 
@@ -245,7 +245,7 @@ export class Spinner {
     this.topPosition.style.fill = this.topPositionColor;
   }
 
-  private setWheelTransformTime(ms): void {
+  private setWheelTransformTime(ms: number): void {
     this.wheel.style.transition = `transform ${ms}ms cubic-bezier(0.33, 0.66, 0.66, 1)`;
   }
 
@@ -253,13 +253,9 @@ export class Spinner {
     this.topPositionColor = this.topPosition.getAttribute('fill');
   }
 
-  private setWheelPartColor(i): string {
+  private setWheelPartColor(i: number): string {
     let color;
-    if (i >= this.partColors.length) {
-      color = this.partColors[i % this.partColors.length];
-    } else {
-      color = this.partColors[i];
-    }
+    (i >= this.partColors.length) ? color = this.partColors[i % this.partColors.length] : color = this.partColors[i];
     if (i === this.parts.length - 1 && this.parts.length % this.partColors.length !== 0) {
       color = this.partColors[(this.partColors.length - 2)];
     }
@@ -267,9 +263,6 @@ export class Spinner {
   }
 
   public checkWheelPartsAmount(): boolean {
-    if (this.parts.length > 1) {
-      return true;
-    }
-    return false;
+    return this.parts.length > 1;
   }
 }

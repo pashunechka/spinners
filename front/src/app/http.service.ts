@@ -9,11 +9,11 @@ export class HttpService {
 
   constructor(private http: HttpClient) {}
 
-  postData(url: string, data?: any) {
+  postData(url: string, data: any): Observable<any>  {
     return this.http.post(`${this.host}${url}`, data);
   }
 
-  getData(url: string) {
+  getData(url: string): Observable<any>   {
     return this.http.get(`${this.host}${url}`);
   }
 

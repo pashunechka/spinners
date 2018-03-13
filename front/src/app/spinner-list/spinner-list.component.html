@@ -33,13 +33,13 @@
             <input matInput
               autocomplete="off"
               [errorStateMatcher]="confirmValidParentMatcher"
-              [type]="hidepass ? 'password' : 'text'"
+              [type]="hidePass ? 'password' : 'text'"
               name="spinnerPassword"
               placeholder="Enter a password"
               formControlName="spinnerPassword"
               (keypress.enter)="submit()"
             >
-            <mat-icon [color]="color" matSuffix (click)="hidepass = !hidepass">{{hidepass ? 'visibility' : 'visibility_off'}}</mat-icon>
+            <mat-icon [color]="color" matSuffix (click)="hidePass = !hidePass">{{hidepass ? 'visibility' : 'visibility_off'}}</mat-icon>
             <mat-error *ngIf="addSpinnerForm.controls['password'].hasError('invalid')">
               The password must be longer than 5 letter
             </mat-error>
@@ -80,13 +80,13 @@
           <mat-form-field class="full-width">
             <input matInput
                    autocomplete="off"
-                   [type]="hideauth ? 'password' : 'text'"
+                   [type]="hideAuth ? 'password' : 'text'"
                    name="password"
                    placeholder="Enter a password"
                    formControlName="authPassword"
                    (keypress.enter)="sendAuth()"
             >
-            <mat-icon [color]="color" matSuffix (click)="hideauth = !hideauth">{{hideauth ? 'visibility' : 'visibility_off'}}</mat-icon>
+            <mat-icon [color]="color" matSuffix (click)="hideAuth = !hideAuth">{{hideauth ? 'visibility' : 'visibility_off'}}</mat-icon>
             <mat-error  *ngIf="authForm.controls['authPassword'].getError('invalid')">
               Invalid password!
             </mat-error>

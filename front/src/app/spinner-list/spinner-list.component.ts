@@ -2,17 +2,19 @@ import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {HttpService} from '../http.service';
 import {FormBuilder, FormControl, FormGroup, FormGroupDirective, NgForm, ValidatorFn, Validators} from '@angular/forms';
 import {DataService} from '../data.service';
-import {ActivatedRoute, Router} from '@angular/router';
+import {Router} from '@angular/router';
 import { map } from 'rxjs/operators';
 import {ErrorStateMatcher} from '@angular/material';
 import {Observable} from 'rxjs/Observable';
+import Timer = NodeJS.Timer;
+import {Spinner} from '../spinner';
+import {SpinnerItem} from '../spinnerItem';
 
 export class ConfirmValidParentMatcher implements ErrorStateMatcher {
   isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
     return control.parent.invalid && control.touched;
   }
 }
-
 
 @Component({
   selector: 'app-spinner-list',
@@ -42,29 +44,27 @@ export class SpinnerListComponent implements OnInit {
 
   addSpinnerForm: FormGroup;
   authForm: FormGroup;
-  interval;
-  hidepass = true;
-  hideauth = true;
+  interval: Timer;
+  hidePass = true;
+  hideAuth = true;
   spinnerID: string;
   isDelete = false;
   isSpinnerPassword = true;
   isAuthForm = true;
 
   confirmValidParentMatcher = new ConfirmValidParentMatcher();
-
-  spinners = [];
+  spinners: Array<Spinner> = [];
 
   constructor(
     private http: HttpService,
     private formBuilder: FormBuilder,
     private data: DataService,
-    private router: Router,
-    private route: ActivatedRoute) { }
+    private router: Router) { }
 
   ngOnInit() {
-    this.http.getData('/getSpinners').subscribe((res: any) => {
+    this.http.getData('/getSpinners').subscribe((res: Array<Spinner>) => {
       this.spinners = res;
-      this.router.navigateByUrl(`/${res[0]._id}`);
+      this.router.navigateByUrl(`/${res[0]._id}`).then();
     });
     this.data.authorizationError.subscribe(() => this.initAuthorizationError());
     this.initForm();
@@ -107,7 +107,7 @@ export class SpinnerListComponent implements OnInit {
 
   validateAuth(): Observable<object | null> {
     return this.http.postData('/checkAuth', {id: this.spinnerID, auth: this.authForm.get('authPassword').value})
-      .pipe(map(res => {
+      .pipe(map((res: null | boolean) => {
       return  res ? null : {invalid: true};
     }));
   }
@@ -123,18 +123,19 @@ export class SpinnerListComponent implements OnInit {
     }
   }
 
-  showSpinner(spinner): void  {
+  showSpinner(spinner: Spinner): void  {
     this.spinnerID = spinner._id;
     this.closeAuth();
     if (!spinner.password.private) {
       this.data.setSpinnerId(this.spinnerID);
-      this.http.getItems(this.data.getSpinnerId()).subscribe((res: any) => this.showSpinnerItems(res, this.data.getSpinnerId()));
+      this.http.getItems(this.data.getSpinnerId())
+        .subscribe((res: Array<SpinnerItem>) => this.showSpinnerItems(res, this.data.getSpinnerId()));
     } else {
       this.showAuthForm();
     }
   }
 
-  sendAuth() {
+  sendAuth(): void {
     this.interval = setInterval(() => {
       if (this.authForm.valid) {
         this.isDelete ?
@@ -145,13 +146,14 @@ export class SpinnerListComponent implements OnInit {
     }, 200);
   }
 
-  deleteSpinnerById(deletedSpinner) {
-    this.http.postData('/deleteSpinner', deletedSpinner).subscribe((result: any) => {
+  deleteSpinnerById(deletedSpinner: {_id: string, authPassword: string}): void {
+    this.http.postData('/deleteSpinner', deletedSpinner).subscribe(() => {
       this.spinners.forEach(spinner => {
         if (spinner._id === deletedSpinner._id) {
           this.spinners.splice(this.spinners.indexOf(spinner), 1);
-          if (this.data.getSpinnerId() === result._id) {
-            this.http.getItems(this.spinners[0]._id).subscribe((res: any) => this.showSpinnerItems(res, this.spinners[0]._id));
+          if (this.data.getSpinnerId() === deletedSpinner._id) {
+            this.http.getItems(this.spinners[0]._id)
+              .subscribe((res: Array<SpinnerItem>) => this.showSpinnerItems(res, this.spinners[0]._id));
           }
         }
       });
@@ -160,7 +162,7 @@ export class SpinnerListComponent implements OnInit {
     });
   }
 
-  deleteSpinner(deletedSpinner) {
+  deleteSpinner(deletedSpinner): void {
     if (!deletedSpinner.password.private) {
       this.deleteSpinnerById(deletedSpinner);
     } else {
@@ -169,17 +171,17 @@ export class SpinnerListComponent implements OnInit {
     }
   }
 
-  getPrivateSpinnerItems() {
-    this.http.getItems(this.spinnerID, this.authForm.get('authPassword').value).subscribe((res: any) => {
+  getPrivateSpinnerItems(): void {
+    this.http.getItems(this.spinnerID, this.authForm.get('authPassword').value).subscribe((res: Array<SpinnerItem>) => {
       this.data.setSpinnerId(this.spinnerID);
       this.showSpinnerItems(res, this.data.getSpinnerId());
       this.closeAuth();
     });
   }
 
-  showSpinnerItems(data: DataService, navURL): void {
+  showSpinnerItems(data: Array<SpinnerItem>, navURL: string): void {
     this.data.announceSpinnerItems(data);
-    this.router.navigateByUrl(`/${navURL}`);
+    this.router.navigateByUrl(`/${navURL}`).then();
   }
 
   clickShowPassword(): void {
@@ -200,8 +202,8 @@ export class SpinnerListComponent implements OnInit {
     this.addSpinnerForm.reset();
     this.addSpinnerForm.get('spinnerName').reset('');
     this.addSpinnerForm.get('password').get('isShowPass').reset(false);
-    this.elcheckBox.checked = false;
     this.addSpinnerForm.get('password').get('spinnerPassword').reset('');
+    this.elcheckBox.checked = false;
   }
 
   closeAuth(): void {
