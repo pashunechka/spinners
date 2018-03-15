@@ -6,6 +6,6 @@ let options = {
     port: process.argv[5] || process.env.npm_package_config_port,
     db: process.argv[6] || process.env.npm_package_config_db
 };
-const connection = `mongodb://${options.login}:${options.password}@${options.host}:${options.port}/${options.db}`;
+const connection = `mongodb://${options.login}${options.login ? ':' : ''}${options.password}${options.login ? '@' : ''}${options.host}:${options.port}/${options.db}`;
 console.log(connection)
 module.exports = connection;
