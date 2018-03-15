@@ -27,11 +27,11 @@ import { AppMaterialModule } from './app-material.module';
   imports: [
     BrowserModule,
     AppRoutingModule,
+    AppMaterialModule,
+    HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpClientModule,
-    ChartsModule,
-    AppMaterialModule
+    ChartsModule
   ],
   providers: [
     DataService,
