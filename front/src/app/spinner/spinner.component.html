@@ -32,7 +32,7 @@
         </svg>
       </div>
       <mat-card-actions>
-        <button class="btn-spin" mat-raised-button (click)="clickToRotate()" [disabled]="parts.length < 2"><i class="fa fa-repeat"></i> Spin</button>
+        <button class="btn-spin" mat-raised-button (click)="clickToRotate()" [disabled]="parts.length < 2 "><i class="fa fa-repeat"></i> Spin</button>
       </mat-card-actions>
     </div>
     <app-statistics [hidden]="!isWheel"></app-statistics>

@@ -10,8 +10,7 @@ import {SpinnerItem} from '../../spinnerItem';
 })
 export class StatisticsComponent implements OnInit, OnDestroy {
 
-  types: Array<string> = ['line', 'bar' ];
-  select = 'line';
+  types: Array<string> = ['bar', 'line' ];
 
   public chartOptions: any = {
     scaleShowVerticalLines: false,
@@ -40,7 +39,7 @@ export class StatisticsComponent implements OnInit, OnDestroy {
     backgroundColor: 'rgba(89, 187, 181, 0.5)',
   }];
   public chartLabels: string[] = [];
-  public chartType = 'line';
+  public chartType = 'bar';
   public chartLegend = false;
 
   public chartData: any[] = [
@@ -62,7 +61,7 @@ export class StatisticsComponent implements OnInit, OnDestroy {
       this.initStatistics(parts);
     });
     this.data.spinnerStatistics
-      .subscribe(statistics => this.collectStatistics(statistics));
+      .subscribe(statistics => this.showStatistics(this.collectStatistics(statistics)));
   }
 
   ngOnDestroy() {
@@ -84,11 +83,11 @@ export class StatisticsComponent implements OnInit, OnDestroy {
     this.chartLabels = [];
   }
 
-  collectStatistics(spinnerValue: SpinnerItem): void {
+  collectStatistics(spinnerValue: SpinnerItem): Array<number> {
     if (spinnerValue) {
       this.collectStat[this.chartLabels.indexOf(spinnerValue.name)] = spinnerValue.statistics;
     }
-    this.showStatistics(this.collectStat);
+    return this.collectStat;
   }
 
   showStatistics(data: Array<number>): void {

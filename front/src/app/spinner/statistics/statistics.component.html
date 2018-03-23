@@ -2,7 +2,7 @@
   <p><i class="material-icons">pie_chart</i> Statistics
     <span class="statisticsType">
     <mat-form-field>
-      <mat-select [(value)]="select">
+      <mat-select [(value)]="chartType">
         <mat-option *ngFor="let type of types" [value]="type" (onSelectionChange)="toggleStatistics($event, type)">
           {{ type }}
         </mat-option>

@@ -9,6 +9,7 @@ import {Observable} from 'rxjs/Observable';
 import {Spinner} from '../spinner';
 import {SpinnerItem} from '../spinnerItem';
 
+
 export class ConfirmValidParentMatcher implements ErrorStateMatcher {
   isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
     return control.parent.invalid && control.touched;
@@ -23,23 +24,25 @@ export class ConfirmValidParentMatcher implements ErrorStateMatcher {
 
 export class SpinnerListComponent implements OnInit {
 
+  greenColor = '#009688';
+  whiteColor = 'white';
   color = 'primary';
   warnColor = 'warn';
 
   @ViewChild('elAuthForm')
-  private elAuthForm: ElementRef;
+  elAuthForm: ElementRef;
 
   @ViewChild('cont')
-  private elCont: ElementRef;
+  elCont: ElementRef;
 
   @ViewChild('checkboxPass')
-  private elCheckboxPass: ElementRef;
+  elCheckboxPass: ElementRef;
 
   @ViewChild('checkBox')
-  private elcheckBox;
+  elcheckBox;
 
   @ViewChild('spinnersForm')
-  private elSpinnersForm: ElementRef;
+  elSpinnersForm: ElementRef;
 
   addSpinnerForm: FormGroup;
   authForm: FormGroup;
@@ -61,10 +64,7 @@ export class SpinnerListComponent implements OnInit {
     private router: Router) { }
 
   ngOnInit() {
-    this.http.getData('/getSpinners').subscribe((res: Array<Spinner>) => {
-      this.spinners = res;
-      this.router.navigateByUrl(`/${res[0]._id}`).then();
-    });
+    this.http.getData('/getSpinners').subscribe((res: Array<Spinner>) => this.spinners = res);
     this.data.authorizationError.subscribe(() => this.initAuthorizationError());
     this.initForm();
     this.initAuthForm();
@@ -164,7 +164,7 @@ export class SpinnerListComponent implements OnInit {
     });
   }
 
-  checkDeleteSpinnerIsCurrentSpinner(deletedSpinner) {
+  checkDeleteSpinnerIsCurrentSpinner(deletedSpinner): void {
     if (this.data.getSpinnerId() === deletedSpinner._id) {
       this.http.getItems(this.spinners[0]._id)
         .subscribe((res: Array<SpinnerItem>) => this.showSpinnerItems(res, this.spinners[0]._id));
@@ -181,7 +181,7 @@ export class SpinnerListComponent implements OnInit {
     }
   }
 
-  getPrivateSpinnerItems(id, auth): void {
+  getPrivateSpinnerItems(id: string, auth: string): void {
     this.http.getItems(id, auth).subscribe((result: Array<SpinnerItem>) => {
       this.data.setSpinnerId(this.spinnerID);
       this.showSpinnerItems(result, this.data.getSpinnerId());
@@ -190,8 +190,14 @@ export class SpinnerListComponent implements OnInit {
   }
 
   showSpinnerItems(data: Array<SpinnerItem>, navURL: string): void {
+    const spinnerBut = document.getElementsByClassName('but-choose');
+    for (let i = 0; i < spinnerBut.length; i++) {
+        spinnerBut[i].setAttribute('style', `bakcground-color: ${this.whiteColor}; color: ${this.greenColor}`);
+    }
+    document.getElementById(this.spinnerID).style.backgroundColor = this.greenColor;
+    document.getElementById(this.spinnerID).style.color = this.whiteColor;
     this.data.announceSpinnerItems(data);
-    this.router.navigateByUrl(`/${navURL}`).then();
+    this.router.navigateByUrl(`/${navURL}`);
   }
 
   clickShowPassword(): void {

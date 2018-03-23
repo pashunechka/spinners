@@ -42,7 +42,7 @@ export class AddFormComponent implements OnInit, OnChanges {
   ngOnChanges() {
     if (this.member) {
       this.loadImage.name = this.member.image;
-      this.setImage(`../../assets/${this.member.image}`);
+      this.setImage(`/assets/${this.member.image}`);
       this.addForm.get('title').setValue(this.member.name);
       this.addForm.get('color').setValue(this.member.color);
     }
@@ -100,10 +100,10 @@ export class AddFormComponent implements OnInit, OnChanges {
   resetAddForm(): void {
     this.addForm.reset();
     this.loadImage = {};
-    this.setImage(`../../assets/${this.data.DEFAULTIMAGE}`);
+    this.setImage(`/assets/${this.data.DEFAULTIMAGE}`);
   }
 
-  setForm(id: string): FormGroup {
+  setForm(id: string) {
     const form = this.addForm.value;
     this.loadImage.name ?  form.image = this.loadImage.name : form.image = this.data.DEFAULTIMAGE;
     form.id = id;

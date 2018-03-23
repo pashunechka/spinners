@@ -1,8 +1,7 @@
 import 'hammerjs';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {
-  MatButtonModule, MatCardModule, MatCheckboxModule, MatGridListModule, MatIconModule, MatInputModule, MatListModule,
-  MatMenuModule,
+  MatButtonModule, MatCardModule, MatCheckboxModule, MatIconModule, MatInputModule, MatListModule, MatMenuModule,
   MatSelectModule,
   MatSidenavModule,
   MatSlideToggleModule, MatToolbarModule
@@ -22,8 +21,7 @@ import {NgModule} from '@angular/core';
     MatCheckboxModule,
     MatListModule,
     MatCardModule,
-    MatMenuModule,
-    MatGridListModule
+    MatMenuModule
   ],
   exports: [
     BrowserAnimationsModule,
@@ -37,7 +35,7 @@ import {NgModule} from '@angular/core';
     MatCheckboxModule,
     MatListModule,
     MatCardModule,
-    MatMenuModule,
-    MatGridListModule]
+    MatMenuModule
+  ]
 })
 export class AppMaterialModule { }

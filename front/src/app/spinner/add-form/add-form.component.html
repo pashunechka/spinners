@@ -32,10 +32,11 @@
       </div>
       <div class="input-cont">
         <span for="image">Image:</span><br />
-        <img #imageCont class="image-cont" src="../../assets/no-image.svg" (click)="chooseImg()"/>
+        <img #imageCont id="imageCont" class="image-cont" src="/assets/no-image.svg" (click)="chooseImg()"/>
         <input
           hidden
           #image
+          id="image"
           type="file"
           accept="image/*"
           name="image"

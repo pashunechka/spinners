@@ -1,22 +1,21 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs/Observable';
+import {Config} from './config';
+
 
 @Injectable()
 export class HttpService {
 
-  host = 'http://localhost:3000';
-
   constructor(private http: HttpClient) {}
 
   postData(url: string, data: any): Observable<any>  {
-    return this.http.post(`${this.host}${url}`, data);
+    return this.http.post(`${Config.host}:${Config.port}${url}`, data);
   }
 
   getData(url: string): Observable<any>   {
-    return this.http.get(`${this.host}${url}`);
+    return this.http.get(`${Config.host}:${Config.port}${url}`);
   }
-
 
   getItems(id: string, auth?: string): Observable<object> {
     const sendData = {id: id, auth: auth};

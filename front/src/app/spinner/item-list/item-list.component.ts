@@ -1,4 +1,7 @@
-import {Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {
+  Component, Input, OnDestroy, OnInit, QueryList, ViewChild,
+  ViewChildren
+} from '@angular/core';
 import {DataService} from '../../data.service';
 import {Subscription} from 'rxjs/Subscription';
 import {HttpService} from '../../http.service';
@@ -18,6 +21,8 @@ export class ItemListComponent implements OnInit, OnDestroy {
   @ViewChild('itemsList')
   private elItemsList;
 
+  @ViewChildren('option') elItems: QueryList<any>;
+
   @Input() disableItemsList: boolean;
 
   color = 'primary';
@@ -35,7 +40,7 @@ export class ItemListComponent implements OnInit, OnDestroy {
     private http: HttpService,
     private route: ActivatedRoute) { }
 
-  static getArrayItem(array: Array<SpinnerItem>, item: SpinnerItem): any {
+  static getArrayItem(array: Array<SpinnerItem>, item: SpinnerItem): SpinnerItem {
     return array[ItemListComponent.getItemIndexInArray(array, item)];
   }
 
@@ -55,11 +60,28 @@ export class ItemListComponent implements OnInit, OnDestroy {
     if (this.data.getSpinnerId()) {
       this.http.getItems(this.data.getSpinnerId()).subscribe((items: Array<SpinnerItem>) => {
         this.items = items;
+        this.setInitialParts();
       }, () => this.data.announceError(false));
     }
     this.subscription = this.data.wheelParts.subscribe((parts: Array<SpinnerItem>) => this.parts = parts);
     this.subscribeSpinnerItems();
     this.subscribeSpinnerStatistics();
+  }
+
+  setInitialParts() {
+    if (localStorage.getItem('items')) {
+      this.parts = JSON.parse(localStorage.getItem('items'));
+      this.elItems.changes.subscribe(elItems =>
+        elItems.forEach(elItem => {
+          this.parts.forEach(locItem => {
+            if (elItem._element.nativeElement.id === locItem._id) {
+              elItem.selected = true;
+              this.isAllChecked();
+            }
+          });
+        }));
+      this.data.announceWheelParts(this.parts);
+    }
   }
 
   ngOnDestroy() {
@@ -70,6 +92,7 @@ export class ItemListComponent implements OnInit, OnDestroy {
     this.subscription = this.data.spinnerItems.subscribe((items: Array<SpinnerItem>) => {
       this.data.announceWheelParts([]);
       this.items = items;
+      localStorage.clear();
       this.elCheckAllInp.checked = false;
     });
   }
@@ -89,29 +112,38 @@ export class ItemListComponent implements OnInit, OnDestroy {
     if (event.checked) {
       this.elItemsList.selectAll();
       this.items.forEach((el: SpinnerItem) => this.parts.push(el));
+      localStorage.setItem('items', JSON.stringify(this.parts));
     } else {
       this.elItemsList.deselectAll();
+      localStorage.clear();
     }
     this.data.announceWheelParts(this.parts);
   }
 
-
   getInput(event): void {
       this.items.forEach((el: SpinnerItem) => {
         if (el._id === event.source._element.nativeElement.id) {
-          event.selected ? this.parts.push(el) : this.parts.splice(ItemListComponent.getItemIndexInArray(this.parts, el), 1);
+          if (event.selected) {
+            this.parts.push(el);
+          } else {
+            const position = this.parts.filter(elem => {
+              return (elem._id === el._id);
+            })[0];
+            this.parts.splice(ItemListComponent.getItemIndexInArray(this.parts, position), 1);
+          }
         }
       });
+      localStorage.setItem('items', JSON.stringify(this.parts));
       this.data.announceWheelParts(this.parts);
       this.isAllChecked();
   }
 
-  isAllChecked(): void | boolean {
+  isAllChecked(): boolean {
     if (this.elItemsList.selectedOptions.selected.length === this.items.length) {
       this.elItemsList.selectAll();
       return this.elCheckAllInp.checked = true;
     }
-    this.elCheckAllInp.checked = false;
+    return this.elCheckAllInp.checked = false;
   }
 
   dragStart(event, id: string): void  {
