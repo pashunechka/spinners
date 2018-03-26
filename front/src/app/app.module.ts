@@ -35,7 +35,7 @@ import { AppMaterialModule } from './app-material.module';
   ],
   providers: [
     DataService,
-    HttpService,
+    HttpService
   ],
   bootstrap: [AppComponent]
 })

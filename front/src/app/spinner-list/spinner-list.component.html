@@ -49,7 +49,12 @@
       </form>
       <div class="list-spinners">
         <div *ngFor="let spinner of spinners">
-        <button id="{{spinner._id}}" [ngClass]="data.getSpinnerId() ? 'but-choose' : 'but-choose but-width'" mat-raised-button (click)="showSpinner(spinner)">
+        <button
+          id="{{spinner._id}}"
+          [ngClass]="viewMode ? 'but-choose' : 'but-choose but-width'"
+          mat-raised-button
+          (click)="showSpinner(spinner)"
+        >
           <span class="spinner-list-name"><a title="{{spinner.name}}">{{spinner.name}}</a></span>
           <span *ngIf="spinner.password.private" class="lock material-icons">lock</span>
           <span *ngIf="!spinner.password.private" class="unlock material-icons">lock_open</span>

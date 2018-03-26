@@ -14,6 +14,6 @@ export class AppComponent implements OnInit {
   constructor(private data: DataService) {}
 
   ngOnInit(): void {
-    this.viewMode = this.data.getSpinnerId();
+    this.data.changeURL.subscribe(url => this.viewMode = url);
   }
 }

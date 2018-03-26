@@ -53,6 +53,8 @@ export class SpinnerListComponent implements OnInit {
   isDelete = false;
   isSpinnerPassword = true;
   isAuthForm = true;
+  viewMode: string;
+  intervalBut;
 
   confirmValidParentMatcher = new ConfirmValidParentMatcher();
   spinners: Array<Spinner> = [];
@@ -61,13 +63,15 @@ export class SpinnerListComponent implements OnInit {
     private http: HttpService,
     private formBuilder: FormBuilder,
     private data: DataService,
-    private router: Router) { }
+    private router: Router) {}
 
   ngOnInit() {
+    this.data.changeURL.subscribe(url => this.viewMode = url);
     this.http.getData('/getSpinners').subscribe((res: Array<Spinner>) => this.spinners = res);
     this.data.authorizationError.subscribe(() => this.initAuthorizationError());
     this.initForm();
     this.initAuthForm();
+    this.changeActiveSpinnerStyle();
   }
 
   initAuthorizationError(): void {
@@ -167,7 +171,7 @@ export class SpinnerListComponent implements OnInit {
   checkDeleteSpinnerIsCurrentSpinner(deletedSpinner): void {
     if (this.data.getSpinnerId() === deletedSpinner._id) {
       this.http.getItems(this.spinners[0]._id)
-        .subscribe((res: Array<SpinnerItem>) => this.showSpinnerItems(res, this.spinners[0]._id));
+        .subscribe((res: Array<SpinnerItem>) => this.showSpinnerItems(res, '/'));
     }
   }
 
@@ -190,14 +194,24 @@ export class SpinnerListComponent implements OnInit {
   }
 
   showSpinnerItems(data: Array<SpinnerItem>, navURL: string): void {
-    const spinnerBut = document.getElementsByClassName('but-choose');
-    for (let i = 0; i < spinnerBut.length; i++) {
-        spinnerBut[i].setAttribute('style', `bakcground-color: ${this.whiteColor}; color: ${this.greenColor}`);
-    }
-    document.getElementById(this.spinnerID).style.backgroundColor = this.greenColor;
-    document.getElementById(this.spinnerID).style.color = this.whiteColor;
+    this.changeActiveSpinnerStyle();
     this.data.announceSpinnerItems(data);
     this.router.navigateByUrl(`/${navURL}`);
+  }
+
+  changeActiveSpinnerStyle() {
+    const spinnerBut = document.getElementsByClassName('but-choose');
+    for (let i = 0; i < spinnerBut.length; i++) {
+      spinnerBut[i].setAttribute('style', `bakcground-color: ${this.whiteColor}; color: ${this.greenColor}`);
+    }
+    this.intervalBut = setInterval(() => {
+      if (this.data.getSpinnerId()) {
+       document.getElementById(this.data.getSpinnerId()).style.backgroundColor = this.greenColor;
+       document.getElementById(this.data.getSpinnerId()).style.color = this.whiteColor;
+       clearInterval(this.intervalBut);
+       console.log('111');
+      }
+    }, 300);
   }
 
   clickShowPassword(): void {

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import {Subject} from 'rxjs/Subject';
 import {SpinnerItem} from './spinnerItem';
+import {Spinner} from "./spinner";
 
 @Injectable()
 export class DataService {
@@ -13,12 +14,14 @@ export class DataService {
   private parts = new Subject<any>();
   private errorAuth = new Subject<any>();
   private statistics = new Subject<any>();
+  private changeUrl = new Subject<any>();
 
   constructor() { }
 
   spinnerItems = this.items.asObservable();
   wheelParts = this.parts.asObservable();
   authorizationError = this.errorAuth.asObservable();
+  changeURL = this.changeUrl.asObservable();
   spinnerStatistics = this.statistics.asObservable();
 
   announceSpinnerStatistics(statistics: SpinnerItem): void {
@@ -35,6 +38,10 @@ export class DataService {
 
   announceError(errorAuth: boolean): void {
     this.errorAuth.next(errorAuth);
+  }
+
+  announceChangeURL(url: string): void {
+    this.changeUrl.next(url);
   }
 
   getSpinnerId(): string {

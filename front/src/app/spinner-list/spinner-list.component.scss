@@ -48,6 +48,11 @@ button {
     width: 95%;
   }
 
+  .but-active {
+    background-color: $color;
+    color: $whiteColor;
+  }
+
   .delete-spinner{
     outline: none;
   }

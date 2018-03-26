@@ -57,6 +57,7 @@ export class ItemListComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.data.setSpinnerId(this.route.snapshot.paramMap.get('id'));
+    this.data.announceChangeURL(this.data.getSpinnerId());
     if (this.data.getSpinnerId()) {
       this.http.getItems(this.data.getSpinnerId()).subscribe((items: Array<SpinnerItem>) => {
         this.items = items;

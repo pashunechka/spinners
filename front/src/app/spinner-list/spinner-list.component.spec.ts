@@ -16,6 +16,7 @@ describe('SpinnerListComponent', () => {
   let fixture: ComponentFixture<SpinnerListComponent>;
   let router;
   let httpService;
+  let dataService;
   let httpMock: HttpTestingController;
   const item = {name: '1', _id: '1', image: 'no-image.jpg', color: '#000000', statistics: 3};
 
@@ -38,6 +39,7 @@ describe('SpinnerListComponent', () => {
     })
     .compileComponents();
     router = TestBed.get(Router);
+    dataService = TestBed.get(DataService);
     httpService = TestBed.get(HttpService);
     httpMock = TestBed.get(HttpTestingController);
   }));
@@ -108,7 +110,7 @@ describe('SpinnerListComponent', () => {
   it('#showSpinnerItems should change url', fakeAsync(() => {
     const spy = spyOn(router, 'navigateByUrl');
     component.showSpinnerItems([item], '1');
-
+    clearInterval(component.intervalBut);
     const url = spy.calls.first().args[0];
     expect(url).toEqual('/1');
   }));
