@@ -171,7 +171,10 @@ export class SpinnerListComponent implements OnInit {
   checkDeleteSpinnerIsCurrentSpinner(deletedSpinner): void {
     if (this.data.getSpinnerId() === deletedSpinner._id) {
       this.http.getItems(this.spinners[0]._id)
-        .subscribe((res: Array<SpinnerItem>) => this.showSpinnerItems(res, '/'));
+        .subscribe((res: Array<SpinnerItem>) => {
+          this.router.navigateByUrl('/');
+          this.data.announceChangeURL('');
+        });
     }
   }
 
@@ -209,7 +212,6 @@ export class SpinnerListComponent implements OnInit {
        document.getElementById(this.data.getSpinnerId()).style.backgroundColor = this.greenColor;
        document.getElementById(this.data.getSpinnerId()).style.color = this.whiteColor;
        clearInterval(this.intervalBut);
-       console.log('111');
       }
     }, 300);
   }
