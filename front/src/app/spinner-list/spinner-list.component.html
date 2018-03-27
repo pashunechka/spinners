@@ -17,7 +17,7 @@
             The field shouldn't be empty
           </mat-error>
         </mat-form-field>
-        <fieldset formGroupName="password">
+        <span formGroupName="password">
         <div class="isPrivateSpinner">
           <mat-checkbox #checkBox (change)="clickShowPassword()">Set password</mat-checkbox>
           <input
@@ -29,7 +29,7 @@
             formControlName="isShowPass"
           >
         </div>
-          <mat-form-field class="full-width" [hidden]="isSpinnerPassword">
+          <mat-form-field class="full-width" *ngIf="!isSpinnerPassword">
             <input matInput
               autocomplete="off"
               [errorStateMatcher]="confirmValidParentMatcher"
@@ -45,7 +45,7 @@
             </mat-error>
           </mat-form-field>
           <button class="add-spinner" mat-raised-button [color]="color" (click)="submit()"><mat-icon>add</mat-icon> Add a spinner</button>
-        </fieldset>
+        </span>
       </form>
       <div class="list-spinners">
         <div *ngFor="let spinner of spinners">

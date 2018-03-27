@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css?family=Ubuntu');
-@import "../node_modules/bootstrap/scss/bootstrap.scss";
-
+@import "../node_modules/bootstrap/scss/bootstrap-grid.scss";
 @import '~@angular/material/theming';
 @include mat-core();
 
