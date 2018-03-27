@@ -75,6 +75,15 @@ describe('SpinnerListComponent', () => {
     expect(component.authForm.get('authPassword').value).toBe(null);
   });
 
+  it('#checkDeleteSpinnerIsCurrentSpinner should navigate to / if deleteItem id equals current url', () => {
+    dataService.setSpinnerId('1');
+    const spy = spyOn(router, 'navigateByUrl');
+    component.checkDeleteSpinnerIsCurrentSpinner(item);
+
+    const url = spy.calls.first().args[0];
+    expect(url).toEqual('/');
+  });
+
   it('#resetForm should reset addSpinnerForm', () => {
     component.addSpinnerForm.get('spinnerName').setValue('first');
     component.addSpinnerForm.get('password').get('spinnerPassword').setValue('12345');

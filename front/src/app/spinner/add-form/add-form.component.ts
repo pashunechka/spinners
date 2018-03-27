@@ -83,15 +83,15 @@ export class AddFormComponent implements OnInit, OnChanges {
     return true;
   }
 
-  modifySpinnerItem(spinnerItem: FormGroup): void {
-    this.http.postData('/modifyItem', spinnerItem).subscribe((res: SpinnerItem) => {
+  modifySpinnerItem(spinnerItem: SpinnerItem): void {
+    this.http.modifyItem(spinnerItem).subscribe((res: SpinnerItem) => {
       this.modifyItem.emit(res);
       this.resetAddForm();
       }, () => this.data.announceError(false));
   }
 
-  addSpinnerItems(spinnerItem: FormGroup): void {
-    this.http.postData('/addItems', spinnerItem).subscribe((res: SpinnerItem) => {
+  addSpinnerItems(spinnerItem: SpinnerItem): void {
+    this.http.addItems(spinnerItem).subscribe((res: SpinnerItem) => {
       this.addItem.emit(res);
       this.resetAddForm();
     }, () => this.data.announceError(false));
@@ -127,7 +127,7 @@ export class AddFormComponent implements OnInit, OnChanges {
     const formData: any = new FormData();
     const file = this.loadImage;
     formData.append('file', file);
-    this.http.postData('/uploads', formData).subscribe();
+    this.http.uploadImage(formData).subscribe();
   }
 
   previewImage(event): void {

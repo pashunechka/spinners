@@ -50,4 +50,9 @@ describe('DataService', () => {
     dataService.authorizationError.subscribe(val => expect(val).toEqual(items));
   });
 
+  it('#announceChangeURL should return string from Observable', () => {
+    dataService.announceChangeURL('string url value');
+    dataService.changeURL.subscribe(val => expect(val).toEqual('string url value'));
+  });
+
 });

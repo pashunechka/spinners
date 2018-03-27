@@ -15,11 +15,9 @@ import {SpinnerItem} from '../../spinnerItem';
 })
 export class ItemListComponent implements OnInit, OnDestroy {
 
-  @ViewChild('checkAllInp')
-  private elCheckAllInp;
+  @ViewChild('checkAllInp') elCheckAllInp;
 
-  @ViewChild('itemsList')
-  private elItemsList;
+  @ViewChild('itemsList') elItemsList;
 
   @ViewChildren('option') elItems: QueryList<any>;
 
@@ -127,9 +125,9 @@ export class ItemListComponent implements OnInit, OnDestroy {
           if (event.selected) {
             this.parts.push(el);
           } else {
-            const position = this.parts.filter(elem => {
+            const position = this.parts.find(elem => {
               return (elem._id === el._id);
-            })[0];
+            });
             this.parts.splice(ItemListComponent.getItemIndexInArray(this.parts, position), 1);
           }
         }
@@ -155,21 +153,26 @@ export class ItemListComponent implements OnInit, OnDestroy {
 
   setModifyItem(newItem: SpinnerItem): void {
     this.resetMember();
-    const modItem = this.items.find((item: SpinnerItem) => {
-      return item._id === newItem._id;
-    });
-    ItemListComponent.modifyItem(this.items, modItem, newItem);
-    if (ItemListComponent.getArrayItem(this.parts, modItem)) {
-      ItemListComponent.modifyItem(this.parts, modItem, newItem);
+    ItemListComponent.modifyItem(this.items, this.findItemInArray(this.items, newItem), newItem);
+    if (ItemListComponent.getArrayItem(this.parts, this.findItemInArray(this.parts, newItem))) {
+      ItemListComponent.modifyItem(this.parts, this.findItemInArray(this.parts, newItem), newItem);
+      localStorage.setItem('items', JSON.stringify(this.parts));
       this.data.announceWheelParts(this.parts);
     }
   }
 
+  findItemInArray(array: SpinnerItem[], searchItem: SpinnerItem): SpinnerItem {
+    return array.find((item: SpinnerItem) => {
+      return item._id === searchItem._id;
+    });
+  }
+
   deleteItem(): void {
-    this.http.postData('/deleteItem', this.deletedItem).subscribe(() => {
+    this.http.deleteItem(this.deletedItem).subscribe(() => {
       this.deleteItemFromItems();
       this.deleteItemFromWheelParts();
       this.setIsDelete(false);
+      this.isAllChecked();
     });
   }
 
@@ -178,10 +181,11 @@ export class ItemListComponent implements OnInit, OnDestroy {
   }
 
   deleteItemFromWheelParts(): void {
-    const delItem = ItemListComponent.getArrayItem(this.parts, this.deletedItem);
+    const delItem = this.findItemInArray(this.parts, this.deletedItem);
     if (delItem) {
       this.parts.splice(ItemListComponent.getItemIndexInArray(this.parts, this.deletedItem), 1);
       this.data.announceWheelParts(this.parts);
+      localStorage.setItem('items', JSON.stringify(this.parts));
     }
   }
 

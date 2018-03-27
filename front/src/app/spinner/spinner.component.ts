@@ -28,6 +28,8 @@ export class SpinnerComponent implements OnInit, OnDestroy {
   stop = false;
   isWheel: boolean;
   disableItemsList: boolean;
+  disableBut = false;
+  disableButTimer;
 
   clickNumber = 0;
   parts: Array<SpinnerItem> = [];
@@ -64,14 +66,18 @@ export class SpinnerComponent implements OnInit, OnDestroy {
     this.clickNumber = 0;
     this.spinner.stopWheel();
     this.disableItems(false);
+    clearInterval(this.disableButTimer);
+    this.disableBut = false;
   }
 
   clickToRotate(): void {
+    clearInterval(this.disableButTimer);
     this.spinner.clearTimeOut();
     this.clickNumber++;
     this.setStop(true);
     this.disableItems(true);
     this.rotateWheel();
+    this.disableButTimer = setInterval( () => this.disableBut = true, 1000);
   }
 
   rotateWheel(): void {
@@ -82,9 +88,11 @@ export class SpinnerComponent implements OnInit, OnDestroy {
   afterWheelRotate = (): void => {
       this.setStop(false);
       this.setIsPopUp(true);
+      this.disableBut = false;
+      clearInterval(this.disableButTimer);
       this.clickNumber = 0;
       this.disableItems(false);
-      this.http.postData('/increaseItemStatistics', this.spinner.getValue())
+      this.http.increaseItemStatistics(this.spinner.getValue())
         .subscribe(result => this.data.announceSpinnerStatistics(result));
   }
 

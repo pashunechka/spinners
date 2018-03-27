@@ -67,7 +67,7 @@ export class SpinnerListComponent implements OnInit {
 
   ngOnInit() {
     this.data.changeURL.subscribe(url => this.viewMode = url);
-    this.http.getData('/getSpinners').subscribe((res: Array<Spinner>) => this.spinners = res);
+    this.http.getSpinners().subscribe((res: Array<Spinner>) => this.spinners = res);
     this.data.authorizationError.subscribe(() => this.initAuthorizationError());
     this.initForm();
     this.initAuthForm();
@@ -109,7 +109,7 @@ export class SpinnerListComponent implements OnInit {
   }
 
   validateAuth(): Observable<object | null> {
-    return this.http.postData('/checkAuth', {id: this.spinnerID, auth: this.authForm.get('authPassword').value})
+    return this.http.checkAuth(this.spinnerID, this.authForm.get('authPassword').value)
       .pipe(map((res: null | boolean) => {
       return  res ? null : {invalid: true};
     }));
@@ -118,7 +118,7 @@ export class SpinnerListComponent implements OnInit {
   submit(): void {
     this.markAsTouch();
     if (this.addSpinnerForm.valid) {
-      this.http.postData('/addSpinner', this.addSpinnerForm.value).subscribe((res: any) => {
+      this.http.addSpinner(this.addSpinnerForm.value).subscribe((res: any) => {
         this.spinners.push(res);
         this.http.getItems(res._id, this.addSpinnerForm.get('password').get('spinnerPassword').value)
           .subscribe( (result: Array<SpinnerItem>) => {
@@ -156,7 +156,7 @@ export class SpinnerListComponent implements OnInit {
   }
 
   deleteSpinnerById(deletedSpinner: {_id: string, authPassword: string}): void {
-    this.http.postData('/deleteSpinner', deletedSpinner).subscribe(() => {
+    this.http.deleteSpinner(deletedSpinner).subscribe(() => {
       this.spinners.forEach(spinner => {
         if (spinner._id === deletedSpinner._id) {
           this.spinners.splice(this.spinners.indexOf(spinner), 1);
@@ -170,11 +170,8 @@ export class SpinnerListComponent implements OnInit {
 
   checkDeleteSpinnerIsCurrentSpinner(deletedSpinner): void {
     if (this.data.getSpinnerId() === deletedSpinner._id) {
-      this.http.getItems(this.spinners[0]._id)
-        .subscribe((res: Array<SpinnerItem>) => {
-          this.router.navigateByUrl('/');
-          this.data.announceChangeURL('');
-        });
+      this.router.navigateByUrl('/');
+      this.data.announceChangeURL('');
     }
   }
 
@@ -202,16 +199,16 @@ export class SpinnerListComponent implements OnInit {
     this.router.navigateByUrl(`/${navURL}`);
   }
 
-  changeActiveSpinnerStyle() {
-    const spinnerBut = document.getElementsByClassName('but-choose');
-    for (let i = 0; i < spinnerBut.length; i++) {
-      spinnerBut[i].setAttribute('style', `bakcground-color: ${this.whiteColor}; color: ${this.greenColor}`);
-    }
+  changeActiveSpinnerStyle(): void {
     this.intervalBut = setInterval(() => {
       if (this.data.getSpinnerId()) {
-       document.getElementById(this.data.getSpinnerId()).style.backgroundColor = this.greenColor;
-       document.getElementById(this.data.getSpinnerId()).style.color = this.whiteColor;
-       clearInterval(this.intervalBut);
+        const spinnerBut = document.getElementsByClassName('but-choose');
+        for (let i = 0; i < spinnerBut.length; i++) {
+          spinnerBut[i].setAttribute('style', `bakcground-color: ${this.whiteColor}; color: ${this.greenColor}`);
+        }
+        document.getElementById(this.data.getSpinnerId()).style.backgroundColor = this.greenColor;
+        document.getElementById(this.data.getSpinnerId()).style.color = this.whiteColor;
+        clearInterval(this.intervalBut);
       }
     }, 300);
   }

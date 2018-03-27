@@ -15,7 +15,7 @@ describe('ItemListComponent', () => {
   const item = {name: '1', _id: '1', image: 'no-image.jpg', color: '#000000', statistics: 3};
   const items = [];
   const member = { name: '1', color: '#000000', image: 'no-image.svg', _id: '1', statistics: 5};
-
+  let dataService;
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [
@@ -34,7 +34,7 @@ describe('ItemListComponent', () => {
       ]
     })
     .compileComponents();
-
+    dataService = TestBed.get(DataService);
     for (let i = 0; i < 5; i++) {
       items.push({name: `${i}`, _id: '1', image: 'no-image.jpg', color: '#000000', statistics: 3});
     }
@@ -84,8 +84,18 @@ describe('ItemListComponent', () => {
   });
 
   it('#deleteItem should remove item from DB', () => {
-    spyOn(component, 'deleteItem');
     component.deleteItem();
     expect(component.isDelete).toEqual(false);
   });
+
+  it('#isAllChecked should toggle checkAll', () => {
+    component.isAllChecked();
+    expect(component.elCheckAllInp.checked).toBeTruthy();
+
+    component.items = items;
+    component.elItemsList.selectAll();
+    component.isAllChecked();
+    expect(component.elCheckAllInp.checked).toBeFalsy();
+  });
+
 });
