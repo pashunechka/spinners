@@ -26,7 +26,7 @@
     <button mat-icon-button class="show-mod-menu" [matMenuTriggerFor]="menu"><i class="material-icons">more_vert</i></button>
     <mat-menu #menu="matMenu">
       <span class="delete-item"  mat-menu-item (click)="showDeletePopUp(member)"><i class="material-icons">delete_forever</i> Delete</span>
-      <span class="modify-item"  mat-menu-item (click)="showModifyPopUp(member)"><i class="material-icons">create</i> Modify</span>
+      <span class="modify-item"  mat-menu-item (click)="checkedModifyItem(member)"><i class="material-icons">create</i> Modify</span>
     </mat-menu>
     </div>
   </mat-selection-list>

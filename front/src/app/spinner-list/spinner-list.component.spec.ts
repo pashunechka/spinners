@@ -116,13 +116,6 @@ describe('SpinnerListComponent', () => {
     expect(component.addSpinnerForm.get('password').get('spinnerPassword').value).toEqual('');
   });
 
-  it('#showSpinnerItems should change url', fakeAsync(() => {
-    const spy = spyOn(router, 'navigateByUrl');
-    component.showSpinnerItems([item], '1');
-    clearInterval(component.intervalBut);
-    const url = spy.calls.first().args[0];
-    expect(url).toEqual('/1');
-  }));
 
   it('initialize addSpinnerForm on ngOnInit', () => {
       expect(component.addSpinnerForm).not.toBeUndefined();

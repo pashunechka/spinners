@@ -5,6 +5,7 @@ export class SpinnerItem {
   image: string;
   color: string;
   statistics: number;
+  spinnerId: string;
 
   constructor() {}
 

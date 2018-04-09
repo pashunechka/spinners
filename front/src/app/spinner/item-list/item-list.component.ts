@@ -69,11 +69,13 @@ export class ItemListComponent implements OnInit, OnDestroy {
 
   setInitialParts() {
     if (localStorage.getItem('items')) {
-      this.parts = JSON.parse(localStorage.getItem('items'));
+      if (JSON.parse(localStorage.getItem('items'))[0].spinnerId === this.data.getSpinnerId()) {
+        this.parts = JSON.parse(localStorage.getItem('items'));
+      }
       this.elItems.changes.subscribe(elItems =>
         elItems.forEach(elItem => {
           this.parts.forEach(locItem => {
-            if (elItem._element.nativeElement.id === locItem._id) {
+            if (elItem._element.nativeElement.id === locItem._id && locItem.spinnerId === this.data.getSpinnerId()) {
               elItem.selected = true;
               this.isAllChecked();
             }
@@ -125,14 +127,12 @@ export class ItemListComponent implements OnInit, OnDestroy {
           if (event.selected) {
             this.parts.push(el);
           } else {
-            const position = this.parts.find(elem => {
-              return (elem._id === el._id);
-            });
+            const position = this.parts.find(elem => elem._id === el._id);
             this.parts.splice(ItemListComponent.getItemIndexInArray(this.parts, position), 1);
           }
         }
       });
-      localStorage.setItem('items', JSON.stringify(this.parts));
+      this.parts.length ? localStorage.setItem('items', JSON.stringify(this.parts)) : localStorage.clear();
       this.data.announceWheelParts(this.parts);
       this.isAllChecked();
   }
@@ -185,7 +185,7 @@ export class ItemListComponent implements OnInit, OnDestroy {
     if (delItem) {
       this.parts.splice(ItemListComponent.getItemIndexInArray(this.parts, this.deletedItem), 1);
       this.data.announceWheelParts(this.parts);
-      localStorage.setItem('items', JSON.stringify(this.parts));
+      this.parts.length ? localStorage.setItem('items', JSON.stringify(this.parts)) : localStorage.clear();
     }
   }
 
@@ -203,7 +203,7 @@ export class ItemListComponent implements OnInit, OnDestroy {
     this.deletedItem = member;
   }
 
-  showModifyPopUp(member: SpinnerItem): void {
+  checkedModifyItem(member: SpinnerItem): void {
     this.member = member;
   }
 

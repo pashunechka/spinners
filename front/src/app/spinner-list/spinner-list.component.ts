@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Component, DoCheck, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {HttpService} from '../http.service';
 import {FormBuilder, FormControl, FormGroup, FormGroupDirective, NgForm, ValidatorFn, Validators} from '@angular/forms';
 import {DataService} from '../data.service';
@@ -22,7 +22,7 @@ export class ConfirmValidParentMatcher implements ErrorStateMatcher {
   styleUrls: ['./spinner-list.component.scss']
 })
 
-export class SpinnerListComponent implements OnInit {
+export class SpinnerListComponent implements OnInit, DoCheck {
 
   greenColor = '#009688';
   whiteColor = 'white';
@@ -54,7 +54,6 @@ export class SpinnerListComponent implements OnInit {
   isSpinnerPassword = true;
   isAuthForm = true;
   viewMode: string;
-  intervalBut;
 
   confirmValidParentMatcher = new ConfirmValidParentMatcher();
   spinners: Array<Spinner> = [];
@@ -71,7 +70,12 @@ export class SpinnerListComponent implements OnInit {
     this.data.authorizationError.subscribe(() => this.initAuthorizationError());
     this.initForm();
     this.initAuthForm();
-    this.changeActiveSpinnerStyle();
+  }
+
+  ngDoCheck() {
+    if (document.getElementById(this.data.getSpinnerId())) {
+      this.changeActiveSpinnerStyle();
+    }
   }
 
   initAuthorizationError(): void {
@@ -133,7 +137,7 @@ export class SpinnerListComponent implements OnInit {
 
   showSpinner(spinner: Spinner): void  {
     this.spinnerID = spinner._id;
-    this.isDelete = false;
+    this.setIsDelete(false);
     this.closeAuth();
     if (!spinner.password.private) {
       this.data.setSpinnerId(this.spinnerID);
@@ -152,7 +156,7 @@ export class SpinnerListComponent implements OnInit {
           this.getPrivateSpinnerItems(this.spinnerID, this.authForm.get('authPassword').value);
         clearInterval(this.interval);
       }
-    }, 200);
+    }, 1000);
   }
 
   deleteSpinnerById(deletedSpinner: {_id: string, authPassword: string}): void {
@@ -163,7 +167,7 @@ export class SpinnerListComponent implements OnInit {
           this.checkDeleteSpinnerIsCurrentSpinner(deletedSpinner);
         }
       });
-      this.isDelete = false;
+      this.setIsDelete(false);
       this.closeAuth();
     });
   }
@@ -180,7 +184,7 @@ export class SpinnerListComponent implements OnInit {
     if (!deletedSpinner.password.private) {
       this.deleteSpinnerById(deletedSpinner);
     } else {
-      this.isDelete = true;
+      this.setIsDelete(true);
       this.showAuthForm();
     }
   }
@@ -194,23 +198,17 @@ export class SpinnerListComponent implements OnInit {
   }
 
   showSpinnerItems(data: Array<SpinnerItem>, navURL: string): void {
-    this.changeActiveSpinnerStyle();
     this.data.announceSpinnerItems(data);
     this.router.navigateByUrl(`/${navURL}`);
   }
 
   changeActiveSpinnerStyle(): void {
-    this.intervalBut = setInterval(() => {
-      if (this.data.getSpinnerId()) {
-        const spinnerBut = document.getElementsByClassName('but-choose');
-        for (let i = 0; i < spinnerBut.length; i++) {
-          spinnerBut[i].setAttribute('style', `bakcground-color: ${this.whiteColor}; color: ${this.greenColor}`);
-        }
-        document.getElementById(this.data.getSpinnerId()).style.backgroundColor = this.greenColor;
-        document.getElementById(this.data.getSpinnerId()).style.color = this.whiteColor;
-        clearInterval(this.intervalBut);
-      }
-    }, 300);
+    const spinnerBut = document.getElementsByClassName('but-choose');
+    for (let i = 0; i < spinnerBut.length; i++) {
+      spinnerBut[i].setAttribute('style', `bakcground-color: ${this.whiteColor}; color: ${this.greenColor}`);
+    }
+    document.getElementById(this.data.getSpinnerId()).style.backgroundColor = this.greenColor;
+    document.getElementById(this.data.getSpinnerId()).style.color = this.whiteColor;
   }
 
   clickShowPassword(): void {
@@ -230,14 +228,17 @@ export class SpinnerListComponent implements OnInit {
     this.isSpinnerPassword = true;
     this.addSpinnerForm.reset();
     this.addSpinnerForm.get('spinnerName').reset('');
-    this.addSpinnerForm.get('password').get('isShowPass').reset(false);
-    this.addSpinnerForm.get('password').get('spinnerPassword').reset('');
+    this.addSpinnerForm.controls['password'].get('spinnerPassword').reset('');
     this.elcheckBox.checked = false;
   }
 
   closeAuth(): void {
     this.hideAuthForm();
     this.authForm.reset('');
+  }
+
+  setIsDelete(value: boolean) {
+    this.isDelete = value;
   }
 
   showAuthForm() {

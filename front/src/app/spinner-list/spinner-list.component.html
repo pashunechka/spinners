@@ -1,25 +1,26 @@
 <mat-card>
-<div #spinnersForm>
-  <div class="cont" id="cont" #cont >
-    <p>Create a new spinner</p>
-    <div class="arround">
-      <form class="form-cont" [formGroup]="addSpinnerForm" novalidate>
-        <mat-form-field class="full-width">
-          <input matInput
-          type="text"
-          autocomplete="off"
-          name="spinnerName"
-          placeholder="Enter a spinner name"
-          formControlName="spinnerName"
-          (keypress.enter)="submit()"
-        >
-          <mat-error *ngIf="addSpinnerForm.controls['spinnerName'].getError('required') && addSpinnerForm.controls['spinnerName'].touched">
-            The field shouldn't be empty
-          </mat-error>
-        </mat-form-field>
-        <span formGroupName="password">
+  <div #spinnersForm>
+    <div class="cont" id="cont" #cont>
+      <p>Create a new spinner</p>
+      <div class="arround">
+        <form class="form-cont" [formGroup]="addSpinnerForm" novalidate>
+          <mat-form-field class="full-width">
+            <input matInput
+                   type="text"
+                   autocomplete="off"
+                   name="spinnerName"
+                   placeholder="Enter a spinner name"
+                   formControlName="spinnerName"
+                   (keypress.enter)="submit()"
+            >
+            <mat-error
+              *ngIf="addSpinnerForm.controls['spinnerName'].getError('required') && addSpinnerForm.controls['spinnerName'].touched">
+              The field shouldn't be empty
+            </mat-error>
+          </mat-form-field>
+          <span formGroupName="password">
         <div class="isPrivateSpinner">
-          <mat-checkbox #checkBox (change)="clickShowPassword()">Set password</mat-checkbox>
+          <mat-checkbox id="checkBox" #checkBox (change)="clickShowPassword()">Set password</mat-checkbox>
           <input
             hidden
             type="checkbox"
@@ -31,13 +32,14 @@
         </div>
           <mat-form-field class="full-width" *ngIf="!isSpinnerPassword">
             <input matInput
-              autocomplete="off"
-              [errorStateMatcher]="confirmValidParentMatcher"
-              [type]="hidePass ? 'password' : 'text'"
-              name="spinnerPassword"
-              placeholder="Enter a password"
-              formControlName="spinnerPassword"
-              (keypress.enter)="submit()"
+                   id="password-field"
+                   autocomplete="off"
+                   [errorStateMatcher]="confirmValidParentMatcher"
+                   [type]="hidePass ? 'password' : 'text'"
+                   name="spinnerPassword"
+                   placeholder="Enter a password"
+                   formControlName="spinnerPassword"
+                   (keypress.enter)="submit()"
             >
             <mat-icon [color]="color" matSuffix (click)="hidePass = !hidePass">{{hidePass ? 'visibility' : 'visibility_off'}}</mat-icon>
             <mat-error *ngIf="addSpinnerForm.controls['password'].hasError('invalid')">
@@ -46,28 +48,30 @@
           </mat-form-field>
           <button class="add-spinner" mat-raised-button [color]="color" (click)="submit()"><mat-icon>add</mat-icon> Add a spinner</button>
         </span>
-      </form>
-      <div class="list-spinners">
-        <div *ngFor="let spinner of spinners">
-        <button
-          id="{{spinner._id}}"
-          [ngClass]="viewMode ? 'but-choose' : 'but-choose but-width'"
-          mat-raised-button
-          (click)="showSpinner(spinner)"
-        >
-          <span class="spinner-list-name"><a title="{{spinner.name}}">{{spinner.name}}</a></span>
-          <span *ngIf="spinner.password.private" class="lock material-icons">lock</span>
-          <span *ngIf="!spinner.password.private" class="unlock material-icons">lock_open</span>
-        </button>
-        <button
-          class="delete-spinner"
-          (click)="deleteSpinner(spinner)"
-          mat-icon-button><mat-icon [color]="warnColor">delete</mat-icon></button>
+        </form>
+        <div class="list-spinners">
+          <div *ngFor="let spinner of spinners">
+            <button
+              id="{{spinner._id}}"
+              [ngClass]="viewMode ? 'but-choose' : 'but-choose but-width'"
+              mat-raised-button
+              (click)="showSpinner(spinner)"
+            >
+              <span class="spinner-list-name"><a title="{{spinner.name}}">{{spinner.name}}</a></span>
+              <span *ngIf="spinner.password.private" class="lock material-icons">lock</span>
+              <span *ngIf="!spinner.password.private" class="unlock material-icons">lock_open</span>
+            </button>
+            <button
+              class="delete-spinner"
+              (click)="deleteSpinner(spinner)"
+              mat-icon-button>
+              <mat-icon [color]="warnColor">delete</mat-icon>
+            </button>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
 </mat-card>
 
 
@@ -91,17 +95,22 @@
                    formControlName="authPassword"
                    (keypress.enter)="sendAuth()"
             >
-            <mat-icon [color]="color" matSuffix (click)="hideAuth = !hideAuth">{{hideAuth ? 'visibility' : 'visibility_off'}}</mat-icon>
-            <mat-error  *ngIf="authForm.controls['authPassword'].getError('invalid')">
+            <mat-icon [color]="color" matSuffix (click)="hideAuth = !hideAuth">{{hideAuth ? 'visibility' :
+              'visibility_off'}}
+            </mat-icon>
+            <mat-error *ngIf="authForm.controls['authPassword'].getError('invalid')">
               Invalid password!
             </mat-error>
-            <mat-error  *ngIf="authForm.controls['authPassword'].getError('minlength') && !authForm.touched">
+            <mat-error *ngIf="authForm.controls['authPassword'].getError('minlength') && !authForm.touched">
               The password must be longer than 5 letter
             </mat-error>
           </mat-form-field>
         </div>
         <div>
-          <button class="add-spinner" id="auth-but" mat-raised-button color="primary" (click)="sendAuth()"><mat-icon>account circle</mat-icon>Log in</button>
+          <button class="add-spinner" id="auth-but" mat-raised-button color="primary" (click)="sendAuth()">
+            <mat-icon>account circle</mat-icon>
+            Log in
+          </button>
         </div>
       </form>
     </mat-card-content>

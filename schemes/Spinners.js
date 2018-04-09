@@ -9,7 +9,6 @@ const SpinnersSchema = mongoose.Schema({
     password: {
         private: {
             type:  Boolean,
-            required: true,
             default: false
         },
         passwordSpinner:{
