@@ -5,7 +5,7 @@ When('I toggle button', function () {
   return driver.findElement(By.tagName(`mat-slide-toggle`)).click();
 });
 
-Then('I expect that statistics page will show', function () {
+Then('I expect that statistics page will shown', function () {
   return driver.wait(until.elementTextContains(
     driver.findElement(By.xpath(`/html/body/app-root/div/div/app-spinner/div/div[1]/mat-card/app-statistics/div/p`)), 'Statistics'
   ), 5000);
@@ -20,7 +20,7 @@ When('I select {string}', function (string) {
   });
 });
 
-Then('I expect thaw statistics view change', function () {
+Then('I expect that statistics view will changed', function () {
   return driver.findElement(By.xpath(`//*[@id="mat-option-1"]/span`)).getText().then(t => {
     return expect(t).to.equal('line');
   });

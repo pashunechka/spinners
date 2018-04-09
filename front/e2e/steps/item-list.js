@@ -65,7 +65,7 @@ Then('I expect that item(s) will {string}', function (status) {
   }
 });
 
-Then('I expect that item(s) will add to the wheel', function () {
+Then('I expect that item(s) will added to the wheel', function () {
   if(itemName) {
     return driver.findElement(By.xpath(`//*[@id='spinner-parts'][contains(., '${itemName}')]`));
   } else {

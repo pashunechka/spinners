@@ -41,7 +41,7 @@ Then('I expect that I will navigate to this spinner page', async function () {
     });
 });
 
-Then('I expect that style of spinner in spinner list change', async function () {
+Then("I expect the spinner's style will changed in the spinners list", async function () {
   return driver.findElement(By.xpath(`//*[@id="cont"]/div/div/div[contains(., '${this.spinnerName}')]/button[1]`))
     .getCssValue('color').then(style => {
       return expect(style).to.equal('rgba(255, 255, 255, 1)');
@@ -49,11 +49,11 @@ Then('I expect that style of spinner in spinner list change', async function () 
 });
 
 
-Then('I expect that the name field error message will show', async function () {
+Then('I expect that the name field error message will shown', async function () {
   return driver.findElement(By.xpath('//*[@id="cont"]/div/form/mat-form-field/div/div/div/mat-error')).isDisplayed();
 });
 
-Then('I expect that the password field error message will show', async function () {
+Then('I expect that the password field error message will shown', async function () {
   return driver.findElement(By.xpath('//*[@id="cont"]/div/form/span/mat-form-field/div/div/div/mat-error')).isDisplayed();
 });
 

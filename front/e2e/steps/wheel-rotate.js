@@ -20,6 +20,6 @@ Then('I expect that wheel start rotate', function () {
   });
 });
 
-Then('I expect that after rotation show pop-up with selected item', function () {
+Then('I expect that after the rotation there will be a pop up containing an item dropped on the spinner', function () {
   return driver.wait(until.elementLocated(By.xpath(`/html/body/app-root/div/div/app-spinner/div[2]`)), 5000).isDisplayed();
 });
