@@ -21,7 +21,7 @@ When('I select {string}', function (string) {
 });
 
 Then('I expect thaw statistics view change', function () {
-  return driver.findElement(By.xpath(`//*[@id="mat-select-0"]/div/div[1]/span/span`)).getText().then(t => {
+  return driver.findElement(By.xpath(`//*[@id="mat-option-1"]/span`)).getText().then(t => {
     return expect(t).to.equal('line');
   });
 });

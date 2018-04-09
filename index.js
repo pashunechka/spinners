@@ -57,7 +57,7 @@ router.post('/deleteSpinner', (req, res) => {
 
 router.post('/addItems', isLoggedIn, (req, res) => {
     let member = req.body;
-    const item = new SpinnerItems({spinnerId:  /*member.id */  req.user._id, name: member.title,
+    const item = new SpinnerItems({spinnerId: /* member.id  */ req.user._id, name: member.title,
         image: member.image, color: member.color === '#ffffff' ? '' : member.color});
     if(member.title === '' || member.image === '')
        return res.status(400).send('Invalid request');
