@@ -43,7 +43,7 @@ Then('I expect that this item to be added/changed to/in the items list', functio
       By.xpath(`//*[@id='list-cont']/mat-selection-list/div/mat-list-option[contains(., '${this.itemName}')]`)), 5000);
 });
 
-Then('I expect add form to be cleared', function () {
+Then('I expect the form to be cleared', function () {
   return driver.wait(until.elementTextIs(driver.findElement(By.id('title')), '')).then(() => {
     return driver.wait(driver.findElement(By.id('imageCont')).getAttribute('src').then(src => {
       return src === defaultSrc;
@@ -77,12 +77,12 @@ When('I click {string} button', function (butName) {
   });
 });
 
-When('I click {string} button on the shown pop-up', function (butName) {
+When('I click {string} button on the appeared pop-up', function (butName) {
   return driver.wait(until.elementLocated(
     By.xpath(`/html/body/app-root/div/div/app-spinner/div/div[2]/app-item-list/div[3]/mat-card/mat-card-actions/button[contains(., '${butName}')]`)), 5000).click();
 });
 
-Then('I expect that confirmation pop-up closed', function () {
+Then('I expect that confirmation pop-up will closed', function () {
   return driver.wait(until.elementIsNotVisible(driver.findElement(By.className(`pop-up`))), 5000);
 });
 

@@ -58,5 +58,5 @@ Then('I expect that the password field error message will show', async function 
 });
 
 AfterAll(async function () {
-  //driver.quit();
+  driver.quit();
 });
