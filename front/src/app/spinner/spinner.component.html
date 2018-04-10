@@ -43,16 +43,21 @@
   </div>
 </div>
 
-<div class="overlay" *ngIf="isPopUp" (click)="isPopUp = false">
-  <div class="pop-up">
-    <mat-card>
-        <p>
-          {{spinner.topPositionValue.name}}
-        </p>
-      <mat-card-content>
-        <img src="/assets/{{spinner.topPositionValue.image}}">
-      </mat-card-content>
-    </mat-card>
-  </div>
-  <i class="fa fa-remove" (click)="isPopUp = false"></i>
+<div class="overlay" *ngIf="isPopUp" (click)="statisticsChange()">
+  <i><mat-icon>close</mat-icon></i>
 </div>
+
+<div class="pop-up" *ngIf="isPopUp">
+  <mat-card>
+    <p>
+      {{spinner.topPositionValue.name}}
+    </p>
+    <mat-card-content>
+      <img src="/assets/{{spinner.topPositionValue.image}}">
+    </mat-card-content>
+    <mat-card-actions>
+      <button [color]="warn" mat-raised-button (click)="setIsPopUp(false)"><b>Cancel</b></button>
+    </mat-card-actions>
+  </mat-card>
+</div>
+

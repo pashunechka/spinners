@@ -41,7 +41,7 @@
 </div>
 </div>
 <div class="overlay" *ngIf="isDelete" (click)="isDelete = false">
-  <i class="fa fa-remove" (click)="isDelete = false"></i>
+  <i (click)="isDelete = false"><mat-icon>close</mat-icon></i>
 </div>
 
 <div class="pop-up" *ngIf="isDelete">

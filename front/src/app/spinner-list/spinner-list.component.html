@@ -76,7 +76,7 @@
 
 
 <div class="overlay" [hidden]="isAuthForm" (click)="closeAuth()">
-  <i class="fa fa-remove" (click)="closeAuth()"></i>
+  <i (click)="closeAuth()"><mat-icon>close</mat-icon></i>
 </div>
 <div class="pop-up" id="authForm" #elAuthForm [hidden]="isAuthForm">
   <mat-card>

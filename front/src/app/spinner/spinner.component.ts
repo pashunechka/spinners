@@ -13,6 +13,7 @@ import {SpinnerItem} from '../spinnerItem';
 export class SpinnerComponent implements OnInit, OnDestroy {
 
   color = 'primary';
+  warn = 'warn';
   spinnerCenterColor = '#266096';
   dragExitColor = '#009688';
   dragEnterColor = 'lightgray';
@@ -92,8 +93,16 @@ export class SpinnerComponent implements OnInit, OnDestroy {
       clearInterval(this.disableButTimer);
       this.clickNumber = 0;
       this.disableItems(false);
-      this.http.increaseItemStatistics(this.spinner.getValue())
-        .subscribe(result => this.data.announceSpinnerStatistics(result));
+  }
+
+  statisticsChange(): void {
+    this.http.increaseItemStatistics(this.spinner.getValue()).subscribe(result => {
+      this.data.announceSpinnerStatistics(result);
+      const parts = JSON.parse(localStorage.getItem('items'));
+      parts.find(el => el._id === result._id).statistics = result.statistics;
+      localStorage.setItem('items', JSON.stringify(parts));
+      this.setIsPopUp(false);
+    });
   }
 
   disableItems(value: boolean): void {
