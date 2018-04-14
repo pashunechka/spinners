@@ -88,7 +88,7 @@ After({tags: '@uncheck'}, function () {
         return driver.wait(until.elementLocated(By.xpath(`//*[@id="cdk-overlay-0"]`)), 5000).then(() => {
           return driver.executeScript(`document.getElementsByClassName('delete-item')[0].click()`).then(() => {
             return driver.wait(until.elementLocated(
-              By.xpath(`/html/body/app-root/div/div/app-spinner/div/div[2]/app-item-list/div[3]/mat-card/mat-card-actions/button[contains(., 'Delete')]`)), 5000).click();
+              By.xpath(`//*[@id='item-pop-up']/mat-card/mat-card-actions/button[contains(., 'Delete')]`)), 5000).click();
           });
         });
       });

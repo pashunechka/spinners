@@ -10,7 +10,7 @@ import {ChartsModule} from 'ng2-charts';
 describe('StatisticsComponent', () => {
   let component: StatisticsComponent;
   let fixture: ComponentFixture<StatisticsComponent>;
-
+  const item = {name: '1', _id: '1', image: 'no-image.jpg', color: '#000000', statistics: 3, spinnerId: '1'};
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ StatisticsComponent ],
@@ -60,16 +60,11 @@ describe('StatisticsComponent', () => {
   });
 
   it('#collectStatistics should return collectStat', () => {
-    const item = { name: '', color: '#000000', image: 'no-image.svg', _id: '1', statistics: 5};
       expect(component.collectStatistics(item)).toBe(component.collectStat);
   });
 
   it('#initStatistics should init chartLabels', () => {
-    const items = [
-      { name: '1', color: '#000000', image: 'no-image.svg', _id: '1', statistics: 5},
-      { name: '2', color: '#000000', image: 'no-image.svg', _id: '2', statistics: 4},
-      { name: '3', color: '#000000', image: 'no-image.svg', _id: '3', statistics: 8}
-      ];
+    const items = [item, item, item];
     expect(component.chartLabels.length).toBe(0);
     expect(component.collectStat.length).toBe(0);
     component.initStatistics(items);

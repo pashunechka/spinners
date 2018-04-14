@@ -27,11 +27,14 @@ When('I click on the button Add a spinner', async function () {
 Then('I expect that a spinner will appears in spinner list with name {string}', async function (name) {
   this.spinnerName = name;
   return driver.findElements(By.className('spinner-list-name')).then(values => {
-    return driver.wait(until.elementLocated(By.xpath(`//*[@id="cont"]/div/div/div[position() = ${values.length + 1}]/button[1]/span/span[1]`)), 5000)
-      .getText().then(text => {
-        return expect(text).equal(name);
-      });
+    return driver.wait(
+      until.elementLocated(By.xpath(`//*[@id="list-spinners"]/div[position() = ${values.length + 1}]/button[1]`)), 5000).then(value => {
+        return value.getText(t => {
+          return expect(t).to.equal(name);
+        })
+    });
   });
+
 });
 
 Then('I expect that I will navigate to this spinner page', async function () {
@@ -47,7 +50,6 @@ Then("I expect the spinner's style will changed in the spinners list", async fun
       return expect(style).to.equal('rgba(255, 255, 255, 1)');
     });
 });
-
 
 Then('I expect that the name field error message will shown', async function () {
   return driver.findElement(By.xpath('//*[@id="cont"]/div/form/mat-form-field/div/div/div/mat-error')).isDisplayed();

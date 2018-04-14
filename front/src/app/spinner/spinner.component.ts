@@ -22,7 +22,7 @@ export class SpinnerComponent implements OnInit, OnDestroy {
   startRadians: number = (1 + Math.random()) * ((360 * Math.PI) / 180);
   rotateRad: number = this.startRadians;
 
-  spinner: Spinner = new Spinner();
+  spinner: Spinner;
   subscription: Subscription;
 
   isPopUp = false;
@@ -44,10 +44,10 @@ export class SpinnerComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.spinner.spinnerCenterColor = this.spinnerCenterColor;
+    this.spinner = new Spinner('wheel', this.spinnerCenterColor);
     this.subscription = this.data.wheelParts.subscribe(parts => {
       this.parts = parts;
-      this.spinner.initialize('wheel', this.parts);
+      this.spinner.initialize(this.parts);
     });
   }
 

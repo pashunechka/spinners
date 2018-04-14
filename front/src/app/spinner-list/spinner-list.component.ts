@@ -53,7 +53,6 @@ export class SpinnerListComponent implements OnInit, DoCheck {
   isDelete = false;
   isSpinnerPassword = true;
   isAuthForm = true;
-  viewMode: string;
 
   confirmValidParentMatcher = new ConfirmValidParentMatcher();
   spinners: Array<Spinner> = [];
@@ -65,7 +64,6 @@ export class SpinnerListComponent implements OnInit, DoCheck {
     private router: Router) {}
 
   ngOnInit() {
-    this.data.changeURL.subscribe(url => this.viewMode = url);
     this.http.getSpinners().subscribe((res: Array<Spinner>) => this.spinners = res);
     this.data.authorizationError.subscribe(() => this.initAuthorizationError());
     this.initForm();

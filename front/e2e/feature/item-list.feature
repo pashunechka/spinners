@@ -18,7 +18,7 @@
       Given I create item with name "check me"
       When I check this item
       Then I expect that item will "checked"
-      And I expect that item will add to the wheel
+      And I expect that item will added to the wheel
     @uncheck
     Scenario: Unchecked item
       Given Item is checked

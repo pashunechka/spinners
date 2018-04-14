@@ -1,29 +1,25 @@
 <div class="grid">
-  <div class="reel">
-    <mat-card>
-      <div class="toggle">
-        Spinner
-        <mat-slide-toggle [color]="color" [(ngModel)]="isWheel">
-        </mat-slide-toggle>
-        Statistics
-      </div>
-    <div class="wheel-conatoiner" [hidden]="isWheel">
-      <mat-card-header>
-        <p><i class="material-icons">rotate_right</i> Spinner</p>
-      </mat-card-header>
+  <mat-card class="reel">
+    <div class="toggle">
+      Spinner
+      <mat-slide-toggle [color]="color" [(ngModel)]="isWheel">
+      </mat-slide-toggle>
+      Statistics
+    </div>
+    <div class="wheel-container" [hidden]="isWheel">
       <div class="arrow-cont" id="arrow-cont">
-        <svg id="arrow" height="18px" version="1.1" viewBox="0 0 24 12" width="36px" >
+        <svg id="arrow" height="18px" version="1.1" viewBox="0 0 24 12" width="36px">
           <g fill-rule="evenodd" stroke="black" stroke-width="1">
-            <g transform="translate(-16.000000, -23.000000)">
-              <g transform="translate(28.000000, 28.000000) rotate(-90.000000) translate(-28.000000, -28.000000)">
-                <polygon class="arrow" points="32.6666667 16.3333333 21 28 32.6666667 39.6666667"></polygon>
+            <g transform="translate(-16, -23)">
+              <g transform="translate(28, 28) rotate(-90) translate(-28, -28)">
+                <polygon class="arrow" points="32.7 16.3 21 28 32.7 39.7"></polygon>
               </g>
             </g>
           </g>
         </svg>
       </div>
       <div class="wheel-cont" id="wheel-cont">
-        <svg class="svg-spinner-parts" id="wheel"
+        <svg class="svg-spinner-parts" id="wheel" version="1.1" viewBox="0 0 750 750"
              (drop)="drop($event)"
              (dragenter)="dragEnter($event)"
              (dragover)="dragOver($event)"
@@ -31,33 +27,32 @@
              (mousedown)="clickDown()">
         </svg>
       </div>
-      <mat-card-actions>
-        <button class="btn-spin" mat-raised-button (click)="clickToRotate()" [disabled]="parts.length < 2 || disableBut"><i class="fa fa-repeat"></i> Spin</button>
-      </mat-card-actions>
+      <button class="btn-spin" mat-raised-button (click)="clickToRotate()"
+              [disabled]="parts.length < 2 || disableBut"><i class="fa fa-repeat"></i> Spin
+      </button>
     </div>
     <app-statistics [hidden]="!isWheel"></app-statistics>
-    </mat-card>
-  </div>
-  <div class="item-list">
-     <app-item-list [disableItemsList]="disableItemsList"></app-item-list>
-  </div>
+  </mat-card>
+  <app-item-list [disableItemsList]="disableItemsList"></app-item-list>
 </div>
 
 <div class="overlay" *ngIf="isPopUp" (click)="statisticsChange()">
-  <i><mat-icon>close</mat-icon></i>
+  <i>
+    <mat-icon>close</mat-icon>
+  </i>
 </div>
 
-<div class="pop-up" *ngIf="isPopUp">
+<div class="pop-up"  id="show-selected-item" *ngIf="isPopUp">
   <mat-card>
-    <p>
-      {{spinner.topPositionValue.name}}
-    </p>
+    <p>{{spinner.topPositionValue.name}}</p>
     <mat-card-content>
-      <img src="/assets/{{spinner.topPositionValue.image}}">
+      <div>
+        <img src="/assets/{{spinner.topPositionValue.image}}">
+      </div>
+      <div>
+        <button [color]="warn" mat-raised-button (click)="setIsPopUp(false)"><b>Cancel</b></button>
+      </div>
     </mat-card-content>
-    <mat-card-actions>
-      <button [color]="warn" mat-raised-button (click)="setIsPopUp(false)"><b>Cancel</b></button>
-    </mat-card-actions>
   </mat-card>
 </div>
 

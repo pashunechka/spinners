@@ -79,7 +79,7 @@ When('I click {string} button', function (butName) {
 
 When('I click {string} button on the appeared pop-up', function (butName) {
   return driver.wait(until.elementLocated(
-    By.xpath(`/html/body/app-root/div/div/app-spinner/div/div[2]/app-item-list/div[3]/mat-card/mat-card-actions/button[contains(., '${butName}')]`)), 5000).click();
+    By.xpath(`//*[@id='item-pop-up']/mat-card/mat-card-actions/button[contains(., '${butName}')]`)), 5000).click();
 });
 
 Then('I expect that confirmation pop-up will closed', function () {
@@ -87,7 +87,7 @@ Then('I expect that confirmation pop-up will closed', function () {
 });
 
 Then('I expect that this item will be removed from item list', function () {
-  return driver.wait(driver.findElements(By.xpath(`//*[@id='list-cont']/mat-selection-list/div/mat-list-option/div`)).then(elements => {
+  return driver.wait(driver.findElements(By.xpath(`//*[@id='list-cont']/mat-selection-list/div/mat-list-option/div/div/a`)).then(elements => {
     let res = true;
     elements.forEach(el => {
       el.getText().then(t => {

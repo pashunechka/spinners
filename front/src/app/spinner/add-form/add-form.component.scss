@@ -2,43 +2,39 @@ $border-inp: 1px solid gray;
 $color: #009688;
 $whiteColor: white;
 
-mat-card{
-  height: 100%;
-}
-
-.but-submit{
+.but-submit {
   width: 100%;
-  outline: none;
   font-weight: 700;
   border-radius: 0;
   margin-top: 0.5em;
   font-size: 1.2em;
 }
 
-.full-width{
+.full-width {
   width: 100%;
 }
 
-form{
+form {
   border-radius: 2px;
   color: $color;
-  .cont{
+  .cont {
     padding: 0.5em;
   }
 }
+
 #title {
   width: 100%;
   outline: none;
 }
 
-.image-cont{
+.image-cont {
   width: 9em;
   height: 7em;
   border: none;
   cursor: pointer;
 }
 
-.image-name{
+.image-name {
   vertical-align: top;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -47,36 +43,6 @@ form{
   max-width: 50%;
 }
 
-.tooltip{
-  display: inline;
-  position: relative;
-  color: black;
-}
-
-.tooltip:hover:after{
-  background: #333;
-  background: rgba(0,0,0,.8);
-  border-radius: 5px;
-  bottom: 26px;
-  content: attr(title);
-  left: 20%;
-  padding: 5px 15px;
-  position: absolute;
-  z-index: 98;
-  width: 220px;
-}
-
-.tooltip:hover:before{
-  border: solid;
-  border-color: #333 transparent;
-  border-width: 6px 6px 0 6px;
-  bottom: 20px;
-  content: "";
-  left: 50%;
-  position: absolute;
-  z-index: 99;
-}
-
-.input-cont{
+.input-cont {
   vertical-align: top;
 }

@@ -1,8 +1,8 @@
-<div>
-  <p><i class="material-icons">pie_chart</i> Statistics
+<div id="statistics">
+  <p>
     <span class="statisticsType">
     <mat-form-field>
-      <mat-select [(value)]="chartType">
+      <mat-select [(value)]="chartType" id="statistics-type">
         <mat-option *ngFor="let type of types" [value]="type" (onSelectionChange)="toggleStatistics($event, type)">
           {{ type }}
         </mat-option>
@@ -10,7 +10,7 @@
     </mat-form-field>
         </span>
   </p>
-    <canvas  baseChart height="200px"
+    <canvas  baseChart height="220px"
             [data]="chartData"
             [labels]="chartLabels"
             [colors]="chartColors"

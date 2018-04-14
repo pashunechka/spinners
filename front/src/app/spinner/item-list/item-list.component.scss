@@ -3,27 +3,23 @@ $color: #009688;
 $whiteColor: white;
 
 .grid-list{
-  width: 100%;
-  height: 100%;
-  display: grid;
-  grid-row-gap: 0.7em;
-  grid-template-columns: 100%;
-  grid-template-areas:  "item-list"
-                        "add-form";
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  justify-content: space-between;
 }
 
-.item-list{
-  grid-area: item-list;
-  width: 100%;
+.item-list, .add-form{
+  flex: 1;
+  min-width: 250px;
+  margin-bottom: 0.5em;
+  margin-left: 0.5em;
 }
 
-.add-form{
-  grid-area: add-form;
-  width: 100%;
-}
-
-mat-card{
-  height: 100%;
+@media (max-width: 650px) {
+  .item-list, .add-form{
+    min-width: 320px;
+  }
 }
 
 #check-all{
@@ -36,84 +32,72 @@ mat-card{
   max-height: 24.7em;
 }
 
+mat-selection-list div{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 mat-list-option{
-  width: 80%;
-  float: left;
-  p{
+  min-width: 0;
+  flex: auto;
+  .div-flex{
     text-transform: uppercase;
-    display: inline-block;
-    float: left;
     font-weight: 700;
     color: $color;
-    position: relative;
-    z-index: 100;
-
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-width: 0;
   }
-  span {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    width: 80%;
-    display: inline-block;
+  .item-name-flex {
+    flex-basis: 60%;
+    min-width: 0;
+    a {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
   }
   img{
     width: 1.7em;
     height: 1.7em;
-    float: right;
   }
 }
 
 .show-mod-menu{
-  outline: none;
+  flex-basis: 3em;
   color: $color;
-  height: 48px;
 }
 
-.delete-item{
+.delete-item, .modify-item{
   i {
     font-size: 1.2em;
   }
-  color: #721c24;
   font-weight: 500;
   vertical-align: middle;
 }
 
 .modify-item{
-  i{
-    font-size: 1.2em;
-  }
   color: #d2a33f;
-  font-weight: 500;
-  vertical-align: middle;
 }
 
-.overlay{
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(62, 62, 62, 0.76);
-  top: 0;
+.delete-item {
+  color: #721c24;
+}
+
+.pop-up {
+  top: 25%;
   left: 0;
-  z-index: 1000000000;
-  i{
-    position: relative;
-    top: 1em;
-    right: 1em;
-    width: 2%;
-    float: right;
-    margin: 0.3em;
-    cursor: pointer;
-    font-size: 2em;
-    color: $whiteColor;
-  }
-}
-
-.pop-up{
+  right: 0;
+  bottom: 0;
+  position: fixed;
+  min-width: 22em;
+  margin: auto;
+  width: 33%;
   z-index: 1000000001;
   position: fixed;
-  left: 30%;
-  top: 23%;
-  width: 32%;
   text-transform: uppercase;
   text-align: center;
   p {
@@ -130,61 +114,5 @@ mat-list-option{
   }
   button:first-child {
     background-color: #721c24;
-  }
-}
-
-.modify-pop-up{
-  text-align: left;
-  border: none;
-  padding: 1em;
-  border-radius: 2px;
-  p{
-    text-align: center;
-    margin-bottom: -0.1em;
-  }
-}
-
-@media (min-width: 1120px) and (max-width: 1500px) {
-  .grid-list{
-    grid-column-gap: 0.7em;
-    grid-template-columns: 50% 50%;
-    grid-template-areas:  "item-list add-form";
-  }
-
-  .item-list{
-    grid-area: item-list;
-  }
-
-  .add-form{
-    grid-area: add-form;
-  }
-
-  .pop-up{
-    left: 25%;
-    top: 25%;
-    width: 50%;
-  }
-}
-
-@media(max-width: 1120px) {
-  .grid-list{
-    grid-column-gap: 0.7em;
-    grid-template-columns: 50% 50%;
-    grid-template-areas:  "item-list add-form";
-  }
-
-  .item-list{
-    grid-area: item-list;
-  }
-
-  .add-form{
-    grid-area: add-form;
-  }
-
-  .pop-up{
-    left: 10%;
-    top: 20%;
-    width: 80%;
-
   }
 }

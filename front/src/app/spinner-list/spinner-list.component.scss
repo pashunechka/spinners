@@ -1,170 +1,135 @@
 $color: #009688;
 $whiteColor: white;
 
-mat-card{
-  height: 100%;
-  padding-right: 10px;
-  padding-left: 10px;
-}
-
-
-.full-width{
+.full-width {
   width: 100%;
 }
 
-.toolbar {
-  position: fixed;
-  top: 0;
-  z-index: 99999;
-  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.77);
-  h1 {
-    margin-left: 1em;
-    font-weight: 700;
+.but-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  .spinner-list-name {
+    a  {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    flex-basis: 80%;
+    min-width: 0;
+  }
+  .lock {
+    color: #721c24;
   }
 }
 
-button {
-  outline: none;
-}
-
-.list-spinners{
-  .spinner-list-name{
-    display: inline-block;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    width: 78%;
-  }
+.list-spinners {
+  overflow-y: scroll;
+  max-height: 50vh;
   .but-choose {
     color: $color;
     font-size: 1.2em;
     font-weight: 700;
-    text-align: left;
-    outline: none;
     padding: 0.2em 0.5em;
-    width: 83%;
+    width: 100%;
+    flex-basis: 85%;
+    min-width: 0;
   }
-
-  .but-width{
-    width: 95%;
-  }
-
-  .but-active {
-    background-color: $color;
-    color: $whiteColor;
-  }
-
-  .delete-spinner{
-    outline: none;
-  }
-  span{
-    margin-top: 0.2em;
+  div {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    button  {
+      flex: auto;
+    }
   }
 }
 
-  p{
-    color: $color;
-    font-size: 1em;
-    font-weight: 700;
-    padding: 0.2em 1em;
-    text-align: center;
-    text-transform: uppercase;
-    margin-bottom: 0;
-  }
+p {
+  color: $color;
+  font-size: 1.2em;
+  font-weight: 700;
+  padding: 0.2em 1em;
+  text-align: center;
+  text-transform: uppercase;
+  margin-bottom: 0;
+}
 
-.isPrivateSpinner{
+.isPrivateSpinner {
   color: $color;
   font-size: 0.9em;
 }
 
-.add-spinner{
+.add-spinner {
   margin-top: 0.5em;
   margin-bottom: 0.5em;
   width: 100%;
   font-size: 1em;
   font-weight: 700;
-  outline: none;
 }
 
-.lock,.unlock{
-  float: right;
-  padding-right: 0.5em;
+@media (max-width: 1530px) {
+  .arround {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+  form {
+    min-width: 35%;
+    margin-right: 1em;
+    align-self: self-start;
+  }
 
-}
-
-.lock{
-  color: #721c24;
-}
-
-.overlay{
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(62, 62, 62, 0.76);
-  top: 0;
-  left: 0;
-  z-index: 100000000;
-  i{
-    position: relative;
-    top: 1em;
-    right: 1em;
-    width: 2%;
-    float: right;
-    margin: 0.3em;
-    cursor: pointer;
-    font-size: 2em;
-    color: $whiteColor;
+  .list-spinners {
+    min-width: 30%;
+    max-height: 210px;
+  }
+  mat-card {
+    padding: 10px;
   }
 }
 
-.pop-up{
-  color: $color;
+@media (max-width: 700px) {
+  .arround {
+    display: block;
+  }
+  form {
+    min-width: 100%;
+    margin-right: 0;
+  }
+
+  .list-spinners {
+    max-height: 300px;
+  }
+}
+
+.pop-up {
+  top: 25%;
+  left: 0;
+  right: 0;
+  bottom: 0;
   position: fixed;
-  left: 33%;
-  top: 23%;
-  width: 30%;
+  min-width: 22em;
+  margin: auto;
+  width: 33%;
+  color: $color;
   z-index: 1000000001;
-  p{
+  p {
     margin-bottom: 0.2em;
     text-align: center;
     color: $color;
     font-size: 1.5em;
     text-transform: uppercase;
   }
-  .arround-auth{
+  .arround-auth {
     font-size: 1.2em;
     padding: 0.5em;
   }
-  button{
+  button {
     margin-top: 0.5em;
   }
-
 }
 
-
-@media (min-width: 1120px) and (max-width: 1500px) {
-  .pop-up{
-    left: 25%;
-    top: 25%;
-    width: 50%;
-  }
-  .list-spinners {
-    .but-choose {
-      width: 95%;
-    }
-  }
-}
-
-@media (max-width:1120px) {
-  .pop-up{
-    left: 20%;
-    top: 20%;
-    width: 60%;
-  }
-  .list-spinners {
-    .but-choose {
-      width: 95%;
-    }
-  }
-}
 
 

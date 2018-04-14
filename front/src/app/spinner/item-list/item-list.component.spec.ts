@@ -12,9 +12,8 @@ import {RouterTestingModule} from '@angular/router/testing';
 describe('ItemListComponent', () => {
   let component: ItemListComponent;
   let fixture: ComponentFixture<ItemListComponent>;
-  const item = {name: '1', _id: '1', image: 'no-image.jpg', color: '#000000', statistics: 3};
   const items = [];
-  const member = { name: '1', color: '#000000', image: 'no-image.svg', _id: '1', statistics: 5};
+  const member = {name: '1', _id: '1', image: 'no-image.jpg', color: '#000000', statistics: 3, spinnerId: '1'};
   let dataService;
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -58,12 +57,6 @@ describe('ItemListComponent', () => {
     expect(component.isDelete).toBeFalsy();
   });
 
-  it('#showModifyPopUp should set member: SpinnerItem', () => {
-    expect(component.member).toBeUndefined();
-    component.showModifyPopUp(member);
-    expect(component.member).toEqual(member);
-  });
-
   it('#showDeletePopUp should set deletedItem: SpinnerItem', () => {
     expect(component.deletedItem).toBeUndefined();
     component.showDeletePopUp(member);
@@ -71,7 +64,7 @@ describe('ItemListComponent', () => {
   });
 
   it('#resetMember should set member to undefined', () => {
-    component.showModifyPopUp(member);
+    component.member = member;
     expect(component.member).toEqual(member);
     component.resetMember();
     expect(component.member).toBeUndefined();

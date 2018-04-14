@@ -7,6 +7,16 @@ p{
   font-size: 2em;
   color: $color;
   margin-bottom: 0;
+  margin-top: -1.7em;
+  display: inline-block;
+  float: right;
+}
+
+@media (max-width: 500px) {
+  p{
+    margin-top: 0em;
+    float: left;
+  }
 }
 
 .statisticsType{

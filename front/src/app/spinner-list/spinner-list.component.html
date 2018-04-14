@@ -49,17 +49,19 @@
           <button class="add-spinner" mat-raised-button [color]="color" (click)="submit()"><mat-icon>add</mat-icon> Add a spinner</button>
         </span>
         </form>
-        <div class="list-spinners">
+        <div class="list-spinners" id="list-spinners">
           <div *ngFor="let spinner of spinners">
             <button
               id="{{spinner._id}}"
-              [ngClass]="viewMode ? 'but-choose' : 'but-choose but-width'"
+              class="but-choose"
               mat-raised-button
               (click)="showSpinner(spinner)"
             >
-              <span class="spinner-list-name"><a title="{{spinner.name}}">{{spinner.name}}</a></span>
-              <span *ngIf="spinner.password.private" class="lock material-icons">lock</span>
-              <span *ngIf="!spinner.password.private" class="unlock material-icons">lock_open</span>
+              <div class="but-flex">
+                <div class="spinner-list-name"><a title="{{spinner.name}}">{{spinner.name}}</a></div>
+                <div *ngIf="spinner.password.private" class="lock material-icons">lock</div>
+                <div *ngIf="!spinner.password.private" class="unlock material-icons">lock_open</div>
+              </div>
             </button>
             <button
               class="delete-spinner"

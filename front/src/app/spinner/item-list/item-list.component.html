@@ -16,12 +16,14 @@
         [checkboxPosition]="before"
         #option
         (selectionChange)="getInput($event)"
-        id="{{member._id}}"
-      >
-        <p
+        id="{{member._id}}">
+        <div class="div-flex"
           attr.data-checked = "{{option?.selected}}"
           draggable="true"
-          (dragstart)="dragStart($event, member._id)"><a title="{{member.name}}"><span>{{member.name}}</span></a><img src="assets/{{member.image}}"></p>
+          (dragstart)="dragStart($event, member._id)">
+          <div class="item-name-flex"><a title="{{member.name}}">{{member.name}}</a></div>
+          <div><img src="assets/{{member.image}}"></div>
+        </div>
       </mat-list-option>
     <button mat-icon-button class="show-mod-menu" [matMenuTriggerFor]="menu"><i class="material-icons">more_vert</i></button>
     <mat-menu #menu="matMenu">
@@ -33,18 +35,18 @@
 </div>
 </mat-card>
 </div>
-<div class="add-form">
   <app-add-form
+    class="add-form"
     [member]="member"
     (modifyItem)="setModifyItem($event)"
     (addItem)="addItemToItems($event)"></app-add-form>
 </div>
-</div>
+
 <div class="overlay" *ngIf="isDelete" (click)="isDelete = false">
   <i (click)="isDelete = false"><mat-icon>close</mat-icon></i>
 </div>
 
-<div class="pop-up" *ngIf="isDelete">
+<div class="pop-up" id="item-pop-up" *ngIf="isDelete">
   <mat-card class="example-card">
     <mat-card-header>
       <p>

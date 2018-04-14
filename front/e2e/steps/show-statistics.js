@@ -6,15 +6,13 @@ When('I toggle button', function () {
 });
 
 Then('I expect that statistics page will shown', function () {
-  return driver.wait(until.elementTextContains(
-    driver.findElement(By.xpath(`/html/body/app-root/div/div/app-spinner/div/div[1]/mat-card/app-statistics/div/p`)), 'Statistics'
-  ), 5000);
+  return driver.wait(until.elementLocated(By.id(`statistics`)), 5000);
 });
 
 When('I select {string}', function (string) {
-  return driver.wait(until.elementLocated(By.xpath(`/html/body/app-root/div/div/app-spinner/div/div[1]/mat-card/app-statistics`)), 5000).then(() => {
+  return driver.wait(until.elementLocated(By.id(`statistics`)), 5000).then(() => {
     return driver.findElement(
-      By.xpath(`/html/body/app-root/div/div/app-spinner/div/div[1]/mat-card/app-statistics/div/p/span/mat-form-field/div/div[1]`)).click().then(() => {
+      By.id(`statistics-type`)).click().then(() => {
         return driver.wait(until.elementLocated(By.xpath(`//*[@id="cdk-overlay-0"]/div/div[contains(., '${string}')]`))).click();
     });
   });

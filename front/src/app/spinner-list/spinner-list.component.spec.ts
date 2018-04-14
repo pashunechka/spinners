@@ -18,7 +18,7 @@ describe('SpinnerListComponent', () => {
   let httpService;
   let dataService;
   let httpMock: HttpTestingController;
-  const item = {name: '1', _id: '1', image: 'no-image.jpg', color: '#000000', statistics: 3};
+  const item = {name: '1', _id: '1', image: 'no-image.jpg', color: '#000000', statistics: 3, spinnerId: '1'};
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({

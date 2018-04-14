@@ -11,11 +11,12 @@ import {DataService} from '../data.service';
 import {HttpService} from '../http.service';
 import {HttpClientModule} from '@angular/common/http';
 import {RouterTestingModule} from '@angular/router/testing';
+import {SpinnerItem} from '../spinnerItem';
 
 describe('SpinnerComponent', () => {
   let component: SpinnerComponent;
   let fixture: ComponentFixture<SpinnerComponent>;
-  const item = {name: '1', _id: '1', image: 'no-image.jpg', color: '#000000', statistics: 3};
+  const item: SpinnerItem = {name: '1', _id: '1', image: 'no-image.jpg', color: '#000000', statistics: 3, spinnerId: '1'};
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -71,10 +72,10 @@ describe('SpinnerComponent', () => {
 
   it('#disableItems should set disableItemsList', () => {
       expect(component.disableItemsList).toBeUndefined();
-      component.spinner.initialize('wheel', []);
+      component.spinner.initialize( []);
       component.disableItems(true);
       expect(component.disableItemsList).toBeUndefined();
-      component.spinner.initialize('wheel', [item, item]);
+      component.spinner.initialize([item, item]);
       component.disableItems(true);
       expect(component.disableItemsList).toBe(true);
   });
@@ -87,7 +88,7 @@ describe('SpinnerComponent', () => {
   }));
 
   it('#resetWheelRotation should stop wheel rotation', () => {
-    component.spinner.initialize('wheel', [item, item]);
+    component.spinner.initialize([item, item]);
     component.clickToRotate();
 
     expect(component.stop).toEqual(true);
@@ -102,7 +103,7 @@ describe('SpinnerComponent', () => {
   });
 
   it('#clickToRotate should start wheel rotation', () => {
-    component.spinner.initialize('wheel', [item, item]);
+    component.spinner.initialize([item, item]);
     expect(component.disableItemsList).toBeUndefined();
     expect(component.stop).toEqual(false);
     expect(component.clickNumber).toEqual(0);

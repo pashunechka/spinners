@@ -12,14 +12,13 @@ When('I click button {string}', function (butName) {
 });
 
 Then('I expect that wheel start rotate', function () {
-  return driver.wait(until.elementLocated(By.xpath(`/html/body/app-root/div/div/app-spinner/div[2]`)), 5000).then(() => {
+  return driver.wait(until.elementLocated(By.id(`show-selected-item`)), 5000).then(() => {
     return driver.findElement(By.id(`wheel`)).getAttribute('style').then(style => {
-      console.log('style:',style);
       return expect(style).to.not.equal('');
     })
   });
 });
 
 Then('I expect that after the rotation there will be a pop up containing an item dropped on the spinner', function () {
-  return driver.wait(until.elementLocated(By.xpath(`/html/body/app-root/div/div/app-spinner/div[2]`)), 5000).isDisplayed();
+  return driver.wait(until.elementLocated(By.id(`show-selected-item`)), 5000).isDisplayed();
 });

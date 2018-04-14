@@ -5,15 +5,15 @@ export class Spinner {
   DEFAULTIMAGE = 'no-image.svg';
 
   private startDegrees = 270;
-  private center = {x: 350, y: 350};
-  private radius = 350;
-  private textRadius = 300;
-  private imageRadius = 250;
+  private radius = 375;
+  private center = {x: 375, y: 375};
+  private textRadius = 320;
+  private imageRadius = 270;
   public spinnerCenterColor = 'black';
   public textColor = 'black';
   public topPartFill = 'SteelBlue';
   public partColors = [
-      '#71CC51',
+    '#71CC51',
     '#B3EAAF',
     '#CADFA1',
     '#40C575',
@@ -48,7 +48,11 @@ export class Spinner {
   private topPositionValue: SpinnerItem;
   public timeout;
 
-  constructor() {}
+  constructor(id, spinnerCenterColor) {
+    this.wheel = document.getElementById(id);
+    this.spinnerCenterColor = spinnerCenterColor;
+    this.initialize([]);
+  }
 
   private static calcRad(degrees: number): number {
     return degrees * Math.PI / 180;
@@ -64,12 +68,10 @@ export class Spinner {
     return name.length > value ? `${name.substring(0, value)}...` : name;
   }
 
-  public initialize(id: string, parts: Array<SpinnerItem>): void {
-    this.wheel = document.getElementById(id);
+  public initialize(parts: Array<SpinnerItem>): void {
     this.parts = parts;
-    document.getElementById(id).innerHTML = `<g id="spinner-parts"></g><circle fill="${this.spinnerCenterColor}"
+    this.wheel.innerHTML = `<g id="spinner-parts">${this.generateWheelParts()}</g><circle fill="${this.spinnerCenterColor}"
                                                 cx="${this.center.x}" cy="${this.center.y}" r="8px"></circle>`;
-    document.getElementById('spinner-parts').innerHTML = this.generateWheelParts();
   }
 
   public initWheelRotation(transformTime, rotateRad, cb): void {
@@ -117,6 +119,9 @@ export class Spinner {
   private generateWheelParts(): string {
     this.calcWheelParts();
     this.fontSize();
+    if (this.parts.length === 0 || !this.parts) {
+      return `<circle id="path" fill="#009688" cx="${this.center.x}" cy="${this.center.y}" r="${this.radius}"></circle>`;
+    }
     if (this.parts.length === 1) {
         return this.generateOneWheelPart();
     }
@@ -266,3 +271,4 @@ export class Spinner {
     return this.parts.length > 1;
   }
 }
+
