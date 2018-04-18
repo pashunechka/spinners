@@ -44,13 +44,16 @@
 
 <div class="pop-up"  id="show-selected-item" *ngIf="isPopUp">
   <mat-card>
-    <p>{{spinner.topPositionValue.name}}</p>
+    <div class="pop-up-header">
+      <p><a title="{{spinner.topPositionValue.name}}">{{spinner.topPositionValue.name}}</a></p>
+      <button [color]="warn" id="cancel-result-but" mat-raised-button (click)="setIsPopUp(false)"><b>Cancel</b></button>
+    </div>
     <mat-card-content>
       <div>
         <img src="/assets/{{spinner.topPositionValue.image}}">
       </div>
       <div>
-        <button [color]="warn" mat-raised-button (click)="setIsPopUp(false)"><b>Cancel</b></button>
+        <button [color]="color" mat-raised-button (click)="statisticsChange()"><b>OK</b></button>
       </div>
     </mat-card-content>
   </mat-card>

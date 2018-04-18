@@ -115,9 +115,13 @@ app-item-list {
   padding: 0.5em 0;
   text-align: center;
   z-index: 1000000001;
+  .pop-up-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
   p {
     color: $color;
-    margin-bottom: 0.2em;
     font-weight: 900;
     font-size: 4em;
     text-align: center;
@@ -125,9 +129,14 @@ app-item-list {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    margin: 0;
+
   }
   img {
     width: 30%;
     margin-bottom: 2em;
+  }
+  #cancel-result-but {
+    margin-left: 1em;
   }
 }
