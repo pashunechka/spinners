@@ -6,7 +6,8 @@
       </mat-slide-toggle>
       Statistics
     </div>
-    <div class="wheel-container" [hidden]="isWheel">
+    <div [hidden]="isWheel">
+    <div class="wheel-container" >
       <div class="arrow-cont" id="arrow-cont">
         <svg id="arrow" height="18px" version="1.1" viewBox="0 0 24 12" width="36px">
           <g fill-rule="evenodd" stroke="black" stroke-width="1">
@@ -30,6 +31,7 @@
       <button class="btn-spin" mat-raised-button (click)="clickToRotate()"
               [disabled]="parts.length < 2 || disableBut"><i class="fa fa-repeat"></i> Spin
       </button>
+    </div>
     </div>
     <app-statistics [hidden]="!isWheel"></app-statistics>
   </mat-card>

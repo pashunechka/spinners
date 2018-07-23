@@ -7,7 +7,7 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 
 router.post('/uploads', (req, res) => {
-    if (!req.files) return;
+    if (!req.files) return res.status(200).send();
     let file = req.files.file;
     file.mv(`./front/dist/assets/${file.name}`, err => {
         if (err) return res.status(500).send(err);

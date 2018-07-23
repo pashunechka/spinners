@@ -29,7 +29,8 @@ $whiteColor: white;
 
 .list-cont{
   overflow-y: scroll;
-  max-height: 24.7em;
+  height: auto;
+  max-height: 34em;
 }
 
 mat-selection-list div{

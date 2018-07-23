@@ -7,6 +7,7 @@ $whiteColor: white;
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: stretch;
+  height: 100vh;
 }
 
 app-item-list {
@@ -47,6 +48,9 @@ app-item-list {
 
 .wheel-container {
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
 .arrow-cont {
@@ -62,7 +66,7 @@ app-item-list {
 .svg-spinner-parts {
   user-select: none;
   z-index: 100;
-  width: 73%;
+  width: 71%;
 }
 
 .wheel-cont {
@@ -104,14 +108,14 @@ app-item-list {
 }
 
 .pop-up {
-  top: 25%;
+  top: 20%;
   left: 0;
   right: 0;
   bottom: 0;
   position: fixed;
   min-width: 22em;
   margin: auto;
-  width: 33%;
+  width: 60%;
   padding: 0.5em 0;
   text-align: center;
   z-index: 1000000001;
@@ -133,7 +137,7 @@ app-item-list {
 
   }
   img {
-    width: 30%;
+    width: 50%;
     margin-bottom: 2em;
   }
   #cancel-result-but {

@@ -58,10 +58,8 @@ export class AddFormComponent implements OnInit, OnChanges {
 
   validateForm(): null | object {
     return(): {[key: string]: any} => {
-      if (!this.member && this.items) {
-        if (this.items.length >= this.limitMaxItems) {
+      if (!this.member && this.items && this.items.length >= this.limitMaxItems) {
           return {invalid: true};
-        }
       }
       return null;
     };
